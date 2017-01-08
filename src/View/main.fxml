@@ -9,26 +9,34 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
 
-<BorderPane prefHeight="379.0" prefWidth="392.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="View.Controller">
+<BorderPane prefHeight="400.0" prefWidth="450.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="View.Controller">
   <bottom>
-    <ToolBar orientation="HORIZONTAL" pickOnBounds="false" BorderPane.alignment="CENTER_RIGHT">
-      <items>
-        <Label fx:id="lb_progressName" text="Label" />
-        <ProgressBar fx:id="pb_progressStatus" prefWidth="200.0" progress="0.0" />
-      </items>
-    </ToolBar>
+    <HBox id="toolBar" alignment="CENTER_RIGHT" fillHeight="true" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT">
+      <children>
+        <Label id="lb_progressName" text="Status" />
+        <ProgressBar id="pb_progressStatus" prefWidth="200.0" progress="0.0">
+          <HBox.margin>
+            <Insets left="5.0" />
+          </HBox.margin>
+        </ProgressBar>
+      </children>
+      <padding>
+        <Insets bottom="2.0" left="10.0" right="10.0" top="2.0" />
+      </padding>
+    </HBox>
   </bottom>
   <center>
     <BorderPane prefHeight="200.0" prefWidth="200.0">
       <center>
-        <HBox fx:id="lv_files" prefHeight="100.0" prefWidth="200.0">
-          <children>
-            <ListView disable="true" editable="false" orientation="VERTICAL" pickOnBounds="false" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-          </children>
-          <padding>
+        <SplitPane disable="false" dividerPositions="0.6728971962616822" focusTraversable="true" prefHeight="160.0" prefWidth="200.0" style="-fx-box-border: transparent;" BorderPane.alignment="CENTER">
+          <items>
+            <ListView fx:id="lv_files" cache="false" disable="true" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mouseTransparent="false" opacity="1.0" orientation="VERTICAL" pickOnBounds="false" prefHeight="299.0" prefWidth="228.0" style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;" />
+            <TextArea fx:id="ta_preview" prefHeight="299.0" prefWidth="136.0" style="-fx-box-border: transparent;&#10;" wrapText="true" />
+          </items>
+          <BorderPane.margin>
             <Insets bottom="5.0" top="5.0" />
-          </padding>
-        </HBox>
+          </BorderPane.margin>
+        </SplitPane>
       </center>
       <padding>
         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
@@ -52,7 +60,8 @@
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <CheckMenuItem mnemonicParsing="false" selected="true" text="Preview" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
