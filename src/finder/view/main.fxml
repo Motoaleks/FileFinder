@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
 
-<BorderPane prefHeight="400.0" prefWidth="450.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="View.Controller">
+<BorderPane prefHeight="400.0" prefWidth="450.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="finder.view.Controller">
   <bottom>
     <HBox id="toolBar" alignment="CENTER_RIGHT" fillHeight="true" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT">
       <children>
@@ -44,8 +44,13 @@
       <top>
         <HBox alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="392.0" spacing="10.0" BorderPane.alignment="CENTER_LEFT" BorderPane.margin="$x1">
           <children>
-            <TextField fx:id="txt_search" prefHeight="24.0" prefWidth="200.0" />
-            <RadioButton fx:id="rb_fileSearch" contentDisplay="LEFT" disable="false" mnemonicParsing="false" mouseTransparent="false" text="Search in file" textAlignment="LEFT" wrapText="true" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="NEVER">
+              <children>
+                <TextField fx:id="txt_search" layoutX="0.0" layoutY="0.0" onAction="#onSearchChanged" prefHeight="24.0" prefWidth="200.0" text="test" />
+                <Button fx:id="btn_Search" cancelButton="false" defaultButton="false" layoutX="167.0" layoutY="0.0" mnemonicParsing="false" onAction="#onSearch" prefHeight="24.0" prefWidth="33.0" text="" textAlignment="RIGHT" wrapText="false" />
+              </children>
+            </AnchorPane>
+            <RadioButton id="rb_fileSearch" fx:id="rb_searchInFile" contentDisplay="LEFT" disable="false" mnemonicParsing="false" mouseTransparent="false" onAction="#onSearchInFileChanged" text="Search in file" textAlignment="LEFT" wrapText="true" />
           </children>
           <padding>
             <Insets fx:id="x1" />
