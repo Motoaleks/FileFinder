@@ -4,7 +4,6 @@ import finder.search.Request;
 import finder.search.Result;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -83,7 +82,7 @@ public class MainController {
         // set custom cell factory
         lv_files.setCellFactory(pathCell -> new PathCell());
         // adding result observer - to add new items when they are found.
-        result.addObserver((a1, a2)->{
+        result.addObserver((a1, a2) -> {
             System.out.println("------------------------------");
             Path founded = (Path) a2;
             System.out.println("file found: " + founded.normalize().toString());

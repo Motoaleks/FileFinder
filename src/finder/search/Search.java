@@ -1,6 +1,5 @@
 package finder.search;
 
-import javafx.beans.InvalidationListener;
 import javafx.collections.ObservableList;
 
 import java.io.File;
@@ -13,7 +12,7 @@ import java.util.Observer;
  * <p>
  * "The more we do, the more we can do" ©
  */
-public class Search{
+public class Search {
     private static volatile Search instance;
     private boolean searchActive = false;
     private ObservableList<?> result;

@@ -22,16 +22,16 @@ public class Finder extends SimpleFileVisitor<Path> {
      */
     private final PathMatcher matcher;
     /**
-     *  {@link Result} reference, where found paths are saved to. Dynamically updating thought the search.
+     * {@link Result} reference, where found paths are saved to. Dynamically updating thought the search.
      */
     private final Result<Path> currentResult;
 
 
-
     /**
      * Creates finder with concrete pattern and result, where found files saves to.
+     *
      * @param pattern The pattern which must match the files
-     * @param result {@link Result} reference, to save found paths.
+     * @param result  {@link Result} reference, to save found paths.
      */
     Finder(String pattern, Result<Path> result) {
         // getting filesystem matcher
@@ -42,6 +42,7 @@ public class Finder extends SimpleFileVisitor<Path> {
 
     /**
      * Perform match file-to-pattern operation.
+     *
      * @param file {@link Path} to current file.
      */
     private void find(Path file) {
@@ -68,7 +69,7 @@ public class Finder extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-        if (!(exc instanceof AccessDeniedException)){
+        if (!(exc instanceof AccessDeniedException)) {
             exc.printStackTrace();
         }
         return FileVisitResult.CONTINUE;

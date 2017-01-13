@@ -106,7 +106,7 @@ public class PathCell extends ListCell<Path> {
             setText(null);
             setGraphic(null);
         } else {
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 lb_name.setText(item.normalize().toString());
                 iv_thumbnail.setImage(null);
                 setText(null);

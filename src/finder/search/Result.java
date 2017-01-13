@@ -7,10 +7,13 @@
  */
 package finder.search;
 
-import java.util.*;
+import java.util.Observable;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Contains search results, with thread safe adding new ones and notifying observers.
+ *
  * @param <T> Store parameter.
  */
 public class Result<T> extends Observable {
@@ -29,6 +32,7 @@ public class Result<T> extends Observable {
 
     /**
      * Adding new search result.
+     *
      * @param newResult search result to add.
      */
     public synchronized void addResult(T newResult) {
@@ -48,6 +52,7 @@ public class Result<T> extends Observable {
 
     /**
      * Get collection.
+     *
      * @return Set of results.
      */
     public Set getResult() {
@@ -56,9 +61,10 @@ public class Result<T> extends Observable {
 
     /**
      * Count results current size.
+     *
      * @return Results size.
      */
-    public int count(){
+    public int count() {
         return result.size();
     }
 }
