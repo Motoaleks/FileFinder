@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="400.0" prefWidth="450.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="finder.view.MainController">
+<BorderPane prefHeight="400.0" prefWidth="450.0" style="-fx-focus-color: transparent; " xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="finder.view.MainController">
   <bottom>
     <HBox id="toolBar" alignment="CENTER_RIGHT" fillHeight="true" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT">
       <children>

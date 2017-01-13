@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
@@ -71,6 +72,42 @@ public class PathCell extends ListCell<Path> {
     }
 
     /**
+     * Setting short name to file name field (just filename).
+     */
+    private void setShortName() {
+        if (getItem() != null) {
+            lb_name.setText(getItem().getFileName().normalize().toString());
+        }
+    }
+
+    /**
+     * Setting full name to file name field (full path).
+     */
+    private void setExpandedName() {
+        if (getItem() != null) {
+            lb_name.setText(getItem().normalize().toString());
+        }
+    }
+
+    /**
+     * Mouse enter on cell.
+     * @param event
+     */
+    @FXML
+    void onElementEntered(MouseEvent event) {
+        setExpandedName();
+    }
+
+    /**
+     * Mouse exit from cell.
+     * @param event
+     */
+    @FXML
+    void onElementExited(MouseEvent event) {
+        setShortName();
+    }
+
+    /**
      * Sets and asserts fxml values.
      */
     @FXML
@@ -80,8 +117,6 @@ public class PathCell extends ListCell<Path> {
         assert lb_created != null : "fx:id=\"lb_created\" was not injected: check your FXML file 'listCell.fxml'.";
         assert lb_name != null : "fx:id=\"lb_name\" was not injected: check your FXML file 'listCell.fxml'.";
         assert lb_size != null : "fx:id=\"lb_size\" was not injected: check your FXML file 'listCell.fxml'.";
-
-
     }
 
     /**
@@ -102,15 +137,22 @@ public class PathCell extends ListCell<Path> {
      */
     @Override
     protected void updateItem(Path item, boolean empty) {
+        // needed for correct listview updating (flickering bug).
+        super.updateItem(item, empty);
         if (empty || item == null) {
             setText(null);
             setGraphic(null);
         } else {
             Platform.runLater(() -> {
-                lb_name.setText(item.normalize().toString());
                 iv_thumbnail.setImage(null);
                 setText(null);
                 setGraphic(ap_cell);
+                // update name field
+                if (isSelected()) {
+                    setExpandedName();
+                } else {
+                    setShortName();
+                }
             });
         }
     }
