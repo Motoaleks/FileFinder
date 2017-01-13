@@ -23,40 +23,43 @@ public class MainController {
     @FXML
     private URL location;
 
-    /**
-     * Search button.
-     */
     @FXML
     private Button btn_Search;
 
-    /**
-     * Found files list view.
-     */
+    @FXML
+    private CheckBox cb_searchInFile;
+
     @FXML
     private ListView<Path> lv_files;
 
-    /**
-     * Search IN files status.
-     */
-    @FXML
-    private RadioButton rb_searchInFile;
-
-    /**
-     * File preview text.
-     */
     @FXML
     private TextArea ta_preview;
 
-    /**
-     * Search for text field.
-     */
+    @FXML
+    private Tab tab_indexes;
+
+    @FXML
+    private Tab tab_search;
+
     @FXML
     private TextField txt_search;
-
     /**
      * Results list.
      */
     private ObservableList<Path> resultList;
+
+    @FXML
+    void initialize() {
+        assert btn_Search != null : "fx:id=\"btn_Search\" was not injected: check your FXML file 'main.fxml'.";
+        assert cb_searchInFile != null : "fx:id=\"cb_searchInFile\" was not injected: check your FXML file 'main.fxml'.";
+        assert lv_files != null : "fx:id=\"lv_files\" was not injected: check your FXML file 'main.fxml'.";
+        assert ta_preview != null : "fx:id=\"ta_preview\" was not injected: check your FXML file 'main.fxml'.";
+        assert tab_indexes != null : "fx:id=\"tab_indexes\" was not injected: check your FXML file 'main.fxml'.";
+        assert tab_search != null : "fx:id=\"tab_search\" was not injected: check your FXML file 'main.fxml'.";
+        assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'main.fxml'.";
+
+
+    }
 
     @FXML
     void onSearch(ActionEvent event) {
@@ -101,15 +104,4 @@ public class MainController {
     @FXML
     void onSearchInFileChanged(ActionEvent event) {
     }
-
-    @FXML
-    void initialize() {
-        assert btn_Search != null : "fx:id=\"btn_Search\" was not injected: check your FXML file 'main.fxml'.";
-        assert lv_files != null : "fx:id=\"lv_files\" was not injected: check your FXML file 'main.fxml'.";
-        assert rb_searchInFile != null : "fx:id=\"rb_searchInFile\" was not injected: check your FXML file 'main.fxml'.";
-        assert ta_preview != null : "fx:id=\"ta_preview\" was not injected: check your FXML file 'main.fxml'.";
-        assert txt_search != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'main.fxml'.";
-
-    }
-
 }
