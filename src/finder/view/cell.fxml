@@ -8,15 +8,15 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-  prefHeight="80.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+  minWidth="-Infinity" prefHeight="80.0" prefWidth="600.0"
   xmlns="http://javafx.com/javafx/2.2">
   <center>
-    <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+    <VBox BorderPane.alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
       <children>
-        <Pane prefHeight="40.0" prefWidth="521.0" VBox.vgrow="ALWAYS">
+        <Pane VBox.vgrow="ALWAYS" prefHeight="40.0" prefWidth="521.0">
           <children>
-            <Label fx:id="lb_name" text="lb_name" textFill="BLACK"/>
+            <Label text="lb_name" textFill="BLACK" fx:id="lb_name"/>
           </children>
           <padding>
             <Insets/>
@@ -25,19 +25,19 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2"/>
           </VBox.margin>
         </Pane>
-        <HBox alignment="BOTTOM_LEFT" prefHeight="30.0" prefWidth="521.0" VBox.margin="$x2"
-          VBox.vgrow="ALWAYS">
+        <HBox VBox.margin="$x2" VBox.vgrow="ALWAYS" alignment="BOTTOM_LEFT" prefHeight="30.0"
+          prefWidth="521.0">
           <children>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+            <BorderPane HBox.hgrow="ALWAYS" prefHeight="200.0" prefWidth="200.0">
               <left>
-                <Label fx:id="lb_created" text="lb_created">
+                <Label text="lb_created" fx:id="lb_created">
                   <textFill>
                     <Color blue="0.375" green="0.375" red="0.375" fx:id="x1"/>
                   </textFill>
                 </Label>
               </left>
               <right>
-                <Label fx:id="lb_size" text="lb_size" textFill="$x1"/>
+                <Label text="lb_size" textFill="$x1" fx:id="lb_size"/>
               </right>
             </BorderPane>
           </children>
@@ -46,7 +46,7 @@
     </VBox>
   </center>
   <left>
-    <ImageView fx:id="iv_thumbnail" fitHeight="81.0" fitWidth="79.0" pickOnBounds="true"
-      preserveRatio="true" BorderPane.alignment="CENTER"/>
+    <ImageView BorderPane.alignment="CENTER" fitHeight="81.0" fitWidth="79.0" pickOnBounds="true"
+      preserveRatio="true" fx:id="iv_thumbnail"/>
   </left>
 </BorderPane>

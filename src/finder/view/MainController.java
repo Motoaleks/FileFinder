@@ -84,8 +84,8 @@ public class MainController {
     // todo: add directory adder
     // initialize request builder with proper fields
     requestBuilder.setSearchFor(searchFor)
-        .setSearchIn(File.listRoots()[0].getAbsolutePath())
-        .setSearchInFiles(false);
+                  .setSearchIn(File.listRoots()[0].getAbsolutePath())
+                  .setSearchInFiles(false);
     // todo: add checking
     // build request
     Request request = requestBuilder.build();

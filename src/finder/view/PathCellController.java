@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -25,7 +23,7 @@ import javafx.scene.image.ImageView;
  * Controller for PathCell. It includes loading the cell, item, and also updating its elements on
  * the view.
  */
-public class PathCellController{
+public class PathCellController {
 
   /**
    * Path to fxml view file.

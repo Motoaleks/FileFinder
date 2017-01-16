@@ -22,6 +22,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * This class perform pattern search and saving results.
  */
 public class Finder extends SimpleFileVisitor<Path> {
+
   /**
    * The pattern which must match the files.
    */

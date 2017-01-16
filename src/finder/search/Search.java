@@ -1,9 +1,8 @@
 package finder.search;
 
-import javafx.collections.ObservableList;
-
 import java.io.File;
 import java.util.Observer;
+import javafx.collections.ObservableList;
 
 /**
  * Created by: Aleksandr
@@ -13,26 +12,27 @@ import java.util.Observer;
  * "The more we do, the more we can do" ©
  */
 public class Search {
-    private static volatile Search instance;
-    private boolean searchActive = false;
-    private ObservableList<?> result;
-    private boolean searchInFiles = false;
 
-    public static Search getInstance() {
-        Search localInstance = instance;
+  private static volatile Search instance;
+  private boolean searchActive = false;
+  private ObservableList<?> result;
+  private boolean searchInFiles = false;
+
+  public static Search getInstance() {
+    Search localInstance = instance;
+    if (localInstance == null) {
+      synchronized (Search.class) {
+        localInstance = instance;
         if (localInstance == null) {
-            synchronized (Search.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new Search();
-                }
-            }
+          instance = localInstance = new Search();
         }
-        return localInstance;
+      }
     }
+    return localInstance;
+  }
 
-    public void findFile(String request, Observer updater) {
-        Result requestResult = new Result<File>();
-        requestResult.addObserver(updater);
-    }
+  public void findFile(String request, Observer updater) {
+    Result requestResult = new Result<File>();
+    requestResult.addObserver(updater);
+  }
 }

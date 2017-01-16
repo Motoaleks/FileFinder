@@ -17,54 +17,55 @@ import java.util.TreeSet;
  * @param <T> Store parameter.
  */
 public class Result<T> extends Observable {
-    /**
-     * Store collection - set.
-     */
-    private Set<T> result;
 
-    /**
-     * Initialize with TreeSet.
-     */
-    public Result() {
-        super();
-        result = new TreeSet<T>();
-    }
+  /**
+   * Store collection - set.
+   */
+  private Set<T> result;
 
-    /**
-     * Adding new search result.
-     *
-     * @param newResult search result to add.
-     */
-    public synchronized void addResult(T newResult) {
-        result.add(newResult);
-        setChanged();
-        notifyObservers(newResult);
-    }
+  /**
+   * Initialize with TreeSet.
+   */
+  public Result() {
+    super();
+    result = new TreeSet<T>();
+  }
 
-    /**
-     * Clear all results.
-     */
-    public synchronized void clearResults() {
-        result.clear();
-        setChanged();
-        notifyObservers();
-    }
+  /**
+   * Adding new search result.
+   *
+   * @param newResult search result to add.
+   */
+  public synchronized void addResult(T newResult) {
+    result.add(newResult);
+    setChanged();
+    notifyObservers(newResult);
+  }
 
-    /**
-     * Get collection.
-     *
-     * @return Set of results.
-     */
-    public Set getResult() {
-        return result;
-    }
+  /**
+   * Clear all results.
+   */
+  public synchronized void clearResults() {
+    result.clear();
+    setChanged();
+    notifyObservers();
+  }
 
-    /**
-     * Count results current size.
-     *
-     * @return Results size.
-     */
-    public int count() {
-        return result.size();
-    }
+  /**
+   * Get collection.
+   *
+   * @return Set of results.
+   */
+  public Set getResult() {
+    return result;
+  }
+
+  /**
+   * Count results current size.
+   *
+   * @return Results size.
+   */
+  public int count() {
+    return result.size();
+  }
 }
