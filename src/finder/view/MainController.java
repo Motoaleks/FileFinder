@@ -1,10 +1,17 @@
 package finder.view;
 
+import finder.index.Indexer;
+import finder.index.InvertedIndex;
 import finder.search.Request;
 import finder.search.Result;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -23,6 +30,8 @@ import javafx.scene.control.TextField;
  */
 public class MainController {
 
+  InvertedIndex invertedIndex;
+
   @FXML
   private ResourceBundle resources;
 
@@ -31,6 +40,13 @@ public class MainController {
 
   @FXML
   private Button btn_Search;
+
+
+  @FXML
+  private Button btn_createIndex;
+
+  @FXML
+  private Button btn_showIndex;
 
   @FXML
   private CheckBox cb_searchInFile;
@@ -111,8 +127,32 @@ public class MainController {
         resultList.add((Path) a2);
       });
     });
+    request.setIndexer(invertedIndex);
     // execute request
     request.execute(null);
+  }
+
+  @FXML
+  void onCreateIndex(ActionEvent event) {
+//    IndexCreateController icc = new IndexCreateController();
+//    Node view = icc.getView();
+//    Stage stage = new Stage();
+//    stage.setTitle("Create index");
+//    stage.setScene(new Scene((Parent) view));
+//    stage.show();
+    invertedIndex = new InvertedIndex();
+
+    try {
+      // Initialize custom filevisitor - finder. It will find and told about any found to result.
+      FileVisitor<Path> finder = new Indexer(invertedIndex);
+      // start filetree walking.
+      Files.walkFileTree(Paths.get(File.listRoots()[0].getAbsolutePath() + "Alex\\"), finder);
+//      Files.walkFileTree(Paths.get(getClass().getClassLoader().getResource("texts").toURI()),
+//                         finder);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 
   @FXML

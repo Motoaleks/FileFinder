@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane prefHeight="294.0" prefWidth="280.9999000000025" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <bottom>
+    <HBox alignment="CENTER_RIGHT" prefHeight="39.0" prefWidth="404.0" BorderPane.alignment="CENTER_RIGHT">
+      <children>
+        <Button fx:id="btn_createIndex" mnemonicParsing="false" onAction="#onCreateIndex" prefHeight="32.000099999997474" prefWidth="97.0" text="Create" HBox.hgrow="ALWAYS" />
+      </children>
+      <padding>
+        <Insets left="5.0" right="5.0" fx:id="x1" />
+      </padding>
+    </HBox>
+  </bottom>
+  <center>
+    <VBox padding="$x1" prefHeight="206.0" prefWidth="301.0">
+      <children>
+        <Label text="Index complexity">
+          <VBox.margin>
+            <Insets />
+          </VBox.margin>
+        </Label>
+        <Slider majorTickUnit="1.0" max="5.0" minorTickCount="0" showTickLabels="true" showTickMarks="false" snapToTicks="true" value="0.0" />
+        <GridPane VBox.vgrow="ALWAYS">
+          <children>
+            <Label text="File text indexer" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <CheckBox mnemonicParsing="false" text="" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label text="Indexing formats" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextArea prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Lemmatisation" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <CheckBox mnemonicParsing="false" text="" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Index algorythm" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField disable="true" editable="false" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+      </children>
+    </VBox>
+  </center>
+  <top>
+    <VBox prefHeight="39.0" prefWidth="404.0">
+      <children>
+        <Label text="Index name" />
+        <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="394.0" />
+      </children>
+      <BorderPane.margin>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </BorderPane.margin>
+    </VBox>
+  </top>
+</BorderPane>

@@ -7,6 +7,7 @@
  */
 package finder.search;
 
+import finder.index.Index;
 import java.io.IOException;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -55,6 +56,12 @@ public class Request
    */
   private Status currentSearchStatus;
 
+  private Index indexer;
+
+  public void setIndexer(Index indexer) {
+    this.indexer = indexer;
+  }
+
   private Request() {
     super();
   }
@@ -85,15 +92,11 @@ public class Request
    */
   private void search() {
     currentSearchStatus = Status.WORKING;
-    try {
-      // Initialize custom filevisitor - finder. It will find and told about any found to result.
-      FileVisitor<Path> finder = new Finder(searchFor, result);
-      // start filetree walking.
-      Files.walkFileTree(searchIn, finder);
-    } catch (IOException e) {
-      e.printStackTrace();
-      currentSearchStatus = Status.ERROR;
-    }
+    //      // Initialize custom filevisitor - finder. It will find and told about any found to result.
+//      FileVisitor<Path> finder = new Finder(searchFor, result);
+//      // start filetree walking.
+//      Files.walkFileTree(searchIn, finder);
+    indexer.search(this);
     if (currentSearchStatus != Status.ERROR) {
       currentSearchStatus = Status.DONE;
     }
