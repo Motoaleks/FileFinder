@@ -1,6 +1,5 @@
 package finder.index;
 
-import finder.search.Request;
 import finder.search.Result;
 import java.nio.file.Path;
 
@@ -11,12 +10,10 @@ import java.nio.file.Path;
  *
  * "The more we do, the more we can do" ©
  */
-public abstract class IndexLogic {
+public abstract class IndexLogic implements Searcher {
 
-  protected Result result;
+  protected Result<Path> result;
   protected State currentState;
-
-  public abstract void search(Request request);
 
   public abstract void index(Path indexPath);
 

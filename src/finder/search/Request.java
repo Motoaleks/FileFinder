@@ -8,9 +8,7 @@
 package finder.search;
 
 import finder.index.Index;
-import java.io.IOException;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
+import finder.index.Searcher;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Observable;
@@ -55,12 +53,10 @@ public class Request
    * Current request stage.
    */
   private Status currentSearchStatus;
-
-  private Index indexer;
-
-  public void setIndexer(Index indexer) {
-    this.indexer = indexer;
-  }
+  /**
+   * Index to search in.
+   */
+  private Searcher searcher;
 
   private Request() {
     super();
@@ -92,11 +88,7 @@ public class Request
    */
   private void search() {
     currentSearchStatus = Status.WORKING;
-    //      // Initialize custom filevisitor - finder. It will find and told about any found to result.
-//      FileVisitor<Path> finder = new Finder(searchFor, result);
-//      // start filetree walking.
-//      Files.walkFileTree(searchIn, finder);
-    indexer.search(this);
+    searcher.search(this);
     if (currentSearchStatus != Status.ERROR) {
       currentSearchStatus = Status.DONE;
     }
@@ -143,6 +135,7 @@ public class Request
     request.searchFor = searchFor;
     request.result = result;
     request.searchInFiles = searchInFiles;
+    request.searcher = searcher;
     return request;
   }
 
@@ -240,13 +233,27 @@ public class Request
     }
 
     /**
+     * Setting index algorithm
+     *
+     * @param index Index to search in
+     * @return this.
+     */
+    public Builder setIndex(Index index) {
+      Request.this.searcher = index;
+      return this;
+    }
+
+    /**
      * Indicates if all fields are correctly initialized.
      *
      * @return Initialized correctly or not.
      */
     public boolean prepared() {
-      if (searchFor != null && !"".equals(searchFor) && searchIn != null && !""
-          .equals(searchIn.normalize().toString())) {
+      if (searchFor != null
+          && !"".equals(searchFor)
+          && searchIn != null
+          && !"".equals(searchIn.normalize().toString())
+          && searcher != null) {
         Request.this.currentSearchStatus = Status.PREPARED;
         return true;
       }

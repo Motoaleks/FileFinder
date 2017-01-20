@@ -1,5 +1,7 @@
 package finder.index;
 
+import finder.search.Request;
+
 /**
  * Created by: Aleksandr
  * Date: 20.01.2017
@@ -7,11 +9,7 @@ package finder.index;
  *
  * "The more we do, the more we can do" ©
  */
-public interface Value {
+public interface Searcher {
 
-  Value set(Object value);
-
-  Object get();
-
-  int getType();
+  void search(Request request);
 }

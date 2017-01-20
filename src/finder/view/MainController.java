@@ -6,7 +6,6 @@ import finder.search.Request;
 import finder.search.Result;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -101,7 +100,8 @@ public class MainController {
     // initialize request builder with proper fields
     requestBuilder.setSearchFor(searchFor)
                   .setSearchIn(File.listRoots()[0].getAbsolutePath())
-                  .setSearchInFiles(false);
+                  .setSearchInFiles(false)
+                  .setIndex(invertedIndex);
     // todo: add checking
     // build request
     Request request = requestBuilder.build();
@@ -127,7 +127,6 @@ public class MainController {
         resultList.add((Path) a2);
       });
     });
-    request.setIndexer(invertedIndex);
     // execute request
     request.execute(null);
   }
@@ -146,7 +145,8 @@ public class MainController {
       // Initialize custom filevisitor - finder. It will find and told about any found to result.
       FileVisitor<Path> finder = new Indexer(invertedIndex);
       // start filetree walking.
-      Files.walkFileTree(Paths.get(File.listRoots()[0].getAbsolutePath() + "Alex\\"), finder);
+      Files.walkFileTree(Paths.get(File.listRoots()[0].getAbsolutePath() + "Program Files\\"),
+                         finder);
 //      Files.walkFileTree(Paths.get(getClass().getClassLoader().getResource("texts").toURI()),
 //                         finder);
     } catch (IOException e) {

@@ -3,9 +3,11 @@ package finder.index;
 import finder.search.Request;
 import finder.search.Result;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,6 +21,9 @@ import java.util.TreeSet;
 public class InvertedIndex extends Index {
 
   private final HashMap<String, Set<String>> container;
+  private String symbols = "[!@#$%^&*()_+1234567890-=|/.,<>]";
+  private PathMatcher pathMatcher;
+  private String searchFor;
 
   public InvertedIndex() {
     super();
@@ -27,13 +32,9 @@ public class InvertedIndex extends Index {
 
   private void indexRow(String row, String path) {
     for (String word : row.split(" ")) {
+      // todo: stripping the string here, biatch
       addToIndex(word, path);
     }
-
-//    StringTokenizer stringTokenizer = new StringTokenizer(row);
-//    while (stringTokenizer.hasMoreTokens()) {
-//      addToIndex(stringTokenizer.nextToken(), path);
-//    }
   }
 
   private void addToIndex(String string, String path) {
@@ -49,25 +50,43 @@ public class InvertedIndex extends Index {
                                                    Parameter.FORMATS));
   }
 
-  @Override
-  public void search(Request request) {
-    String searchFor = request.getSearchFor().toLowerCase();
-    if (!container.containsKey(searchFor)) {
+  private void searchConcrete(Request request) {
+    if (!container.containsKey(request.getSearchFor().toLowerCase())) {
       return;
     }
     Result<Path> result = request.getResult();
-    for (String path : container.get(searchFor)) {
+    for (String path : container.get(request.getSearchFor().toLowerCase())) {
       result.addResult(Paths.get(path));
     }
   }
 
+  private void searchEquality(Request request) {
+    Result<Path> result = request.getResult();
+    for (Entry<String, Set<String>> entry : container.entrySet()) {
+      if (entry.getKey().matches(request.getSearchFor().toLowerCase())) {
+        for (String path : container.get(request.getSearchFor().toLowerCase())) {
+          result.addResult(Paths.get(path));
+        }
+      }
+    }
+  }
+
+  private void searchSimple(Request request) {
+    //todo: Call for simple searcher
+  }
+
+  @Override
+  public void search(Request request) {
+    searchConcrete(request); // fast search in index by straight request
+    searchEquality(request); // mediocre search for all keys and find ones, matching the pattern
+    searchSimple(request); // very slow search by straight looking for files
+  }
+
   @Override
   public void index(Path indexPath) {
-//    if (Files.isDirectory(indexPath)) {
     if (indexPath.getFileName() != null) {
       indexRow(indexPath.getFileName().toString(), indexPath.normalize().toString());
     }
-    return;
 //    }
 //
 //    // todo: try all supported encodings, cause it can cause MalformedInputException
