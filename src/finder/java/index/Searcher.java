@@ -1,6 +1,6 @@
-package finder.index;
+package index;
 
-import finder.search.Request;
+import search.SearchRequest;
 
 /**
  * Created by: Aleksandr
@@ -11,5 +11,5 @@ import finder.search.Request;
  */
 public interface Searcher {
 
-  void search(Request request);
+  void search(SearchRequest searchRequest);
 }

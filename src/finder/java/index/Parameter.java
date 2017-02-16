@@ -1,11 +1,17 @@
-package finder.index;
-
-/**
- * Created by: Aleksandr
- * Date: 19.01.2017
+/*
+ * Created by Aleksandr Smilyanskiy
+ * Date: 10.02.17 22:50
  * Project: FileFinder
  *
- * "The more we do, the more we can do" ©
+ * "The more we do, the more we can do"
+ * Copyright (c) 2017.
+ */
+
+package index;
+
+/**
+ * Represents all available indexing algorithms parameters. Each algorithm can support not all of
+ * the parameters, so every algorithm has set of available parameters.
  */
 public enum Parameter {
   // MOST VALUABLE --------------

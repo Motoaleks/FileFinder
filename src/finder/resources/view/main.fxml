@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.HBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" style="-fx-focus-color: transparent; " prefHeight="400.0"
   prefWidth="450.0" xmlns="http://javafx.com/javafx/2.2"
-  fx:controller="finder.view.MainController">
+  fx:controller="view.MainController">
   <bottom>
     <HBox style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT" alignment="CENTER_RIGHT" fillHeight="true"
       id="toolBar" prefHeight="20.0"
@@ -110,7 +110,7 @@
                   <children>
                     <Button HBox.hgrow="ALWAYS" id="btn_addIndex" mnemonicParsing="false"
                       onAction="#onCreateIndex" prefHeight="31.0" prefWidth="89.0"
-                      text="Create index" underline="false" wrapText="true" fx:id="btn_createIndex"/>
+                      text="Create indexRequest" underline="false" wrapText="true" fx:id="btn_createIndex"/>
                     <Button id="btn_showInfo" mnemonicParsing="false" prefHeight="31.0"
                       prefWidth="89.0" text="Show info" underline="false" wrapText="true"
                       fx:id="btn_showIndex"/>

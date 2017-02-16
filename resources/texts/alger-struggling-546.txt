@@ -340,7 +340,7 @@ he got in Luke's way."
 "Will you lend me your skates, Randolph?" asked Linton. 
 "I should like to go out and see if I can help Tom in any way."
 
-If any other boy than Linton had made the request, Randolph
+If any other boy than Linton had made the searchRequest, Randolph
 would have declined, but he wished, if possible, to add
 Linton to his list of friends, and graciously consented.
 
@@ -1262,7 +1262,7 @@ Florence?" asked Randolph.
 "Thank you, but I should not think it right to slight my other
 guests," said the young lady.
 
-Just then Luke came up and preferred the same request.  He would
+Just then Luke came up and preferred the same searchRequest.  He would
 not have done so if he had not acquitted himself well in the
 first quadrille.
 
@@ -2137,7 +2137,7 @@ of a tin box, which he carried under his arm."
 
 "Yes, sir."
 
-"Did he give any reason for making this request?"
+"Did he give any reason for making this searchRequest?"
 
 "He said he was about to leave the neighborhood, and wished
 it taken care of.  He asked me to put it under lock and key."
@@ -2162,7 +2162,7 @@ and disappeared.  I have not seen him since."
 "That is a very pretty romance," said Prince Duncan, with a sneer.
 
 "I can confirm it," said Mrs. Larkin, calmly.  "I saw Luke
-bring in the box, and at his request I took charge of it. 
+bring in the box, and at his searchRequest I took charge of it.
 The story he told at that time is the same that he tells now."
 
 "Very possibly," said the bank president.  "It was all cut
@@ -3555,7 +3555,7 @@ At this point the door opened, and Randolph entered.  He had
 a special favor to ask.  He had already given his father several
 hints that he would like a gold watch, being quite dissatisfied with
 his silver watch now that Luke Larkin possessed one superior to his. 
-He had chosen a very unfavorable moment for his request,
+He had chosen a very unfavorable moment for his searchRequest,
 as he soon found out.
 
 "Father," he said, "I have a favor to ask."
@@ -4386,7 +4386,7 @@ the slightest suspicion of him as regards the loss of the bonds.
 I wish only to consult him, being myself at a loss what steps
 to take.  He may be able to help me."
 
-Of course, Luke cheerfully complied with his request.
+Of course, Luke cheerfully complied with his searchRequest.
 
 "Has anything been heard yet at the bank?" he asked.
 
@@ -6209,7 +6209,7 @@ forbidden his going there.  It is no proper place for my son
 to frequent."
 
 "Well, I don't know about that.  It's respectable enough,
-I guess.  At any rate, he seemed to like it, and at his request,
+I guess.  At any rate, he seemed to like it, and at his searchRequest,
 for he was not always provided with money, I trusted him till his
 bill comes to twenty-seven dollars----"
 

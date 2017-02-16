@@ -1,4 +1,4 @@
-package finder.search;
+package search;
 
 import java.io.File;
 import java.util.Observer;

@@ -1,28 +1,27 @@
-package finder.view;
+package view;
 
-import finder.index.Indexer;
-import finder.index.InvertedIndex;
-import finder.search.Request;
-import finder.search.Result;
+import index.InvertedIndex;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import search.Result;
+import search.SearchRequest;
 
 /**
  * Controller for main window.
@@ -94,20 +93,21 @@ public class MainController {
     // getting search text pattern
     String searchFor = txt_search.getText();
 
-    //creates request builder ('builder' design pattern)
-    Request.Builder requestBuilder = Request.getBuilder();
+    //creates searchRequest builder ('builder' design pattern)
+    SearchRequest.Builder requestBuilder = SearchRequest.getBuilder();
     // todo: add directory adder
-    // initialize request builder with proper fields
+    // initialize searchRequest builder with proper fields
+    invertedIndex = new InvertedIndex();
     requestBuilder.setSearchFor(searchFor)
                   .setSearchIn(File.listRoots()[0].getAbsolutePath())
                   .setSearchInFiles(false)
-                  .setIndex(invertedIndex);
+                  .setSearcher(invertedIndex);
     // todo: add checking
-    // build request
-    Request request = requestBuilder.build();
+    // build searchRequest
+    SearchRequest searchRequest = requestBuilder.build();
     // todo: add result saving
     // get result reference
-    Result result = request.getResult();
+    Result result = searchRequest.getResult();
     resultList = FXCollections.observableArrayList(result.getResult());
     // setting items to listview
     lv_files.setItems(resultList);
@@ -127,32 +127,18 @@ public class MainController {
         resultList.add((Path) a2);
       });
     });
-    // execute request
-    request.execute(null);
+    // execute searchRequest
+    searchRequest.execute(null);
   }
 
   @FXML
   void onCreateIndex(ActionEvent event) {
-//    IndexCreateController icc = new IndexCreateController();
-//    Node view = icc.getView();
-//    Stage stage = new Stage();
-//    stage.setTitle("Create index");
-//    stage.setScene(new Scene((Parent) view));
-//    stage.show();
-    invertedIndex = new InvertedIndex();
-
-    try {
-      // Initialize custom filevisitor - finder. It will find and told about any found to result.
-      FileVisitor<Path> finder = new Indexer(invertedIndex);
-      // start filetree walking.
-      Files.walkFileTree(Paths.get(File.listRoots()[0].getAbsolutePath() + "Program Files\\"),
-                         finder);
-//      Files.walkFileTree(Paths.get(getClass().getClassLoader().getResource("texts").toURI()),
-//                         finder);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+    IndexCreateController icc = new IndexCreateController();
+    Node view = icc.getView();
+    Stage stage = new Stage();
+    stage.setTitle("Create index");
+    stage.setScene(new Scene((Parent) view));
+    stage.show();
   }
 
   @FXML

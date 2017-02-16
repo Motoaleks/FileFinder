@@ -5,7 +5,7 @@
  * <p>
  * "The more we do, the more we can do" ©
  */
-package finder.search;
+package search;
 
 import java.util.Observable;
 import java.util.Set;

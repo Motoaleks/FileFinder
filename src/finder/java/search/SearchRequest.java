@@ -5,10 +5,9 @@
  * <p>
  * "The more we do, the more we can do" ©
  */
-package finder.search;
+package search;
 
-import finder.index.Index;
-import finder.index.Searcher;
+import index.Searcher;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Observable;
@@ -16,20 +15,21 @@ import java.util.Observable;
 /**
  * Encapsulated file search request, containing: - {@link Path} where to search - {@link String} for
  * what search for - {@link Result} instance reference containing intermediate or final path
- * collection. It is also shared with view and all search algorithms. - {@link Request.Status} with
- * current search stage - search options (like "search in files enabled") <p> This class is
- * initialized by 'builder' pattern, so for initializing use {@link Request#getBuilder()}, and after
- * all settings are complete {@link Builder#build()}. Example:
+ * collection. It is also shared with view and all search algorithms. - {@link SearchRequest.Status}
+ * with current search stage - search options (like "search in files enabled") <p> This class is
+ * initialized by 'builder' pattern, so for initializing use {@link SearchRequest#getBuilder()}, and
+ * after all settings are complete {@link Builder#build()}. Example:
  * <pre>
  *  {@code
- *  Builder builder = Request.getBuilder();
- *  Request request = builder.setSearchFor(...).setSearchIn(...).build();
+ *  Builder builder = SearchRequest.getBuilder();
+ *  SearchRequest request = builder.setSearchFor(...).setSearchIn(...).build();
  *  }
  *  </pre>
- * <p> {@link Request#execute(Result)} creates and run new thread for search. <p> Request extends
- * {@link Observable}, register now if you want to know when new value is added!
+ * <p> {@link SearchRequest#execute(Result)} creates and run new thread for search. <p>
+ * SearchRequest extends {@link Observable}, register now if you want to know when new value is
+ * added!
  */
-public class Request
+public class SearchRequest
     extends Observable
     implements Cloneable {
 
@@ -58,18 +58,18 @@ public class Request
    */
   private Searcher searcher;
 
-  private Request() {
+  private SearchRequest() {
     super();
   }
 
   /**
-   * Returns 'Builder' pattern builder to build ('oh my gosh') the Request. Builder takes care that
-   * all fields are correctly initialized.
+   * Returns 'Builder' pattern builder to build ('oh my gosh') the SearchRequest. Builder takes care
+   * that all fields are correctly initialized.
    *
    * @return Builder instance for current instance of request.
    */
   public static Builder getBuilder() {
-    return new Request().new Builder();
+    return new SearchRequest().new Builder();
   }
 
   /**
@@ -87,7 +87,7 @@ public class Request
    * Perform search for files action. Updates status of request (Working, Error, Done).
    */
   private void search() {
-    currentSearchStatus = Status.WORKING;
+    currentSearchStatus = Status.RUNNING;
     searcher.search(this);
     if (currentSearchStatus != Status.ERROR) {
       currentSearchStatus = Status.DONE;
@@ -128,19 +128,19 @@ public class Request
    *
    * @return Cloned object.
    */
-  public Request clone() throws CloneNotSupportedException {
+  public SearchRequest clone() throws CloneNotSupportedException {
     super.clone();
-    Request request = new Request();
-    request.searchIn = searchIn;
-    request.searchFor = searchFor;
-    request.result = result;
-    request.searchInFiles = searchInFiles;
-    request.searcher = searcher;
-    return request;
+    SearchRequest searchRequest = new SearchRequest();
+    searchRequest.searchIn = searchIn;
+    searchRequest.searchFor = searchFor;
+    searchRequest.result = result;
+    searchRequest.searchInFiles = searchInFiles;
+    searchRequest.searcher = searcher;
+    return searchRequest;
   }
 
   /**
-   * Request stage status.
+   * SearchRequest stage status.
    */
   public enum Status {
     /**
@@ -158,7 +158,7 @@ public class Request
     /**
      * Search working.
      */
-    WORKING(2),
+    RUNNING(2),
     /**
      * Search done.
      */
@@ -196,7 +196,7 @@ public class Request
      * Initializing with Pending status - nothing is ready.
      */
     private Builder() {
-      Request.this.currentSearchStatus = Status.PENDING;
+      SearchRequest.this.currentSearchStatus = Status.PENDING;
     }
 
     /**
@@ -206,7 +206,7 @@ public class Request
      * @return this.
      */
     public Builder setSearchFor(String searchFor) {
-      Request.this.searchFor = searchFor;
+      SearchRequest.this.searchFor = searchFor;
       return this;
     }
 
@@ -217,7 +217,7 @@ public class Request
      * @return this.
      */
     public Builder setSearchInFiles(boolean searchInFiles) {
-      Request.this.searchInFiles = searchInFiles;
+      SearchRequest.this.searchInFiles = searchInFiles;
       return this;
     }
 
@@ -228,7 +228,7 @@ public class Request
      * @return this.
      */
     public Builder setSearchIn(String searchIn) {
-      Request.this.searchIn = Paths.get(searchIn);
+      SearchRequest.this.searchIn = Paths.get(searchIn);
       return this;
     }
 
@@ -238,8 +238,8 @@ public class Request
      * @param index Index to search in
      * @return this.
      */
-    public Builder setIndex(Index index) {
-      Request.this.searcher = index;
+    public Builder setSearcher(Searcher index) {
+      SearchRequest.this.searcher = index;
       return this;
     }
 
@@ -248,29 +248,29 @@ public class Request
      *
      * @return Initialized correctly or not.
      */
-    public boolean prepared() {
+    public boolean checkPrepared() {
       if (searchFor != null
           && !"".equals(searchFor)
           && searchIn != null
           && !"".equals(searchIn.normalize().toString())
           && searcher != null) {
-        Request.this.currentSearchStatus = Status.PREPARED;
+        SearchRequest.this.currentSearchStatus = Status.PREPARED;
         return true;
       }
       return false;
     }
 
     /**
-     * Creates Request instance with initialized fields.
+     * Creates SearchRequest instance with initialized fields.
      *
      * @return Null if something went wrong, else - initialized instance.
      */
-    public Request build() {
-      if (!prepared()) {
+    public SearchRequest build() {
+      if (!checkPrepared()) {
         return null;
       }
       try {
-        return Request.this.clone();
+        return SearchRequest.this.clone();
       } catch (CloneNotSupportedException e) {
         e.printStackTrace();
       }

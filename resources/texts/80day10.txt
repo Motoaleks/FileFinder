@@ -1035,7 +1035,7 @@ arrest him from London."
 The consul did not finish his sentence, for as he spoke a knock was heard
 at the door, and two strangers entered, one of whom was the servant
 whom Fix had met on the quay.  The other, who was his master,
-held out his passport with the request that the consul would do him
+held out his passport with the searchRequest that the consul would do him
 the favour to visa it.  The consul took the document and carefully read it,
 whilst Fix observed, or rather devoured, the stranger with his eyes
 from a corner of the room.
@@ -1907,7 +1907,7 @@ but a hundred steps from here."
 
 They soon reached a small hut, near which, enclosed within
 some high palings, was the animal in question.  An Indian came
-out of the hut, and, at their request, conducted them within
+out of the hut, and, at their searchRequest, conducted them within
 the enclosure.  The elephant, which its owner had reared, not for
 a beast of burden, but for warlike purposes, was half domesticated.
 The Indian had begun already, by often irritating him, and feeding
@@ -5157,7 +5157,7 @@ he should be delighted to continue the journey in such pleasant company.
 
 Mr. Fogg replied that the honour would be his; and the detective--
 who was determined not to lose sight of him--begged permission
-to accompany them in their walk about San Francisco--a request
+to accompany them in their walk about San Francisco--a searchRequest
 which Mr. Fogg readily granted.
 
 They soon found themselves in Montgomery Street, where a great
@@ -6177,7 +6177,7 @@ revolver-shots could be exchanged."
 "Who knows?" replied Mr. Fogg, returning to the car as coolly as usual.
 He began to reassure Aouda, telling her that blusterers were never
 to be feared, and begged Fix to be his second at the approaching duel,
-a request which the detective could not refuse.  Mr. Fogg resumed
+a searchRequest which the detective could not refuse.  Mr. Fogg resumed
 the interrupted game with perfect calmness.
 
 At eleven o'clock the locomotive's whistle announced that they were
@@ -6220,7 +6220,7 @@ The two combatants, their seconds, and the conductor passed through
 the cars to the rear of the train.  The last car was only occupied
 by a dozen passengers, whom the conductor politely asked if they would
 not be so kind as to leave it vacant for a few moments, as two gentlemen
-had an affair of honour to settle.  The passengers granted the request
+had an affair of honour to settle.  The passengers granted the searchRequest
 with alacrity, and straightway disappeared on the platform.
 
 The car, which was some fifty feet long, was very convenient

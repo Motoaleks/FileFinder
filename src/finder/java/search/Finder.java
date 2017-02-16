@@ -6,7 +6,7 @@
  * "The more we do, the more we can do" ©
  */
 
-package finder.search;
+package search;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;

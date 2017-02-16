@@ -5,7 +5,7 @@
  * <p>
  * "The more we do, the more we can do" ©
  */
-package finder.view;
+package view;
 
 import java.nio.file.Path;
 import javafx.scene.Node;
