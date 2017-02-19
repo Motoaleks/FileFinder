@@ -19,11 +19,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" style="-fx-focus-color: transparent; " prefHeight="400.0"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" style="-fx-focus-color: transparent; "
+  prefHeight="400.0"
   prefWidth="450.0" xmlns="http://javafx.com/javafx/2.2"
-  fx:controller="view.MainController">
+  fx:controller="view.controllers.MainController">
   <bottom>
-    <HBox style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT" alignment="CENTER_RIGHT" fillHeight="true"
+    <HBox style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT"
+      alignment="CENTER_RIGHT" fillHeight="true"
       id="toolBar" prefHeight="20.0"
       prefWidth="200.0">
       <children>
@@ -50,12 +52,14 @@
                   disable="false" dividerPositions="0.6728971962616822" focusTraversable="true"
                   prefHeight="160.0" prefWidth="200.0">
                   <items>
-                    <ListView style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;" cache="false" disable="false" editable="false"
+                    <ListView style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;"
+                      cache="false" disable="false" editable="false"
                       maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                       mouseTransparent="false" opacity="1.0" orientation="VERTICAL"
                       pickOnBounds="false" prefHeight="299.0" prefWidth="228.0"
                       fx:id="lv_files"/>
-                    <TextArea style="-fx-box-border: transparent;&#10;" prefHeight="299.0" prefWidth="136.0"
+                    <TextArea style="-fx-box-border: transparent;&#10;" prefHeight="299.0"
+                      prefWidth="136.0"
                       wrapText="true" fx:id="ta_preview"/>
                   </items>
                   <BorderPane.margin>
@@ -67,7 +71,8 @@
                 <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
               </padding>
               <top>
-                <HBox BorderPane.alignment="CENTER_LEFT" BorderPane.margin="$x1" alignment="CENTER_LEFT" prefHeight="24.0"
+                <HBox BorderPane.alignment="CENTER_LEFT" BorderPane.margin="$x1"
+                  alignment="CENTER_LEFT" prefHeight="24.0"
                   prefWidth="392.0" spacing="10.0">
                   <children>
                     <AnchorPane HBox.hgrow="NEVER" prefHeight="200.0" prefWidth="200.0">
@@ -76,7 +81,8 @@
                           prefHeight="24.0" prefWidth="200.0" text="test"
                           fx:id="txt_search"/>
                         <Button cancelButton="false" defaultButton="false" layoutX="167.0"
-                          layoutY="0.0" mnemonicParsing="false" onAction="#onSearch" prefHeight="24.0"
+                          layoutY="0.0" mnemonicParsing="false" onAction="#onSearch"
+                          prefHeight="24.0"
                           prefWidth="33.0" text="" textAlignment="RIGHT" wrapText="false"
                           fx:id="btn_Search"/>
                       </children>
@@ -96,7 +102,8 @@
           <content>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
               <center>
-                <ListView style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;" BorderPane.alignment="CENTER" prefHeight="200.0"
+                <ListView style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;"
+                  BorderPane.alignment="CENTER" prefHeight="200.0"
                   prefWidth="200.0"
                   fx:id="lv_indexes">
                   <BorderPane.margin>
@@ -110,7 +117,8 @@
                   <children>
                     <Button HBox.hgrow="ALWAYS" id="btn_addIndex" mnemonicParsing="false"
                       onAction="#onCreateIndex" prefHeight="31.0" prefWidth="89.0"
-                      text="Create indexRequest" underline="false" wrapText="true" fx:id="btn_createIndex"/>
+                      text="Create indexRequest" underline="false" wrapText="true"
+                      fx:id="btn_createIndex"/>
                     <Button id="btn_showInfo" mnemonicParsing="false" prefHeight="31.0"
                       prefWidth="89.0" text="Show info" underline="false" wrapText="true"
                       fx:id="btn_showIndex"/>

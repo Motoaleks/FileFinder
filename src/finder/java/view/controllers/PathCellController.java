@@ -1,11 +1,20 @@
 /*
+ * Created by Aleksandr Smilyanskiy
+ * Date: 19.02.17 17:02
+ * Project: FileFinder
+ *
+ * "The more we do, the more we can do"
+ * Copyright (c) 2017.
+ */
+
+/*
  * Created by: Aleksandr
  * Date: 15.01.2017
  * Project: FileFinder
  * <p>
  * "The more we do, the more we can do" ©
  */
-package view;
+package view.controllers;
 
 
 import java.io.IOException;
@@ -28,7 +37,7 @@ public class PathCellController {
   /**
    * Path to fxml view file.
    */
-  private final String cellFileName = "cell.fxml";
+  private final String cellFileName = "fxml/cell.fxml";
   /**
    * Thumbnail for file.
    */

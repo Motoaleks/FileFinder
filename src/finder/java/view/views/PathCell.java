@@ -1,15 +1,25 @@
 /*
+ * Created by Aleksandr Smilyanskiy
+ * Date: 19.02.17 17:06
+ * Project: FileFinder
+ *
+ * "The more we do, the more we can do"
+ * Copyright (c) 2017.
+ */
+
+/*
  * Created by: Aleksandr
  * Date: 15.01.2017
  * Project: FileFinder
  * <p>
  * "The more we do, the more we can do" ©
  */
-package view;
+package view.views;
 
 import java.nio.file.Path;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
+import view.controllers.PathCellController;
 
 /**
  * Cell for representing needed path fields.

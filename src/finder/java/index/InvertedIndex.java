@@ -9,8 +9,6 @@
 
 package index;
 
-import search.Result;
-import search.SearchRequest;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -18,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import search.Result;
+import search.SearchRequest;
 
 /**
  * Performs inverted index infrastructure to cache files in it, and after that - search.

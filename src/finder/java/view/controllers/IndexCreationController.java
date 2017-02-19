@@ -1,4 +1,13 @@
-package view;
+/*
+ * Created by Aleksandr Smilyanskiy
+ * Date: 19.02.17 17:02
+ * Project: FileFinder
+ *
+ * "The more we do, the more we can do"
+ * Copyright (c) 2017.
+ */
+
+package view.controllers;
 
 import index.BooleanValue;
 import index.Index;
@@ -40,9 +49,9 @@ import javafx.scene.input.DragEvent;
  *
  * "The more we do, the more we can do" ©
  */
-public class IndexCreateController {
+public class IndexCreationController {
 
-  private final String indexCreateFileName = "indexCreate.fxml";
+  private final String indexCreationFileName = "../fxml/indexCreation.fxml";
   private Node view;
   private Index currentIndex;
 
@@ -77,13 +86,13 @@ public class IndexCreateController {
   @FXML
   void initialize() {
     assert btn_createIndex
-        != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'indexCreate.fxml'.";
+        != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert sl_indexType
-        != null : "fx:id=\"sl_indexType\" was not injected: check your FXML file 'indexCreate.fxml'.";
+        != null : "fx:id=\"sl_indexType\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert tf_indexName
-        != null : "fx:id=\"tf_indexName\" was not injected: check your FXML file 'indexCreate.fxml'.";
+        != null : "fx:id=\"tf_indexName\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert tv_parameters
-        != null : "fx:id=\"tv_parameters\" was not injected: check your FXML file 'indexCreate.fxml'.";
+        != null : "fx:id=\"tv_parameters\" was not injected: check your FXML file 'indexCreation.fxml'.";
 
     configureTableView();
     configureSlider();
@@ -201,7 +210,7 @@ public class IndexCreateController {
   public Node getView() {
     if (view == null) {
       try {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource(indexCreateFileName));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(indexCreationFileName));
         loader.setController(this);
         view = loader.load();
       } catch (IOException e) {

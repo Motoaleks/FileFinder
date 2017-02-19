@@ -1,4 +1,13 @@
-package view;
+/*
+ * Created by Aleksandr Smilyanskiy
+ * Date: 19.02.17 17:02
+ * Project: FileFinder
+ *
+ * "The more we do, the more we can do"
+ * Copyright (c) 2017.
+ */
+
+package view.controllers;
 
 import index.InvertedIndex;
 import java.io.File;
@@ -22,6 +31,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import search.Result;
 import search.SearchRequest;
+import view.views.PathCell;
 
 /**
  * Controller for main window.
@@ -133,7 +143,7 @@ public class MainController {
 
   @FXML
   void onCreateIndex(ActionEvent event) {
-    IndexCreateController icc = new IndexCreateController();
+    IndexCreationController icc = new IndexCreationController();
     Node view = icc.getView();
     Stage stage = new Stage();
     stage.setTitle("Create index");
