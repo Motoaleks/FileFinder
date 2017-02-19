@@ -1,13 +1,15 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 10.02.17 22:50
+ * Date: 19.02.17 19:48
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.logic;
+
+import search.SearchRequest;
 
 /**
  * Created by: Aleksandr
@@ -16,11 +18,7 @@ package index;
  *
  * "The more we do, the more we can do" ©
  */
-public interface Value {
+public interface Searcher {
 
-  Value set(Object value);
-
-  Object get();
-
-  int getType();
+  void search(SearchRequest searchRequest);
 }

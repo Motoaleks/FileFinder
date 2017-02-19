@@ -9,18 +9,20 @@
 
 package view.controllers;
 
-import index.BooleanValue;
-import index.Index;
-import index.InvertedIndex;
-import index.MapValue;
-import index.Parameter;
-import index.ParameterMap;
-import index.Value;
+import index.algorithms.InvertedIndex;
+import index.logic.Index;
+import index.parameters.BooleanValue;
+import index.parameters.ListValue;
+import index.parameters.Parameter;
+import index.parameters.ParameterMap;
+import index.parameters.Value;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ObservableValueBase;
@@ -29,18 +31,21 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.DragEvent;
+import javafx.scene.layout.HBox;
+
+enum CreationState {
+  CONFIGURING,
+  AFFIRMATION,
+  INDEXING
+}
 
 /**
  * Created by: Aleksandr
@@ -51,10 +56,14 @@ import javafx.scene.input.DragEvent;
  */
 public class IndexCreationController {
 
+  // path to view-fxml file
   private final String indexCreationFileName = "../fxml/indexCreation.fxml";
+  // view node
   private Node view;
+  // current index algorithm
   private Index currentIndex;
-
+  // view state
+  private CreationState creationState;
 
   @FXML
   private ResourceBundle resources;
@@ -66,111 +75,93 @@ public class IndexCreationController {
   private Button btn_createIndex;
 
   @FXML
+  private Button btn_returnToConfiguring;
+
+  @FXML
+  private Button btn_acceptIndexCreation;
+
+  @FXML
   private Slider sl_indexType;
 
   @FXML
   private TextField tf_indexName;
 
   @FXML
-  private TableView<Entry<Parameter, Value>> tv_parameters;
+  private HBox hb_bottomBox;
 
+  @FXML
+  private TableView<Entry<Parameter, Value>> tv_parameters;
 
   @FXML
   void onCreateIndex(ActionEvent event) {
+    changeCreationState(CreationState.AFFIRMATION);
   }
 
   @FXML
-  void onIndexChanged(DragEvent event) {
+  void onReturnToConfiguring(ActionEvent event) {
+    changeCreationState(CreationState.CONFIGURING);
+  }
+
+  @FXML
+  void onAffirmIndexCreation(ActionEvent event) {
+    changeCreationState(CreationState.INDEXING);
   }
 
   @FXML
   void initialize() {
+    assert btn_acceptIndexCreation
+        != null : "fx:id=\"btn_acceptIndexCreation\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert btn_createIndex
         != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'indexCreation.fxml'.";
+    assert btn_returnToConfiguring
+        != null : "fx:id=\"btn_returnToConfiguring\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert sl_indexType
         != null : "fx:id=\"sl_indexType\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert tf_indexName
         != null : "fx:id=\"tf_indexName\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert tv_parameters
         != null : "fx:id=\"tv_parameters\" was not injected: check your FXML file 'indexCreation.fxml'.";
+    assert hb_bottomBox
+        != null : "fx:id=\"hb_bottomBox\" was not injected: check your FXML file 'indexCreation.fxml'.";
+
+    changeCreationState(CreationState.CONFIGURING);
 
     configureTableView();
     configureSlider();
   }
 
+  public void changeCreationState(CreationState state) {
+    switch (state) {
+      case CONFIGURING: {
+        setDisable(false);
+        hb_bottomBox.getChildren().clear();
+        hb_bottomBox.getChildren().add(btn_createIndex);
+        break;
+      }
+      case AFFIRMATION: {
+        evaluateData();
+        setDisable(true);
+        hb_bottomBox.getChildren().clear();
+        hb_bottomBox.getChildren().addAll(btn_returnToConfiguring, btn_acceptIndexCreation);
+        break;
+      }
+    }
+    this.creationState = state;
+  }
+
+  private void evaluateData() {
+
+  }
+
+  private void setDisable(boolean state) {
+    tf_indexName.setDisable(state);
+    tv_parameters.setDisable(state);
+    sl_indexType.setDisable(state);
+  }
 
   private void configureTableView() {
-    // add property name column and configure callbacks
-    TableColumn<Entry<Parameter, Value>, String> column_name = new TableColumn<>("Property name");
-    column_name.setCellFactory(param -> new TableCell<Entry<Parameter, Value>, String>() {
-      @Override
-      protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (item == null || empty) {
-          setText(null);
-          setStyle("");
-        } else {
-          setText(item);
-        }
-      }
-    });
-    column_name.setCellValueFactory(
-        param -> new SimpleStringProperty(param.getValue().getKey().name()));
-
-    // add value column and configure callbacks
-    TableColumn<Entry<Parameter, Value>, Value> column_value = new TableColumn<>("Value");
-    column_value.setCellFactory(param -> new TableCell<Entry<Parameter, Value>, Value>() {
-      @Override
-      protected void updateItem(Value item, boolean empty) {
-        super.updateItem(item, empty);
-
-        // todo: Разнести на классы, рефакторинг
-        if (item == null || empty) {
-          setText(null);
-          setStyle("");
-        } else {
-          Node content = null;
-          if (item instanceof BooleanValue) {
-            // Checkbox for boolean parameter values with binding to actual variable
-            CheckBox temp = new CheckBox();
-            temp.setSelected((Boolean) item.get());
-            temp.selectedProperty().addListener((observable, oldValue, newValue) -> {
-              item.set(newValue);
-            });
-            content = temp;
-          } else {
-            // Else - open dialog button
-            Button temp = new Button("Configure");
-            temp.setOnAction(event -> {
-              // create dialog for mapping values
-              Dialog<MapValue> dialog = new Dialog<>();
-              dialog.setTitle("Settings");
-              dialog.setHeaderText("PLease select needed values.");
-              dialog.getDialogPane().getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
-
-              TextField textField = new TextField();
-              textField.setPadding(new Insets(4, 5, 4, 5));
-              dialog.getDialogPane().setContent(textField);
-
-              dialog.showAndWait();
-            });
-            content = temp;
-          }
-          setGraphic(content);
-        }
-      }
-    });
-    column_value.setCellValueFactory(
-        param -> new ObservableValueBase<Value>() {
-          @Override
-          public Value getValue() {
-            return param.getValue().getValue();
-          }
-        });
-
-    // adding all columns to table
-    tv_parameters.getColumns().addAll(column_name, column_value);
+    // add columns
+    tv_parameters.getColumns().addAll(new PropertyNameColumn(), new PropertyValueColumn());
 
     // set column fill width
     tv_parameters.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -182,10 +173,12 @@ public class IndexCreationController {
 
   private void indexChanged(ObservableValue<? extends Number> observable, Number oldValue,
       Number newValue) {
-    if (newValue.intValue() - oldValue.intValue() < 1) {
+    // check if index not changed
+    if (Math.abs(newValue.intValue() - oldValue.intValue()) < 1) {
       return;
     }
 
+    // choose a new one
     switch (newValue.intValue()) {
       case 1:
         setIndex(new InvertedIndex());
@@ -219,5 +212,68 @@ public class IndexCreationController {
     }
 
     return view;
+  }
+}
+
+class PropertyNameColumn extends TableColumn<Entry<Parameter, Value>, String> {
+
+  PropertyNameColumn() {
+    super("Name");
+    setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getKey().name()));
+  }
+}
+
+class PropertyValueColumn extends TableColumn<Entry<Parameter, Value>, Value> {
+
+  PropertyValueColumn() {
+    setText("Value");
+    setCellFactory(param -> new TableCell<Entry<Parameter, Value>, Value>() {
+      @Override
+      protected void updateItem(Value item, boolean empty) {
+        super.updateItem(item, empty);
+
+        if (item == null || empty) {
+          setText(null);
+          setStyle("");
+        } else {
+          // initialize empty node - view. In feature - initialize with concrete view.
+          Node content = null;
+
+          // if true-false value (TYPE 0) then - just checkbox
+          if (item instanceof BooleanValue) {
+            content = new BooleanNode((BooleanValue) item);
+          }
+          // else if list value (TYPE 2) (like formats) - then textfield
+          else if (item instanceof ListValue) {
+            content = new ListNode((ListValue) item);
+          }
+          setGraphic(content);
+        }
+      }
+    });
+    setCellValueFactory(param -> new ObservableValueBase<Value>() {
+      @Override
+      public Value getValue() {
+        return param.getValue().getValue();
+      }
+    });
+  }
+
+  private class BooleanNode extends CheckBox {
+
+    BooleanNode(BooleanValue item) {
+      super();
+      setSelected((Boolean) item.get());
+      selectedProperty().addListener((observable, oldValue, newValue) -> item.set(newValue));
+    }
+  }
+
+  private class ListNode extends TextField {
+
+    ListNode(ListValue item) {
+      super();
+      ArrayList temp = (ArrayList) item.get();
+      setText((String) temp.stream().map(Object::toString).collect(Collectors.joining(" ")));
+    }
   }
 }

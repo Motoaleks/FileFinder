@@ -1,16 +1,19 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 23.01.17 11:59
+ * Date: 19.02.17 19:48
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.logic;
 
+import index.parameters.BooleanValue;
+import index.parameters.ListValue;
+import index.parameters.Parameter;
+import index.parameters.ParameterMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Represents base index class, that already have IndexLogic and parameter container. Classes
@@ -63,20 +66,20 @@ public abstract class Index extends IndexLogic {
       parameters.set(Parameter.WORDS, new BooleanValue(true));
     }
     if (parameterAvailable(Parameter.FORMATS)) {
-      HashMap<String, Boolean> temp = new HashMap<String, Boolean>() {{
-        put(".txt", true);
-        put(".xml", false);
-        put(".html", false);
-        put(".docx", false);
+      ArrayList<String> temp = new ArrayList<String>() {{
+        add(".txt");
+        add(".xml");
+        add(".html");
+        add(".docx");
       }};
-      parameters.set(Parameter.FORMATS, new MapValue(temp));
+      parameters.set(Parameter.FORMATS, new ListValue(temp));
     }
     if (parameterAvailable(Parameter.LANGUAGES)) {
-      HashMap<String, Boolean> temp = new HashMap<String, Boolean>() {{
-        put("russian", false);
-        put("english", true);
+      ArrayList<String> temp = new ArrayList<String>() {{
+        add("russian");
+        add("english");
       }};
-      parameters.set(Parameter.LANGUAGES, new MapValue(temp));
+      parameters.set(Parameter.LANGUAGES, new ListValue(temp));
     }
     if (parameterAvailable(Parameter.LEMMATISATION)) {
       parameters.set(Parameter.LEMMATISATION, new BooleanValue(false));
@@ -101,7 +104,7 @@ public abstract class Index extends IndexLogic {
    * @param parameter Parameter to check.
    * @return Available or unavailable for implementation.
    */
-  protected boolean parameterAvailable(Parameter parameter) {
+  public boolean parameterAvailable(Parameter parameter) {
     return availableParameters.contains(parameter);
   }
 

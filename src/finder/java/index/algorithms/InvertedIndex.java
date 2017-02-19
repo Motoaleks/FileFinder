@@ -1,14 +1,16 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 24.01.17 22:43
+ * Date: 19.02.17 19:39
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.algorithms;
 
+import index.logic.Index;
+import index.parameters.Parameter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;

@@ -1,15 +1,15 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 24.01.17 23:16
+ * Date: 19.02.17 19:48
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.logic;
 
-import index.IndexRequest.State;
+import index.logic.IndexRequest.State;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.FileVisitResult;
@@ -24,11 +24,11 @@ import java.nio.file.attribute.BasicFileAttributes;
  *
  * "The more we do, the more we can do" ©
  */
-public class SimpleIndexer extends SimpleFileVisitor<Path> {
+public class IndexOnVisit extends SimpleFileVisitor<Path> {
 
   private IndexRequest indexRequest;
 
-  SimpleIndexer(IndexRequest indexRequest) {
+  IndexOnVisit(IndexRequest indexRequest) {
     this.indexRequest = indexRequest;
   }
 

@@ -1,13 +1,13 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 10.02.17 22:50
+ * Date: 19.02.17 19:42
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.parameters;
 
 /**
  * Represents all available indexing algorithms parameters. Each algorithm can support not all of
@@ -18,8 +18,8 @@ public enum Parameter {
   FILE_INDEX(0),
   NUMBERS(0),
   WORDS(0),
-  FORMATS(1),
-  LANGUAGES(1),
+  FORMATS(2),
+  LANGUAGES(2),
 
   // OPTIMIZATION ---------------
   LEMMATISATION(0),

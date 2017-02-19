@@ -1,13 +1,13 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 16.02.17 20:17
+ * Date: 19.02.17 19:40
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.parameters;
 
 /**
  * Boolean value wrapper.

@@ -1,13 +1,13 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 24.01.17 1:03
+ * Date: 19.02.17 19:48
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.logic;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,7 +38,7 @@ public abstract class IndexLogic implements Searcher {
           IndexRequest ir = taskQueue.pop();
           try {
             // complete it
-            Files.walkFileTree(ir.getIndexPath(), new SimpleIndexer(ir));
+            Files.walkFileTree(ir.getIndexPath(), new IndexOnVisit(ir));
           } catch (IOException e) {
             e.printStackTrace();
           }

@@ -9,7 +9,7 @@
 
 package view.controllers;
 
-import index.InvertedIndex;
+import index.algorithms.InvertedIndex;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;

@@ -1,13 +1,13 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 24.01.17 20:13
+ * Date: 19.02.17 19:48
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.logic;
 
 import java.nio.file.Path;
 import java.util.Observable;
@@ -44,40 +44,6 @@ public class IndexRequest extends Observable {
     return indexAlg;
   }
 
-  //   todo: state changing
-//  public void stopIndexing() {
-//    if (currentState.code() < 0 || currentState.code() > 3) {
-//      return;
-//    }
-//    currentState = State.STOPPED;
-//    notifyObservers(State.STOPPED);
-//  }
-//
-//  public void resumeIndexing() {
-//    if (currentState != State.PAUSED) {
-//      return;
-//    }
-//    currentState = State.RUNNING;
-//    notifyObservers(State.RUNNING);
-//  }
-//
-//  public void pauseIndexing() {
-//    if (currentState != State.RUNNING) {
-//      return;
-//    }
-//    currentState = State.PAUSED;
-//    notifyObservers(State.PAUSED);
-//  }
-//
-//  public void startIndexing() {
-//    if (currentState != State.PREPARED) {
-//      return;
-//    }
-//    new Thread(() -> {
-//      currentState = State.RUNNING;
-//      indexAlg.index(this);
-//    }).start();
-//  }
   public void execute() {
     indexAlg.index(this);
   }

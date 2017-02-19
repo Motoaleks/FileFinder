@@ -1,34 +1,40 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 10.02.17 22:50
+ * Date: 19.02.17 19:40
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index;
+package index.parameters;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * A value represented by parameters with several string-to-boolean values.
- * Example of such parameter: Languages
- * "Russian" - false,
- * "English" - true,
- * "Indonesian" - false, ...
+ * Created by: Aleksandr
+ * Date: 19.02.2017
+ * Project: FileFinder
+ *
+ * "The more we do, the more we can do" ©
  */
-public class MapValue implements Value {
+public class ListValue implements Value {
 
   /**
-   * Unique value id = 1
+   * Unique value id = 2
    */
-  private final static int TYPE = 1;
+  private final static int TYPE = 2;
+
   /**
    * Container for values available by this parameter.
    */
-  private Map<String, Boolean> value;
+  private List<String> value;
+
+  public ListValue() {
+    value = new ArrayList<>();
+  }
 
   /**
    * Creates MapValue from map containing parameter_variant-boolean entries.
@@ -40,22 +46,18 @@ public class MapValue implements Value {
    *
    * @param value Map containing parameter_variant-boolean entries
    */
-  public MapValue(Map<String, Boolean> value) {
+  public ListValue(List<String> value) {
     this.value = value;
   }
 
-  /**
-   * Return all parameter_variants.
-   *
-   * @return Key set from container (parameter_variants).
-   */
-  public Set<String> getKeys() {
-    return value.keySet();
+  public void parseAndAdd(String tokens) {
+    Collections.addAll(value, tokens.split(" "));
   }
+
 
   @Override
   public Value set(Object value) {
-    this.value = (Map<String, Boolean>) value;
+    this.value = (List<String>) value;
     return this;
   }
 
