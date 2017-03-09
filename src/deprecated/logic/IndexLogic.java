@@ -19,7 +19,6 @@ import java.util.LinkedList;
  */
 public abstract class IndexLogic implements Searcher {
 
-
   protected LinkedList<IndexRequest> taskQueue;
 
   private Thread currentWorker;
@@ -38,7 +37,7 @@ public abstract class IndexLogic implements Searcher {
           IndexRequest ir = taskQueue.pop();
           try {
             // complete it
-            Files.walkFileTree(ir.getIndexPath(), new IndexOnVisit(ir));
+            Files.walkFileTree(ir.getIndexPath(), new FileVisitorIndexer(ir));
           } catch (IOException e) {
             e.printStackTrace();
           }

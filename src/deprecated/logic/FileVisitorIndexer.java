@@ -24,11 +24,11 @@ import java.nio.file.attribute.BasicFileAttributes;
  *
  * "The more we do, the more we can do" ©
  */
-public class IndexOnVisit extends SimpleFileVisitor<Path> {
+public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
   private IndexRequest indexRequest;
 
-  IndexOnVisit(IndexRequest indexRequest) {
+  FileVisitorIndexer(IndexRequest indexRequest) {
     this.indexRequest = indexRequest;
   }
 

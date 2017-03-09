@@ -177,7 +177,7 @@ public class PathCellController {
 
   /**
    * Updates {@link PathCellController#lb_name} according to item path.
-   * If cell is hovered or selected - will show the full path, otherwise - just filename.
+   * If cell is hovered or selected - will show the full path, otherwise - just filepath.
    */
   private void setName() {
     String name = null;

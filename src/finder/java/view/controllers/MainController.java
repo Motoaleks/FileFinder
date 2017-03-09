@@ -1,44 +1,33 @@
-/*
- * Created by Aleksandr Smilyanskiy
- * Date: 19.02.17 17:02
- * Project: FileFinder
- *
- * "The more we do, the more we can do"
- * Copyright (c) 2017.
- */
-
 package view.controllers;
 
-import index.algorithms.InvertedIndex;
-import java.io.File;
+import index.Index;
+import index.IndexParameters;
+import index.IndexingRequest;
+import index.SearchRequest;
+import index.Storages.Node;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import search.Result;
-import search.SearchRequest;
 import view.views.PathCell;
 
-/**
- * Controller for main window.
- */
+
 public class MainController {
 
-  InvertedIndex invertedIndex;
+  Index index;
 
   @FXML
   private ResourceBundle resources;
@@ -49,7 +38,6 @@ public class MainController {
   @FXML
   private Button btn_Search;
 
-
   @FXML
   private Button btn_createIndex;
 
@@ -57,10 +45,16 @@ public class MainController {
   private Button btn_showIndex;
 
   @FXML
-  private CheckBox cb_searchInFile;
+  private Label lb_status;
 
   @FXML
   private ListView<Path> lv_files;
+
+  @FXML
+  private ListView<?> lv_indexes;
+
+  @FXML
+  private ProgressBar pb_progress;
 
   @FXML
   private TextArea ta_preview;
@@ -73,19 +67,67 @@ public class MainController {
 
   @FXML
   private TextField txt_search;
-  /**
-   * Results list.
-   */
-  private ObservableList<Path> resultList;
+
+
+  @FXML
+  void onCreateIndex(ActionEvent event) {
+    index = new Index(new IndexParameters());
+
+    IndexingRequest request;
+    IndexingRequest.Builder builder = IndexingRequest.getBuilder();
+    builder.setIndex(index)
+           .setPath(Paths.get(""));
+    request = builder.build();
+    request.addObserver((o, arg) -> {
+      System.out.println(arg);
+    });
+    request.execute();
+  }
+
+  @FXML
+  void onSearch(ActionEvent event) {
+    if (index == null) {
+      return;
+    }
+
+    SearchRequest request;
+    SearchRequest.Builder builder = SearchRequest.getBuilder();
+    builder.setIndex(index)
+           .setSearchFor("test");
+    request = builder.build();
+    request.addObserver((o, arg) -> {
+      System.out.println("search: " + arg.toString());
+    });
+    request.execute();
+    ObservableSet<Node> set = request.getResult();
+    set.addListener((SetChangeListener<? super Node>) change -> {
+      if (change.wasAdded()) {
+        System.out.println("added: " + change.getElementAdded());
+      }
+    });
+  }
+
+  @FXML
+  void onSearchChanged(ActionEvent event) {
+
+  }
 
   @FXML
   void initialize() {
     assert btn_Search
         != null : "fx:id=\"btn_Search\" was not injected: check your FXML file 'main.fxml'.";
-    assert cb_searchInFile
-        != null : "fx:id=\"cb_searchInFile\" was not injected: check your FXML file 'main.fxml'.";
+    assert btn_createIndex
+        != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'main.fxml'.";
+    assert btn_showIndex
+        != null : "fx:id=\"btn_showIndex\" was not injected: check your FXML file 'main.fxml'.";
+    assert lb_status
+        != null : "fx:id=\"lb_status\" was not injected: check your FXML file 'main.fxml'.";
     assert
         lv_files != null : "fx:id=\"lv_files\" was not injected: check your FXML file 'main.fxml'.";
+    assert lv_indexes
+        != null : "fx:id=\"lv_indexes\" was not injected: check your FXML file 'main.fxml'.";
+    assert pb_progress
+        != null : "fx:id=\"pb_progress\" was not injected: check your FXML file 'main.fxml'.";
     assert ta_preview
         != null : "fx:id=\"ta_preview\" was not injected: check your FXML file 'main.fxml'.";
     assert tab_indexes
@@ -95,67 +137,13 @@ public class MainController {
     assert txt_search
         != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'main.fxml'.";
 
-
+    initializeList();
   }
 
-  @FXML
-  void onSearch(ActionEvent event) {
-    // getting search text pattern
-    String searchFor = txt_search.getText();
-
-    //creates searchRequest builder ('builder' design pattern)
-    SearchRequest.Builder requestBuilder = SearchRequest.getBuilder();
-    // todo: add directory adder
-    // initialize searchRequest builder with proper fields
-    invertedIndex = new InvertedIndex();
-    requestBuilder.setSearchFor(searchFor)
-                  .setSearchIn(File.listRoots()[0].getAbsolutePath())
-                  .setSearchInFiles(false)
-                  .setSearcher(invertedIndex);
-    // todo: add checking
-    // build searchRequest
-    SearchRequest searchRequest = requestBuilder.build();
-    // todo: add result saving
-    // get result reference
-    Result result = searchRequest.getResult();
-    resultList = FXCollections.observableArrayList(result.getResult());
-    // setting items to listview
-    lv_files.setItems(resultList);
-    // setting cell factory, initializing with special cell caching class.
-    lv_files.setCellFactory(cell -> new PathCell());
-
-    // adding result observer - to add new items when they are found.
-    result.addObserver((a1, a2) -> {
-      System.out.println("------------------------------");
-      Path founded = (Path) a2;
-      System.out.println("file found: " + founded.normalize().toString());
-      System.out.println("size: " + resultList.size());
-      System.out.println("------------------------------");
-
-      // adding objects to observerList will update the view, that's why it should be in special thread.
-      Platform.runLater(() -> {
-        resultList.add((Path) a2);
-      });
-    });
-    // execute searchRequest
-    searchRequest.execute(null);
+  private void initializeList() {
+    ObservableList<Path> paths = FXCollections.observableArrayList();
+    lv_files.setCellFactory(param -> new PathCell());
+    lv_files.setItems(paths);
   }
 
-  @FXML
-  void onCreateIndex(ActionEvent event) {
-    IndexCreationController icc = new IndexCreationController();
-    Node view = icc.getView();
-    Stage stage = new Stage();
-    stage.setTitle("Create index");
-    stage.setScene(new Scene((Parent) view));
-    stage.show();
-  }
-
-  @FXML
-  void onSearchChanged(ActionEvent event) {
-  }
-
-  @FXML
-  void onSearchInFileChanged(ActionEvent event) {
-  }
 }

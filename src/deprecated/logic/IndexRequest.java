@@ -17,7 +17,13 @@ import java.util.Observable;
  */
 public class IndexRequest extends Observable {
 
+  /**
+   * Index where results saving in
+   */
   private Index indexAlg;
+  /**
+   * Path, where indexing needed
+   */
   private Path indexPath;
   private State currentState;
 
@@ -67,7 +73,7 @@ public class IndexRequest extends Observable {
       code = stateCode;
     }
 
-    int code() {
+    public int code() {
       return code;
     }
   }
