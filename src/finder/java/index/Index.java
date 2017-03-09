@@ -10,7 +10,6 @@
 package index;
 
 import index.Storages.InvertedIndex;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -22,6 +21,7 @@ import java.util.logging.Logger;
  */
 public class Index {
 
+  private static Logger log;
   private IndexingHandler handler;
   private IndexStorage storage;
   private IndexParameters parameters;
@@ -30,13 +30,17 @@ public class Index {
     this.parameters = parameters;
     handler = new IndexingHandler(this);
     storage = new InvertedIndex(parameters);
+    log = Logger.getLogger(Index.class.getName());
   }
 
   public void index(IndexingRequest request) {
+    log.info("Indexing with request \"" + request.getIndexingPath().toAbsolutePath().toString()
+                 + "\" started");
     handler.index(request);
   }
 
   public void search(SearchRequest request) {
+    log.info("Searching with request \"" + request.getSearchFor() + "\" started");
     storage.search(request);
   }
 

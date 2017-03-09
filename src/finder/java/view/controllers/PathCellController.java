@@ -37,7 +37,7 @@ public class PathCellController {
   /**
    * Path to fxml view file.
    */
-  private final String cellFileName = "fxml/cell.fxml";
+  private final String cellFileName = "../fxml/cell.fxml";
   /**
    * Thumbnail for file.
    */

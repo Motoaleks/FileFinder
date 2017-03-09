@@ -8,7 +8,10 @@ import index.Storages.Node;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -28,6 +31,7 @@ import view.views.PathCell;
 public class MainController {
 
   Index index;
+  ObservableList<Path> paths;
 
   @FXML
   private ResourceBundle resources;
@@ -76,11 +80,8 @@ public class MainController {
     IndexingRequest request;
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
     builder.setIndex(index)
-           .setPath(Paths.get(""));
+           .setPath(Paths.get("../"));
     request = builder.build();
-    request.addObserver((o, arg) -> {
-      System.out.println(arg);
-    });
     request.execute();
   }
 
@@ -95,14 +96,15 @@ public class MainController {
     builder.setIndex(index)
            .setSearchFor("test");
     request = builder.build();
-    request.addObserver((o, arg) -> {
-      System.out.println("search: " + arg.toString());
-    });
+
     request.execute();
     ObservableSet<Node> set = request.getResult();
     set.addListener((SetChangeListener<? super Node>) change -> {
       if (change.wasAdded()) {
-        System.out.println("added: " + change.getElementAdded());
+        Set<String> filenames = ((Node) change.getElementAdded()).getFilenames();
+        List<Path> filepaths = filenames.stream().map(s -> Paths.get(s))
+                                        .collect(Collectors.toList());
+        paths.addAll(filepaths);
       }
     });
   }
@@ -141,8 +143,8 @@ public class MainController {
   }
 
   private void initializeList() {
-    ObservableList<Path> paths = FXCollections.observableArrayList();
     lv_files.setCellFactory(param -> new PathCell());
+    paths = FXCollections.observableArrayList();
     lv_files.setItems(paths);
   }
 

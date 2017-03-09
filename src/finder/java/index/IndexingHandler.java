@@ -69,6 +69,8 @@ public class IndexingHandler {
               request.getIndexingPath().toAbsolutePath().toString());
     } finally {
       semaphore.release();
+      log.info("Indexing with request \"" + request.getIndexingPath().toAbsolutePath().toString()
+                   + "\" completed");
     }
   }
 }

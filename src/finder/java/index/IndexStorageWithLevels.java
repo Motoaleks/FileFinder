@@ -41,6 +41,7 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
       log.log(Level.SEVERE, "Search interrupted: {}", request.getSearchFor());
     } finally {
       semaphore.release(acquired);
+      log.info("Searching with request \"" + request.getSearchFor() + "\" completed");
     }
   }
 
