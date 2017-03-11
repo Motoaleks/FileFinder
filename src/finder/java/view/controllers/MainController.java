@@ -19,6 +19,8 @@ import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -26,6 +28,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import view.views.PathCell;
 
 
@@ -77,21 +81,27 @@ public class MainController {
   @FXML
   void onCreateIndex(ActionEvent event) {
     index = new Index(new IndexParameters());
+    // initialize stage
+    Stage indexCreationStage = new Stage();
+    indexCreationStage.setTitle("Create index");
+    // initialize controller
+    IndexCreationController icc = new IndexCreationController();
+    javafx.scene.Node view = icc.getView();
+    indexCreationStage.setScene(new Scene((Parent) view));
+    // show as a modal
+    indexCreationStage.initOwner(lv_files.getScene().getWindow());
+    indexCreationStage.initModality(Modality.APPLICATION_MODAL);
+    indexCreationStage.showAndWait();
 
-    IndexingRequest request;
+    // result handling
+    IndexParameters parameters = icc.getCreatedParameters();
+    if (parameters == null) {
+      return;
+    }
+    index = new Index(parameters);
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
-    builder.setIndex(index)
-           .setPath(Paths.get("../"));
-    request = builder.build();
+    IndexingRequest request = builder.setIndex(index).setPath(Paths.get("../")).build();
     request.execute();
-
-    //todo: activate when fully ready saving
-//    IndexCreationController icc = new IndexCreationController();
-//    javafx.scene.Node view = icc.getView();
-//    Stage stage = new Stage();
-//    stage.setTitle("Create index");
-//    stage.setScene(new Scene((Parent) view));
-//    stage.show();
   }
 
   @FXML

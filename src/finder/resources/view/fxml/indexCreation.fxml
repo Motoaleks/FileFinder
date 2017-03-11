@@ -18,21 +18,20 @@
 <BorderPane prefHeight="319.0" prefWidth="357.9999000000025" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <bottom>
     <HBox fx:id="hb_bottomBox" alignment="CENTER_RIGHT" prefHeight="39.0" prefWidth="404.0" BorderPane.alignment="CENTER_RIGHT">
-      <Button fx:id="btn_createIndex" mnemonicParsing="false" onAction="#onCreateIndex" prefHeight="32.000099999997474" prefWidth="97.0" text="Create" HBox.hgrow="ALWAYS">
+      <Button fx:id="btn_createIndex" mnemonicParsing="false" onAction="#onCreateIndex" prefHeight="32.000099999997474" prefWidth="97.0" style="-fx-background-color: #8CC152;&#10;-fx-text-fill: #F5F7FA" text="Create" HBox.hgrow="ALWAYS">
+        <font>
+          <Font name="System Bold" size="16.0" fx:id="x4" />
+        </font>
         <HBox.margin>
-          <Insets />
+          <Insets bottom="2.0" left="4.0" top="2.0" fx:id="x2" />
         </HBox.margin>
       </Button>
-      <Button fx:id="btn_returnToConfiguring" disable="false" focusTraversable="true" mnemonicParsing="false" onAction="#onReturnToConfiguring" prefHeight="32.000099999997474" prefWidth="97.0" text="Configure" visible="true" wrapText="false" HBox.hgrow="ALWAYS">
+      <Button fx:id="btn_returnToConfiguring" disable="false" focusTraversable="true" font="$x4" mnemonicParsing="false" onAction="#onReturnToConfiguring" prefHeight="33.0" prefWidth="108.0" style="-fx-background-color: #656D78;&#10;-fx-text-fill: #F5F7FA" text="Configure" visible="true" wrapText="false" HBox.hgrow="ALWAYS">
         <HBox.margin>
-          <Insets bottom="2.0" left="2.0" right="4.0" top="2.0" />
+          <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
         </HBox.margin>
       </Button>
-      <Button fx:id="btn_acceptIndexCreation" disable="false" focusTraversable="true" mnemonicParsing="false" onAction="#onAffirmIndexCreation" prefHeight="32.000099999997474" prefWidth="97.0" text="Confirm" visible="true" wrapText="false" HBox.hgrow="ALWAYS">
-        <HBox.margin>
-          <Insets bottom="2.0" top="2.0" />
-        </HBox.margin>
-      </Button>
+      <Button fx:id="btn_acceptIndexCreation" disable="false" focusTraversable="true" font="$x4" mnemonicParsing="false" onAction="#onAffirmIndexCreation" prefHeight="32.000099999997474" prefWidth="97.0" style="-fx-background-color: #8CC152;&#10;-fx-text-fill: #F5F7FA" text="Confirm" visible="true" wrapText="false" HBox.hgrow="ALWAYS" HBox.margin="$x2" />
       <padding>
         <Insets left="5.0" right="5.0" fx:id="x1" />
       </padding>
@@ -42,27 +41,23 @@
     <VBox padding="$x1" prefHeight="206.0" prefWidth="301.0">
       <Label text="Index parameters">
         <font>
-          <Font size="14.0" fx:id="x2" />
+          <Font size="14.0" fx:id="x3" />
         </font>
       </Label>
-      <ScrollPane fx:id="sp_parameters" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-        <content>
-          <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
-            <padding>
-              <Insets left="10.0" right="10.0" />
-            </padding>
-          </AnchorPane>
-        </content>
+      <ScrollPane fx:id="sp_parameters" content="$null" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+          <Insets />
+        </VBox.margin>
       </ScrollPane>
     </VBox>
   </center>
   <top>
-    <VBox prefHeight="39.0" prefWidth="404.0">
+    <VBox prefHeight="45.0" prefWidth="348.0">
+      <Label font="$x3" text="Index name" />
+      <TextField fx:id="tf_indexName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="348.0" promptText="Enter name for index" />
       <BorderPane.margin>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
       </BorderPane.margin>
-      <Label font="$x2" text="Index name" />
-      <TextField fx:id="tf_indexName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="394.0" promptText="Enter name for index" />
     </VBox>
   </top>
 </BorderPane>
