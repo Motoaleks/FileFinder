@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -83,6 +84,14 @@ public class MainController {
            .setPath(Paths.get("../"));
     request = builder.build();
     request.execute();
+
+    //todo: activate when fully ready saving
+//    IndexCreationController icc = new IndexCreationController();
+//    javafx.scene.Node view = icc.getView();
+//    Stage stage = new Stage();
+//    stage.setTitle("Create index");
+//    stage.setScene(new Scene((Parent) view));
+//    stage.show();
   }
 
   @FXML
@@ -97,14 +106,18 @@ public class MainController {
            .setSearchFor("test");
     request = builder.build();
 
+    paths.clear();
     request.execute();
     ObservableSet<Node> set = request.getResult();
     set.addListener((SetChangeListener<? super Node>) change -> {
       if (change.wasAdded()) {
-        Set<String> filenames = ((Node) change.getElementAdded()).getFilenames();
+        Set<String> filenames = change.getElementAdded().getFilenames();
         List<Path> filepaths = filenames.stream().map(s -> Paths.get(s))
                                         .collect(Collectors.toList());
-        paths.addAll(filepaths);
+
+        Platform.runLater(() -> {
+          paths.addAll(filepaths);
+        });
       }
     });
   }
