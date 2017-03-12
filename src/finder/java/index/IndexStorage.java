@@ -9,6 +9,7 @@
 
 package index;
 
+import index.Storages.Node;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,6 +40,10 @@ public abstract class IndexStorage {
   public abstract void saveToFile();
 
   public abstract void put(String word, String filepath, int description);
+
+  protected abstract Set<String> getKeys();
+
+  protected abstract Node get(String key);
 
   private class Record {
 

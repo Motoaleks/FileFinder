@@ -14,7 +14,7 @@ import index.IndexStorageWithLevels;
 import index.Parameter;
 import index.SearchRequest;
 import java.util.HashMap;
-import java.util.concurrent.Semaphore;
+import java.util.Set;
 import javafx.beans.value.ObservableValue;
 
 /**
@@ -66,5 +66,15 @@ public class InvertedIndex extends IndexStorageWithLevels {
     else {
       entry.add(filepath, description);
     }
+  }
+
+  @Override
+  protected Set<String> getKeys() {
+    return storage.keySet();
+  }
+
+  @Override
+  protected Node get(String key) {
+    return storage.get(key);
   }
 }

@@ -9,6 +9,7 @@
 
 package index;
 
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +35,7 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
       semaphore.acquire();
       acquired++;
       searchConcrete(request);
+      searchSimilar(request);
       semaphore.acquire();
       acquired++;
       searchStraightInFiles(request);
@@ -42,6 +44,17 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
     } finally {
       semaphore.release(acquired);
       log.info("Searching with request \"" + request.getSearchFor() + "\" completed");
+    }
+  }
+
+  private void searchSimilar(SearchRequest request) {
+    Set<String> keys = getKeys();
+    String searchFor = request.getSearchFor();
+    for (String key : keys) {
+      // if request is a part of some key - return node for this key
+      if (key.contains(searchFor)) {
+        request.addResult(get(key));
+      }
     }
   }
 
