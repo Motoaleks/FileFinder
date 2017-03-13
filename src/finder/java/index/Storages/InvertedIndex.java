@@ -14,6 +14,7 @@ import index.IndexStorageWithLevels;
 import index.Parameter;
 import index.SearchRequest;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import javafx.beans.value.ObservableValue;
 
@@ -76,5 +77,14 @@ public class InvertedIndex extends IndexStorageWithLevels {
   @Override
   protected Node get(String key) {
     return storage.get(key);
+  }
+
+  @Override
+  protected void searchSimilar(SearchRequest request) {
+    for (Entry<String, Node> entry : storage.entrySet()) {
+      if (entry.getKey().contains(request.getSearchFor())) {
+        request.addResult(entry.getValue());
+      }
+    }
   }
 }

@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
@@ -57,6 +58,9 @@ public class MainController {
   private Label lb_status;
 
   @FXML
+  private CheckBox cb_seachSubstring;
+
+  @FXML
   private ListView<Path> lv_files;
 
   @FXML
@@ -77,6 +81,11 @@ public class MainController {
   @FXML
   private TextField txt_search;
 
+
+  @FXML
+  void onSubstringSearchChanged(ActionEvent event) {
+
+  }
 
   @FXML
   void onCreateIndex(ActionEvent event) {
@@ -113,7 +122,8 @@ public class MainController {
     SearchRequest request;
     SearchRequest.Builder builder = SearchRequest.getBuilder();
     builder.setIndex(index)
-           .setSearchFor("test");
+           .setSearchFor("test")
+           .setSubstringSearch(cb_seachSubstring.isSelected());
     request = builder.build();
 
     paths.clear();
@@ -161,6 +171,8 @@ public class MainController {
         != null : "fx:id=\"tab_search\" was not injected: check your FXML file 'main.fxml'.";
     assert txt_search
         != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'main.fxml'.";
+    assert cb_seachSubstring
+        != null : "fx:id=\"cb_seachSubstring\" was not injected: check your FXML file 'main.fxml'.";
 
     initializeList();
   }

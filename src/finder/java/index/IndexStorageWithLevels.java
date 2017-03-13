@@ -35,7 +35,9 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
       semaphore.acquire();
       acquired++;
       searchConcrete(request);
-      searchSimilar(request);
+      if (request.getSubstringSearch()) {
+        searchSimilar(request);
+      }
       semaphore.acquire();
       acquired++;
       searchStraightInFiles(request);
@@ -47,7 +49,7 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
     }
   }
 
-  private void searchSimilar(SearchRequest request) {
+  protected void searchSimilar(SearchRequest request) {
     Set<String> keys = getKeys();
     String searchFor = request.getSearchFor();
     for (String key : keys) {

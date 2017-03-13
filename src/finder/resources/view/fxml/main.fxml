@@ -69,6 +69,7 @@
                         <Button fx:id="btn_Search" cancelButton="false" defaultButton="false" layoutX="167.0" layoutY="0.0" mnemonicParsing="false" onAction="#onSearch" prefHeight="24.0" prefWidth="33.0" text="" textAlignment="RIGHT" wrapText="false" />
                       </children>
                     </AnchorPane>
+                    <CheckBox fx:id="cb_seachSubstring" mnemonicParsing="false" onAction="#onSubstringSearchChanged" text="Search as a substring" HBox.hgrow="ALWAYS" />
                   </children>
                   <padding>
                     <Insets fx:id="x1" />

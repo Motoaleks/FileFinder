@@ -28,9 +28,11 @@ public class SearchRequest extends Observable {
   private Index index;
   private ObservableSet<Node> result;
   private State state;
+  private boolean substringSearch;
 
   private SearchRequest() {
     result = FXCollections.observableSet(new HashSet<Node>());
+    substringSearch = false;
   }
 
   public static Builder getBuilder() {
@@ -66,8 +68,14 @@ public class SearchRequest extends Observable {
     notifyObservers(state);
   }
 
+  public Boolean getSubstringSearch() {
+    return substringSearch;
+  }
+
   public void addResult(Node node) {
-    result.add(node);
+    if (!result.contains(node)) {
+      result.add(node);
+    }
   }
 
   /**
@@ -149,6 +157,11 @@ public class SearchRequest extends Observable {
      */
     public Builder setIndex(Index index) {
       SearchRequest.this.index = index;
+      return this;
+    }
+
+    public Builder setSubstringSearch(boolean substringSearch) {
+      SearchRequest.this.substringSearch = substringSearch;
       return this;
     }
 
