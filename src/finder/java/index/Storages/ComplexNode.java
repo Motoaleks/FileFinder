@@ -9,6 +9,7 @@
 
 package index.Storages;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -64,23 +65,24 @@ public class ComplexNode implements Node {
     }
   }
 
-  private class NodeRow {
+}
 
-    String filepath;
-    Set<Integer> rows;
+class NodeRow implements Serializable {
 
-    private NodeRow() {
-      rows = new HashSet<>();
-    }
+  String filepath;
+  HashSet<Integer> rows;
 
-    NodeRow(String filepath, int row) {
-      this();
-      this.filepath = filepath;
-      rows.add(row);
-    }
+  private NodeRow() {
+    rows = new HashSet<>();
+  }
 
-    protected void add(int row) {
-      rows.add(row);
-    }
+  NodeRow(String filepath, int row) {
+    this();
+    this.filepath = filepath;
+    rows.add(row);
+  }
+
+  protected void add(int row) {
+    rows.add(row);
   }
 }

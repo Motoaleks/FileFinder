@@ -9,7 +9,11 @@
 
 package index;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,10 +26,13 @@ import java.util.logging.Logger;
  */
 public abstract class IndexStorageWithLevels extends IndexStorage {
 
-  private Logger log = Logger.getLogger(FileVisitorIndexer.class.getName());
+  private static transient Logger log;
 
   public IndexStorageWithLevels(IndexParameters parameters) {
     super(parameters);
+    if (log == null){
+      log = Logger.getLogger(FileVisitorIndexer.class.getName());
+    }
   }
 
   @Override
@@ -66,4 +73,10 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
   }
 
   protected abstract void searchConcrete(SearchRequest request);
+
+  private void readObject(java.io.ObjectInputStream in) throws IOException {
+    if (log == null){
+      log = Logger.getLogger(FileVisitorIndexer.class.getName());
+    }
+  }
 }

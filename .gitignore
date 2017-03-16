@@ -14,3 +14,7 @@ hs_err_pid*
 # Intellij IDEA
 /out/
 /.idea/
+
+#generated data
+*.ser
+/indexes/

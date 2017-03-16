@@ -27,7 +27,7 @@ import javafx.beans.value.ObservableValue;
  */
 public class InvertedIndex extends IndexStorageWithLevels {
 
-  private HashMap<String, Node> storage;
+  private final HashMap<String, Node> storage;
 
 
   public InvertedIndex(IndexParameters parameters) {
@@ -38,9 +38,11 @@ public class InvertedIndex extends IndexStorageWithLevels {
 
   @Override
   protected void searchConcrete(SearchRequest request) {
-    Node o = storage.get(request.getSearchFor());
-    if (o != null) {
-      request.addResult(o);
+    synchronized (storage) {
+      Node o = storage.get(request.getSearchFor());
+      if (o != null) {
+        request.addResult(o);
+      }
     }
   }
 
@@ -51,39 +53,47 @@ public class InvertedIndex extends IndexStorageWithLevels {
 
   @Override
   public void put(String word, String filepath, int description) {
-    Node entry = storage.get(word);
-    // check if value doesn't exist - just create a new one
-    if (entry == null) {
-      // check for --FILE_INDEX--
-      ObservableValue fileIndexing = parameters.get(Parameter.FILE_INDEX);
-      if (fileIndexing != null && (Boolean) fileIndexing.getValue()) {
-        entry = new ComplexNode(filepath, description);
-      } else {
-        entry = new SimpleNode(filepath);
+    synchronized (storage) {
+      Node entry = storage.get(word);
+      // check if value doesn't exist - just create a new one
+      if (entry == null) {
+        // check for --FILE_INDEX--
+        ObservableValue fileIndexing = parameters.get(Parameter.FILE_INDEX);
+        if (fileIndexing != null && (Boolean) fileIndexing.getValue()) {
+          entry = new ComplexNode(filepath, description);
+        } else {
+          entry = new SimpleNode(filepath);
+        }
+        storage.put(word, entry);
       }
-      storage.put(word, entry);
-    }
-    // else - add description to already existing one
-    else {
-      entry.add(filepath, description);
+      // else - add description to already existing one
+      else {
+        entry.add(filepath, description);
+      }
     }
   }
 
   @Override
   protected Set<String> getKeys() {
-    return storage.keySet();
+    synchronized (storage) {
+      return storage.keySet();
+    }
   }
 
   @Override
   protected Node get(String key) {
-    return storage.get(key);
+    synchronized (storage) {
+      return storage.get(key);
+    }
   }
 
   @Override
   protected void searchSimilar(SearchRequest request) {
-    for (Entry<String, Node> entry : storage.entrySet()) {
-      if (entry.getKey().contains(request.getSearchFor())) {
-        request.addResult(entry.getValue());
+    synchronized (storage) {
+      for (Entry<String, Node> entry : storage.entrySet()) {
+        if (entry.getKey().contains(request.getSearchFor())) {
+          request.addResult(entry.getValue());
+        }
       }
     }
   }

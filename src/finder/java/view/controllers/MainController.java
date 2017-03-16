@@ -5,13 +5,17 @@ import index.IndexParameters;
 import index.IndexingRequest;
 import index.SearchRequest;
 import index.Storages.Node;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,8 +40,10 @@ import view.views.PathCell;
 
 public class MainController {
 
-  Index index;
+  final String INDEXES_DIRECTORY = "\\indexes\\";
+//  Index index;
   ObservableList<Path> paths;
+  ObservableList<Index> indices;
 
   @FXML
   private ResourceBundle resources;
@@ -89,7 +95,7 @@ public class MainController {
 
   @FXML
   void onCreateIndex(ActionEvent event) {
-    index = new Index(new IndexParameters());
+    Index temp_index = new Index(new IndexParameters());
     // initialize stage
     Stage indexCreationStage = new Stage();
     indexCreationStage.setTitle("Create index");
@@ -107,21 +113,23 @@ public class MainController {
     if (parameters == null) {
       return;
     }
-    index = new Index(parameters);
+    temp_index = new Index(parameters);
+
+    indices.add(temp_index);
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
-    IndexingRequest request = builder.setIndex(index).setPath(Paths.get("../")).build();
+    IndexingRequest request = builder.setIndex(temp_index).setPath(Paths.get("../")).build();
     request.execute();
   }
 
   @FXML
   void onSearch(ActionEvent event) {
-    if (index == null) {
+    if (indices.get(0) == null) {
       return;
     }
 
     SearchRequest request;
     SearchRequest.Builder builder = SearchRequest.getBuilder();
-    builder.setIndex(index)
+    builder.setIndex(indices.get(0))
            .setSearchFor("test")
            .setSubstringSearch(cb_seachSubstring.isSelected());
     request = builder.build();
@@ -140,11 +148,45 @@ public class MainController {
         });
       }
     });
+//    saveIndexes();
+//    Index index = Index.load(INDEXES_DIRECTORY + "test");
   }
 
   @FXML
   void onSearchChanged(ActionEvent event) {
 
+  }
+
+  void saveIndexes() {
+    Path temp = Paths.get(INDEXES_DIRECTORY);
+    //if directory exists?
+    if (!Files.exists(temp)) {
+      try {
+        Files.createDirectories(temp);
+      } catch (IOException e) {
+        //fail to create directory
+        e.printStackTrace();
+      }
+    }
+    indices.forEach(index -> {
+      index.save(INDEXES_DIRECTORY);
+    });
+  }
+
+  void loadIndexes() {
+    if (!Files.exists(Paths.get(INDEXES_DIRECTORY))){
+      return;
+    }
+    try (Stream<Path> paths = Files.walk(Paths.get(INDEXES_DIRECTORY))) {
+      List wtf = paths.collect(Collectors.toList());
+      paths.forEach(filePath -> {
+        if (filePath.toString().contains(".ser")) {
+          indices.add(Index.load(INDEXES_DIRECTORY + filePath.getFileName().toString()));
+        }
+      });
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @FXML
@@ -175,6 +217,19 @@ public class MainController {
         != null : "fx:id=\"cb_seachSubstring\" was not injected: check your FXML file 'main.fxml'.";
 
     initializeList();
+    indices = FXCollections.observableList(new ArrayList<>());
+
+//    Platform.runLater(() -> {
+//      loadIndexes();
+//    });
+
+//    tab_search.getGraphic().getScene().getWindow().setOnCloseRequest(event -> {
+//      saveIndexes();
+//    });
+//
+//    tab_indexes.getGraphic().getScene().getWindow().setOnShown(event -> {
+//      loadIndexes();
+//    });
   }
 
   private void initializeList() {

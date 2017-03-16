@@ -41,7 +41,7 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
   private IndexingRequest request;
   private IndexParameters parameters;
   private IndexStorage storage;
-  private Semaphore semaphore;
+  private final Semaphore semaphore;
 
   public FileVisitorIndexer(IndexingRequest request) {
     this.request = request;

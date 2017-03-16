@@ -10,8 +10,12 @@
 package index;
 
 import index.Storages.Node;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -23,11 +27,11 @@ import java.util.concurrent.Semaphore;
  *
  * "The more we do, the more we can do" ©
  */
-public abstract class IndexStorage {
+public abstract class IndexStorage implements Serializable {
 
-  protected IndexParameters parameters;
-  protected Semaphore semaphore;
-  protected Set<Record> indexRecords;
+  protected transient IndexParameters parameters;
+  protected transient Semaphore semaphore;
+  protected transient Set<Record> indexRecords;
 
   public IndexStorage(IndexParameters parameters) {
     this.parameters = parameters;
@@ -45,14 +49,20 @@ public abstract class IndexStorage {
 
   protected abstract Node get(String key);
 
-  private class Record {
 
-    private String path;
-    private Date indexingDate;
+  private void readObject(java.io.ObjectInputStream in) throws IOException {
+    this.semaphore = new Semaphore(20);
+    this.indexRecords = new HashSet<>();
+  }
+}
 
-    Record(Path path) {
-      this.path = path.toAbsolutePath().toString();
-      indexingDate = new Date();
-    }
+class Record implements Serializable {
+
+  private String path;
+  private Date indexingDate;
+
+  Record(Path path) {
+    this.path = path.toAbsolutePath().toString();
+    indexingDate = new Date();
   }
 }
