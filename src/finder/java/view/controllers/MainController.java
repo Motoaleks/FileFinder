@@ -5,7 +5,9 @@ import index.IndexParameters;
 import index.IndexingRequest;
 import index.SearchRequest;
 import index.Storages.Node;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,8 +42,8 @@ import view.views.PathCell;
 
 public class MainController {
 
-  final String INDEXES_DIRECTORY = "\\indexes\\";
-//  Index index;
+  final String INDICES_DIRECTORY = "indices\\";
+  //  Index index;
   ObservableList<Path> paths;
   ObservableList<Index> indices;
 
@@ -149,7 +151,7 @@ public class MainController {
       }
     });
 //    saveIndexes();
-//    Index index = Index.load(INDEXES_DIRECTORY + "test");
+//    Index index = Index.load(INDICES_DIRECTORY + "test");
   }
 
   @FXML
@@ -157,36 +159,45 @@ public class MainController {
 
   }
 
-  void saveIndexes() {
-    Path temp = Paths.get(INDEXES_DIRECTORY);
-    //if directory exists?
-    if (!Files.exists(temp)) {
-      try {
-        Files.createDirectories(temp);
-      } catch (IOException e) {
-        //fail to create directory
-        e.printStackTrace();
-      }
-    }
-    indices.forEach(index -> {
-      index.save(INDEXES_DIRECTORY);
-    });
-  }
-
-  void loadIndexes() {
-    if (!Files.exists(Paths.get(INDEXES_DIRECTORY))){
+  public void saveIndexes() {
+    // check for index existing
+    if (indices.size() == 0) {
       return;
     }
-    try (Stream<Path> paths = Files.walk(Paths.get(INDEXES_DIRECTORY))) {
-      List wtf = paths.collect(Collectors.toList());
-      paths.forEach(filePath -> {
-        if (filePath.toString().contains(".ser")) {
-          indices.add(Index.load(INDEXES_DIRECTORY + filePath.getFileName().toString()));
-        }
-      });
-    } catch (IOException e) {
-      e.printStackTrace();
+
+    File indicesDirectory = new File(INDICES_DIRECTORY);
+    // check for directory existence, if not - create
+    if (!indicesDirectory.exists()) {
+      indicesDirectory.mkdir();
     }
+
+    // start thread for saving indices (cause it is long operation)
+    new Thread(() -> {
+      indices.forEach(index -> {
+        index.save(INDICES_DIRECTORY);
+      });
+    }).start();
+  }
+
+  public void loadIndexes() {
+    File indicesDirectory = new File(INDICES_DIRECTORY);
+    // check for directory existence, if not - leave method (cause it's no indices dude)
+    if (!indicesDirectory.exists()) {
+      return;
+    }
+    // start thread for loading indices (cause it is long operation)
+    new Thread(() -> {
+      try (Stream<Path> paths = Files.walk(indicesDirectory.toPath().toAbsolutePath())) {
+        paths.forEach(filePath -> {
+          // check if name contain '.ser' - serialization extension
+          if (filePath.getFileName().toString().contains(".ser")) {
+            indices.add(Index.load(INDICES_DIRECTORY + filePath.getFileName().toString()));
+          }
+        });
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }).start();
   }
 
   @FXML
@@ -218,18 +229,6 @@ public class MainController {
 
     initializeList();
     indices = FXCollections.observableList(new ArrayList<>());
-
-//    Platform.runLater(() -> {
-//      loadIndexes();
-//    });
-
-//    tab_search.getGraphic().getScene().getWindow().setOnCloseRequest(event -> {
-//      saveIndexes();
-//    });
-//
-//    tab_indexes.getGraphic().getScene().getWindow().setOnShown(event -> {
-//      loadIndexes();
-//    });
   }
 
   private void initializeList() {
