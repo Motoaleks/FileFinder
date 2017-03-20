@@ -7,12 +7,10 @@ import index.SearchRequest;
 import index.Storages.Node;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -37,6 +35,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import view.views.IndexCell;
 import view.views.PathCell;
 
 
@@ -72,7 +71,7 @@ public class MainController {
   private ListView<Path> lv_files;
 
   @FXML
-  private ListView<?> lv_indexes;
+  private ListView<Index> lv_indices;
 
   @FXML
   private ProgressBar pb_progress;
@@ -97,7 +96,7 @@ public class MainController {
 
   @FXML
   void onCreateIndex(ActionEvent event) {
-    Index temp_index = new Index(new IndexParameters());
+//    Index temp_index = new Index(new IndexParameters());
     // initialize stage
     Stage indexCreationStage = new Stage();
     indexCreationStage.setTitle("Create index");
@@ -112,14 +111,17 @@ public class MainController {
 
     // result handling
     IndexParameters parameters = icc.getCreatedParameters();
-    if (parameters == null) {
+    String name = icc.getCreatedName();
+    if (parameters == null || name == null) {
       return;
     }
-    temp_index = new Index(parameters);
+    Index temp_index = new Index(name, parameters);
 
     indices.add(temp_index);
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
-    IndexingRequest request = builder.setIndex(temp_index).setPath(Paths.get("../")).build();
+    IndexingRequest request = builder.setIndex(temp_index)
+                                     .setPath(Paths.get("../"))
+                                     .build();
     request.execute();
   }
 
@@ -212,8 +214,8 @@ public class MainController {
         != null : "fx:id=\"lb_status\" was not injected: check your FXML file 'main.fxml'.";
     assert
         lv_files != null : "fx:id=\"lv_files\" was not injected: check your FXML file 'main.fxml'.";
-    assert lv_indexes
-        != null : "fx:id=\"lv_indexes\" was not injected: check your FXML file 'main.fxml'.";
+    assert lv_indices
+        != null : "fx:id=\"lv_indices\" was not injected: check your FXML file 'main.fxml'.";
     assert pb_progress
         != null : "fx:id=\"pb_progress\" was not injected: check your FXML file 'main.fxml'.";
     assert ta_preview
@@ -227,14 +229,20 @@ public class MainController {
     assert cb_seachSubstring
         != null : "fx:id=\"cb_seachSubstring\" was not injected: check your FXML file 'main.fxml'.";
 
-    initializeList();
-    indices = FXCollections.observableList(new ArrayList<>());
+    initializePathList();
+    initializeIndexList();
   }
 
-  private void initializeList() {
+  private void initializePathList() {
     lv_files.setCellFactory(param -> new PathCell());
     paths = FXCollections.observableArrayList();
     lv_files.setItems(paths);
+  }
+
+  private void initializeIndexList() {
+    lv_indices.setCellFactory(param -> new IndexCell());
+    indices = FXCollections.observableArrayList();
+    lv_indices.setItems(indices);
   }
 
 }

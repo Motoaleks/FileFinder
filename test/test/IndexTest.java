@@ -43,7 +43,7 @@ public class IndexTest {
 
   public Index createDefault() {
     IndexParameters parameters = new IndexParameters();
-    return new Index(parameters);
+    return new Index("test", parameters);
   }
 
   @Test

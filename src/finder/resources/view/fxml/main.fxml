@@ -83,7 +83,7 @@
           <content>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
               <center>
-                <ListView fx:id="lv_indexes" prefHeight="200.0" prefWidth="200.0" style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;" BorderPane.alignment="CENTER">
+                <ListView fx:id="lv_indices" prefHeight="200.0" prefWidth="200.0" style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;" BorderPane.alignment="CENTER">
                   <BorderPane.margin>
                     <Insets bottom="5.0" left="5.0" right="5.0" />
                   </BorderPane.margin>

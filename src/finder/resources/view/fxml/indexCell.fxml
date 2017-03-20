@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.*?>
+<!--
+  ~ Created by Aleksandr Smilyanskiy
+  ~ Date: 17.03.17 15:14
+  ~ Project: FileFinder
+  ~
+  ~ "The more we do, the more we can do"
+  ~ Copyright (c) 2017.
+  -->
+
+<BorderPane fx:id="bp_body" prefHeight="43.0" prefWidth="426.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <left>
+    <Label fx:id="lb_indexName" text="lb_indexName" BorderPane.alignment="CENTER" />
+  </left>
+  <padding>
+    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+  </padding>
+  <right>
+    <Label fx:id="lb_selectionStatus" labelFor="$lb_selectionStatus" text="lb_selectionStatus" textFill="#41cc00" underline="false" BorderPane.alignment="CENTER">
+      <font>
+        <Font size="14.0" />
+      </font>
+    </Label>
+  </right>
+</BorderPane>

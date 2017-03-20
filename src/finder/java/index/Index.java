@@ -44,7 +44,7 @@ public class Index implements Serializable {
     this.name = name;
   }
 
-  public Index(IndexParameters parameters) {
+  private Index(IndexParameters parameters) {
     this.parameters = parameters;
     handler = new IndexingHandler(this);
     storage = new InvertedIndex(parameters);
