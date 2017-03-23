@@ -10,7 +10,10 @@
 package index;
 
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
+import java.util.UUID;
 
 /**
  * Created by: Aleksandr
@@ -21,11 +24,14 @@ import java.util.Observable;
  */
 public class IndexingRequest extends Observable {
 
-  private Path indexingPath;
+  private UUID id;
+  private List<Path> pathsToIndex;
   private State state;
   private Index targetIndex;
 
   private IndexingRequest() {
+    pathsToIndex = new LinkedList<>();
+    id = UUID.randomUUID();
   }
 
 
@@ -55,8 +61,12 @@ public class IndexingRequest extends Observable {
     return targetIndex;
   }
 
-  public Path getIndexingPath() {
-    return indexingPath.toAbsolutePath();
+  public List<Path> getPaths() {
+    return pathsToIndex;
+  }
+
+  public UUID getId() {
+    return id;
   }
 
   public enum State {
@@ -90,13 +100,15 @@ public class IndexingRequest extends Observable {
       return this;
     }
 
-    public Builder setPath(Path indexingPath) {
-      IndexingRequest.this.indexingPath = indexingPath;
+    public Builder addPathToIndex(Path indexingPath) {
+      IndexingRequest.this.pathsToIndex.add(indexingPath);
       return this;
     }
 
     public boolean checkPrepared() {
-      if (targetIndex != null && indexingPath != null
+      if (targetIndex != null
+          && pathsToIndex != null
+          && pathsToIndex.size() > 0
           && state.code <= State.PREPARED.code
           && state.code != State.ERROR.code) {
         setState(State.PREPARED);

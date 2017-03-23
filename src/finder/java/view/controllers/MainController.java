@@ -2,7 +2,6 @@ package view.controllers;
 
 import index.Index;
 import index.IndexParameters;
-import index.IndexingRequest;
 import index.SearchRequest;
 import index.Storages.Node;
 import java.io.File;
@@ -23,6 +22,7 @@ import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -38,6 +38,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import view.views.IndexCell;
 import view.views.PathCell;
 
@@ -45,6 +46,7 @@ import view.views.PathCell;
 public class MainController {
 
   final String INDICES_DIRECTORY = "indices\\";
+  final String INDEX_FOLDERS_FXML = "../fxml/indexFolders.fxml";
   //  Index index;
   ObservableList<Path> paths;
   ObservableList<Index> indices;
@@ -107,25 +109,28 @@ public class MainController {
     IndexCreationController icc = new IndexCreationController();
     javafx.scene.Node view = icc.getView();
     indexCreationStage.setScene(new Scene((Parent) view));
+
     // show as a modal
     indexCreationStage.initOwner(lv_files.getScene().getWindow());
     indexCreationStage.initModality(Modality.APPLICATION_MODAL);
     indexCreationStage.showAndWait();
 
-    // result handling
+    // result handling - adding index to indices
     IndexParameters parameters = icc.getCreatedParameters();
     String name = icc.getCreatedName();
     if (parameters == null || name == null) {
       return;
     }
     Index temp_index = new Index(name, parameters);
-
     indices.add(temp_index);
-    IndexingRequest.Builder builder = IndexingRequest.getBuilder();
-    IndexingRequest request = builder.setIndex(temp_index)
-                                     .setPath(Paths.get("../"))
-                                     .build();
-    request.execute();
+
+    openIndexFolders(temp_index);
+//
+//    IndexingRequest.Builder builder = IndexingRequest.getBuilder();
+//    IndexingRequest request = builder.setIndex(temp_index)
+//                                     .addPathToIndex(Paths.get("../"))
+//                                     .build();
+//    request.execute();
   }
 
   @FXML
@@ -170,6 +175,27 @@ public class MainController {
   @FXML
   void onSearchChanged(ActionEvent event) {
 
+  }
+
+  private void openIndexFolders(Index index) {
+    // show indexing window
+    try {
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(INDEX_FOLDERS_FXML));
+      Parent indexFolders = (Parent) fxmlLoader.load();
+
+      IndexFoldersController controller = fxmlLoader.getController();
+      controller.setIndex(index);
+
+      Stage stage = new Stage();
+      stage.initModality(Modality.APPLICATION_MODAL);
+      stage.initStyle(StageStyle.UTILITY);
+      stage.setTitle("Index folders");
+      stage.setScene(new Scene(indexFolders));
+      stage.show();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void saveIndexes() {

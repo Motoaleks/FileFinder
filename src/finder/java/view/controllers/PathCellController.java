@@ -37,7 +37,7 @@ public class PathCellController {
   /**
    * Path to fxml view file.
    */
-  private final String cellFileName = "../fxml/cell.fxml";
+  private final String cellFileName = "../fxml/pathCell.fxml";
   /**
    * Thumbnail for file.
    */
@@ -101,13 +101,13 @@ public class PathCellController {
   @FXML
   void initialize() {
     assert iv_thumbnail
-        != null : "fx:id=\"iv_thumbnail\" was not injected: check your FXML file 'cell.fxml'.";
+        != null : "fx:id=\"iv_thumbnail\" was not injected: check your FXML file 'pathCell.fxml'.";
     assert lb_created
-        != null : "fx:id=\"lb_created\" was not injected: check your FXML file 'cell.fxml'.";
+        != null : "fx:id=\"lb_created\" was not injected: check your FXML file 'pathCell.fxml'.";
     assert
-        lb_name != null : "fx:id=\"lb_name\" was not injected: check your FXML file 'cell.fxml'.";
+        lb_name != null : "fx:id=\"lb_name\" was not injected: check your FXML file 'pathCell.fxml'.";
     assert
-        lb_size != null : "fx:id=\"lb_size\" was not injected: check your FXML file 'cell.fxml'.";
+        lb_size != null : "fx:id=\"lb_size\" was not injected: check your FXML file 'pathCell.fxml'.";
   }
 
   /**

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="248.0" prefWidth="355.0" style="-fx-focus-color: transparent;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.IndexFoldersController">
+  <children>
+    <Button fx:id="btn_foldersSelection" cancelButton="false" defaultButton="false" disable="false" maxWidth="1.7976931348623157E308" mnemonicParsing="false" mouseTransparent="false" onAction="#onOpenFileDialog" pickOnBounds="false" prefHeight="36.0" prefWidth="600.0" style="-fx-focus-color: transparent;&#10;-fx-background-radius: 0;" text="Select files and folders" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+      <font>
+        <Font size="12.0" />
+      </font>
+      <VBox.margin>
+        <Insets />
+      </VBox.margin>
+    </Button>
+      <ListView fx:id="lv_filesToIndex" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+      <Button fx:id="btn_index" cancelButton="false" defaultButton="false" disable="false" maxWidth="1.7976931348623157E308" mnemonicParsing="false" mouseTransparent="false" onAction="#onIndexFolders" pickOnBounds="false" prefHeight="36.0" prefWidth="600.0" style="-fx-focus-color: transparent;&#10;-fx-background-radius: 0;" text="Index them" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Button>
+  </children>
+</VBox>

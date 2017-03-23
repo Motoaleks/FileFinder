@@ -11,6 +11,7 @@ package index;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -39,7 +40,7 @@ public class IndexingHandler {
 
     // The number of indexing tasks are not limited and can grow a lot.
     // That is why cached pool will be a good idea.
-    semaphore = new Semaphore(10);
+    semaphore = new Semaphore(10, false);
 
     // Unpack storage and parameters
     this.storage = index.getStorage();
@@ -56,21 +57,20 @@ public class IndexingHandler {
       // start file walking
       try {
         FileVisitorIndexer visitor = new FileVisitorIndexer(request);
-        Files.walkFileTree(request.getIndexingPath(), visitor);
+        for (Path pathToIndex : request.getPaths()) {
+          Files.walkFileTree(pathToIndex, visitor);
+        }
         visitor.waitUntilQueueEnds();
       } catch (IOException e) {
         e.printStackTrace();
-        log.log(Level.SEVERE, "Indexing file tree interrupted: {}",
-                request.getIndexingPath().toAbsolutePath().toString());
+        log.log(Level.SEVERE, "Indexing file tree interrupted: {}", request.getId().toString());
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
-      log.log(Level.SEVERE, "Indexing path interrupted: {}",
-              request.getIndexingPath().toAbsolutePath().toString());
+      log.log(Level.SEVERE, "Indexing path interrupted: {}", request.getId().toString());
     } finally {
       semaphore.release();
-      log.info("Indexing with request \"" + request.getIndexingPath().toAbsolutePath().toString()
-                   + "\" completed");
+      log.info("Indexing with request \"" + request.getId().toString() + "\" completed");
     }
   }
 }

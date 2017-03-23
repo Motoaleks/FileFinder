@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.*?>
+
 <!--
   ~ Created by Aleksandr Smilyanskiy
   ~ Date: 17.03.17 15:14
@@ -15,7 +16,7 @@
   ~ Copyright (c) 2017.
   -->
 
-<BorderPane fx:id="bp_body" prefHeight="43.0" prefWidth="426.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<BorderPane fx:id="bp_body" prefHeight="43.0" prefWidth="239.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <left>
     <Label fx:id="lb_indexName" text="lb_indexName" BorderPane.alignment="CENTER" />
   </left>
