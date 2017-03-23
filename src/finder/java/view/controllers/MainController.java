@@ -25,11 +25,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -127,33 +130,41 @@ public class MainController {
 
   @FXML
   void onSearch(ActionEvent event) {
-    if (indices.get(0) == null) {
+    // get selected index to search in
+    Index selectedIndex = lv_indices.getSelectionModel().getSelectedItem();
+    // if there is no index - show dialog and return
+    if (selectedIndex == null) {
+      Alert alert = new Alert(AlertType.INFORMATION);
+      alert.setTitle("No index selected");
+      alert.setHeaderText(null);
+      alert.setContentText("Select or create-select an index to search in on indices tab.");
+      alert.showAndWait();
       return;
     }
 
+    // building request
     SearchRequest request;
     SearchRequest.Builder builder = SearchRequest.getBuilder();
-    builder.setIndex(indices.get(0))
-           .setSearchFor("test")
+    builder.setIndex(selectedIndex)
+           .setSearchFor(txt_search.getText())
            .setSubstringSearch(cb_seachSubstring.isSelected());
     request = builder.build();
 
+    // todo: обновление списка найденных путей здесь
     paths.clear();
+
+    // execute request
     request.execute();
-    ObservableSet<Node> set = request.getResult();
-    set.addListener((SetChangeListener<? super Node>) change -> {
+    ObservableSet<Node> requestResults = request.getResult();
+    requestResults.addListener((SetChangeListener<? super Node>) change -> {
       if (change.wasAdded()) {
         Set<String> filenames = change.getElementAdded().getFilenames();
         List<Path> filepaths = filenames.stream().map(s -> Paths.get(s))
                                         .collect(Collectors.toList());
 
-        Platform.runLater(() -> {
-          paths.addAll(filepaths);
-        });
+        Platform.runLater(() -> paths.addAll(filepaths));
       }
     });
-//    saveIndexes();
-//    Index index = Index.load(INDICES_DIRECTORY + "test");
   }
 
   @FXML
@@ -237,12 +248,15 @@ public class MainController {
     lv_files.setCellFactory(param -> new PathCell());
     paths = FXCollections.observableArrayList();
     lv_files.setItems(paths);
+    lv_files.setPlaceholder(new Label("Select index to search in and word for search."));
   }
 
   private void initializeIndexList() {
     lv_indices.setCellFactory(param -> new IndexCell());
     indices = FXCollections.observableArrayList();
     lv_indices.setItems(indices);
+    lv_indices.setPlaceholder(new Label("No indices found."));
+    lv_indices.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
   }
 
 }
