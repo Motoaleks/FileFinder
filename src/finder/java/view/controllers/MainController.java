@@ -45,11 +45,10 @@ import view.views.PathCell;
 
 public class MainController {
 
-  final String INDICES_DIRECTORY = "indices\\";
-  final String INDEX_FOLDERS_FXML = "../fxml/indexFolders.fxml";
-  //  Index index;
-  ObservableList<Path> paths;
-  ObservableList<Index> indices;
+  public final static String INDICES_DIRECTORY = "indices\\";
+  public final static String INDEX_FOLDERS_FXML = "../fxml/indexFolders.fxml";
+  private ObservableList<Path> paths;
+  private ObservableList<Index> indices;
 
   @FXML
   private ResourceBundle resources;
@@ -93,7 +92,6 @@ public class MainController {
   @FXML
   private TextField txt_search;
 
-
   @FXML
   void onSubstringSearchChanged(ActionEvent event) {
 
@@ -101,12 +99,11 @@ public class MainController {
 
   @FXML
   void onCreateIndex(ActionEvent event) {
-//    Index temp_index = new Index(new IndexParameters());
     // initialize stage
     Stage indexCreationStage = new Stage();
     indexCreationStage.setTitle("Create index");
     // initialize controller
-    IndexCreationController icc = new IndexCreationController();
+    IndexCreationController icc = new IndexCreationController(indices);
     javafx.scene.Node view = icc.getView();
     indexCreationStage.setScene(new Scene((Parent) view));
 
@@ -125,12 +122,6 @@ public class MainController {
     indices.add(temp_index);
 
     openIndexFolders(temp_index);
-//
-//    IndexingRequest.Builder builder = IndexingRequest.getBuilder();
-//    IndexingRequest request = builder.setIndex(temp_index)
-//                                     .addPathToIndex(Paths.get("../"))
-//                                     .build();
-//    request.execute();
   }
 
   @FXML

@@ -1,0 +1,24 @@
+/*
+ * Created by Aleksandr Smilyanskiy
+ * Date: 24.03.17 20:58
+ * Project: FileFinder
+ *
+ * "The more we do, the more we can do"
+ * Copyright (c) 2017.
+ */
+
+/*.context-menu {*/
+  /*-fx-background-color: #ff0033;*/
+  /*-fx-text-fill: white;*/
+  /*-fx-padding: 0;*/
+/*}*/
+
+/*.context-menu:hover {*/
+  /*-fx-background-color: #ff0033;*/
+  /*-fx-text-fill: white;*/
+/*}*/
+
+.error{
+  -fx-background-color: #ff0033;
+  -fx-text-fill: white;
+}

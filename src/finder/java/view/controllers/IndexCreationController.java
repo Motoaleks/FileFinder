@@ -1,13 +1,16 @@
 package view.controllers;
 
+import index.Index;
 import index.IndexParameters;
 import index.Parameter;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,11 +31,12 @@ import javafx.util.converter.DefaultStringConverter;
 
 public class IndexCreationController {
 
-  private final String indexCreationFileName = "../fxml/indexCreation.fxml";
+  // for errors in name
+  private final String INDEX_CREATION_FXML = "../fxml/indexCreation.fxml";
+  private final ObservableList<Index> indices;
   private IndexParameters parameters;
   private Node view;
   private boolean confirmed;
-
   @FXML
   private ResourceBundle resources;
 
@@ -58,6 +62,10 @@ public class IndexCreationController {
   private TextField tf_indexName;
 
 
+  public IndexCreationController(ObservableList<Index> indices) {
+    this.indices = indices;
+  }
+
   @FXML
   void onAffirmIndexCreation(ActionEvent event) {
     // disable view
@@ -70,7 +78,14 @@ public class IndexCreationController {
 
   @FXML
   void onCreateIndex(ActionEvent event) {
-    toConfirmation();
+    String temp_name = tf_indexName.getText();
+    // if name is not empty && is not (in runtime ||on disk) - go to confirmation
+    if (!"".equals(temp_name) && nameAvailable(temp_name)) {
+      tf_indexName.getStyleClass().remove("error");
+      toConfirmation();
+    } else {
+      tf_indexName.getStyleClass().add("error");
+    }
   }
 
   @FXML
@@ -113,6 +128,11 @@ public class IndexCreationController {
     btn_acceptIndexCreation.setManaged(!enabled);
   }
 
+  private boolean nameAvailable(String name) {
+    boolean fileInMemory = new File(MainController.INDICES_DIRECTORY, name).exists();
+    boolean fileInRuntime = indices.stream().anyMatch(index -> index.getName().equals(name));
+    return !(fileInMemory || fileInRuntime);
+  }
 
   @FXML
   void initialize() {
@@ -132,6 +152,13 @@ public class IndexCreationController {
     parameters = new IndexParameters();
     // initialize paramlist
     initializeParamList();
+
+    // validation textfield - index name
+    tf_indexName.focusedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue) {
+        tf_indexName.getStyleClass().remove("error");
+      }
+    });
 
     // start with editing
     toEditing();
@@ -185,7 +212,7 @@ public class IndexCreationController {
   public Node getView() {
     if (view == null) {
       try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(indexCreationFileName));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(INDEX_CREATION_FXML));
         loader.setController(this);
         view = loader.load();
       } catch (IOException e) {
