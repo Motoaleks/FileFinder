@@ -23,5 +23,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="org.mockito:mockito-core:2.4.0" level="project" />
+    <orderEntry type="library" name="de.ruedigermoeller:fst:2.48" level="project" />
   </component>
 </module>
