@@ -9,6 +9,8 @@
 
 package index;
 
+import index.Storages.FileVisitorIndexerDB;
+import index.Storages.H2Storage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,11 +58,18 @@ public class IndexingHandler {
       semaphore.acquire();
       // start file walking
       try {
-        FileVisitorIndexer visitor = new FileVisitorIndexer(request);
+        FileVisitorIndexer visitor;
+        if (storage instanceof H2Storage){
+          visitor = new FileVisitorIndexerDB(request);
+        } else {
+          visitor = new FileVisitorIndexer(request);
+        }
+
         for (Path pathToIndex : request.getPaths()) {
           Files.walkFileTree(pathToIndex, visitor);
         }
         visitor.waitUntilQueueEnds();
+        visitor.stopCounter();
       } catch (IOException e) {
         e.printStackTrace();
         log.log(Level.SEVERE, "Indexing file tree interrupted: {}", request.getId().toString());

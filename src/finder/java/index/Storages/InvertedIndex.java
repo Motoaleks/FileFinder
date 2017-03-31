@@ -13,7 +13,10 @@ import index.IndexParameters;
 import index.IndexStorageWithLevels;
 import index.Parameter;
 import index.SearchRequest;
+import index.entities.Inclusion;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 import javafx.beans.value.ObservableValue;
@@ -36,20 +39,17 @@ public class InvertedIndex extends IndexStorageWithLevels {
     this.parameters = parameters;
   }
 
-  @Override
-  protected void searchConcrete(SearchRequest request) {
-    synchronized (storage) {
-      Node o = storage.get(request.getSearchFor());
-      if (o != null) {
-        request.addResult(o);
+  private Set<Inclusion> extractFromNode(Node node) {
+    Set<Inclusion> result = new HashSet<>();
+    for (Entry<String, Set<Integer>> entry : node.filesToPos().entrySet()) {
+      for (Integer position : entry.getValue()) {
+        // todo: add date
+        result.add(new Inclusion(Paths.get(entry.getKey()), position, null));
       }
     }
+    return result;
   }
 
-  @Override
-  public void saveToFile() {
-    // todo: saving
-  }
 
   @Override
   public void put(String word, String filepath, int description) {
@@ -81,9 +81,16 @@ public class InvertedIndex extends IndexStorageWithLevels {
   }
 
   @Override
-  protected Node get(String key) {
+  protected Set<Inclusion> get(String key) {
     synchronized (storage) {
-      return storage.get(key);
+      return extractFromNode(storage.get(key));
+    }
+  }
+
+  @Override
+  protected void searchConcrete(SearchRequest request) {
+    synchronized (storage) {
+      request.addResult(extractFromNode(storage.get(request.getSearchFor())));
     }
   }
 
@@ -92,7 +99,7 @@ public class InvertedIndex extends IndexStorageWithLevels {
     synchronized (storage) {
       for (Entry<String, Node> entry : storage.entrySet()) {
         if (entry.getKey().contains(request.getSearchFor())) {
-          request.addResult(entry.getValue());
+          request.addResult(extractFromNode(storage.get(entry.getKey())));
         }
       }
     }

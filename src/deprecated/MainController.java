@@ -19,7 +19,7 @@
 //import javafx.collections.ObservableList;
 //import javafx.event.ActionEvent;
 //import javafx.fxml.FXML;
-//import javafx.scene.Node;
+//import javafx.scene.Occurrence;
 //import javafx.scene.Parent;
 //import javafx.scene.Scene;
 //import javafx.scene.control.Button;
@@ -144,7 +144,7 @@
 //  @FXML
 //  void onCreateIndex(ActionEvent event) {
 //    IndexCreationController icc = new IndexCreationController();
-//    Node view = icc.getView();
+//    Occurrence view = icc.getView();
 //    Stage stage = new Stage();
 //    stage.setTitle("Create index");
 //    stage.setScene(new Scene((Parent) view));

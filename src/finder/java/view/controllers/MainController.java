@@ -3,17 +3,13 @@ package view.controllers;
 import index.Index;
 import index.IndexParameters;
 import index.SearchRequest;
-import index.Storages.Node;
+import index.entities.Inclusion;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -45,9 +41,9 @@ import view.views.PathCell;
 
 public class MainController {
 
-  public final static String INDICES_DIRECTORY = "indices\\";
+  public final static String INDICES_DIRECTORY  = "indices\\";
   public final static String INDEX_FOLDERS_FXML = "../fxml/indexFolders.fxml";
-  private ObservableList<Path> paths;
+  private ObservableList<Path>  paths;
   private ObservableList<Index> indices;
 
   @FXML
@@ -151,14 +147,10 @@ public class MainController {
 
     // execute request
     request.execute();
-    ObservableSet<Node> requestResults = request.getResult();
-    requestResults.addListener((SetChangeListener<? super Node>) change -> {
+    ObservableSet<Inclusion> requestResults = request.getResult();
+    requestResults.addListener((SetChangeListener<? super Inclusion>) change -> {
       if (change.wasAdded()) {
-        Set<String> filenames = change.getElementAdded().getFilenames();
-        List<Path> filepaths = filenames.stream().map(s -> Paths.get(s))
-                                        .collect(Collectors.toList());
-
-        Platform.runLater(() -> paths.addAll(filepaths));
+        Platform.runLater(() -> paths.addAll(change.getElementAdded().getFile()));
       }
     });
   }
@@ -233,29 +225,29 @@ public class MainController {
   @FXML
   void initialize() {
     assert btn_Search
-        != null : "fx:id=\"btn_Search\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"btn_Search\" was not injected: check your FXML file 'main.fxml'.";
     assert btn_createIndex
-        != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'main.fxml'.";
     assert btn_showIndex
-        != null : "fx:id=\"btn_showIndex\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"btn_showIndex\" was not injected: check your FXML file 'main.fxml'.";
     assert lb_status
-        != null : "fx:id=\"lb_status\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"lb_status\" was not injected: check your FXML file 'main.fxml'.";
     assert
         lv_files != null : "fx:id=\"lv_files\" was not injected: check your FXML file 'main.fxml'.";
     assert lv_indices
-        != null : "fx:id=\"lv_indices\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"lv_indices\" was not injected: check your FXML file 'main.fxml'.";
     assert pb_progress
-        != null : "fx:id=\"pb_progress\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"pb_progress\" was not injected: check your FXML file 'main.fxml'.";
     assert ta_preview
-        != null : "fx:id=\"ta_preview\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"ta_preview\" was not injected: check your FXML file 'main.fxml'.";
     assert tab_indexes
-        != null : "fx:id=\"tab_indexes\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"tab_indexes\" was not injected: check your FXML file 'main.fxml'.";
     assert tab_search
-        != null : "fx:id=\"tab_search\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"tab_search\" was not injected: check your FXML file 'main.fxml'.";
     assert txt_search
-        != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'main.fxml'.";
     assert cb_seachSubstring
-        != null : "fx:id=\"cb_seachSubstring\" was not injected: check your FXML file 'main.fxml'.";
+           != null : "fx:id=\"cb_seachSubstring\" was not injected: check your FXML file 'main.fxml'.";
 
     initializePathList();
     initializeIndexList();

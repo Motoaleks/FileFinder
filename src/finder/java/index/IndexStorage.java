@@ -9,16 +9,16 @@
 
 package index;
 
-import index.Storages.Node;
+import index.entities.Inclusion;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 /**
  * Created by: Aleksandr
@@ -30,8 +30,8 @@ import java.util.concurrent.Semaphore;
 public abstract class IndexStorage implements Serializable {
 
   protected transient IndexParameters parameters;
-  protected transient Semaphore semaphore;
-  protected transient Set<Record> indexRecords;
+  protected transient Semaphore       semaphore;
+  protected transient Set<Record>     indexRecords;
 
   public IndexStorage(IndexParameters parameters) {
     this.parameters = parameters;
@@ -41,13 +41,11 @@ public abstract class IndexStorage implements Serializable {
 
   public abstract void search(SearchRequest request);
 
-  public abstract void saveToFile();
-
   public abstract void put(String word, String filepath, int description);
 
   protected abstract Set<String> getKeys();
 
-  protected abstract Node get(String key);
+  protected abstract Set<Inclusion> get(String key);
 
 
   private void readObject(java.io.ObjectInputStream in) throws IOException {
@@ -59,7 +57,7 @@ public abstract class IndexStorage implements Serializable {
 class Record implements Serializable {
 
   private String path;
-  private Date indexingDate;
+  private Date   indexingDate;
 
   Record(Path path) {
     this.path = path.toAbsolutePath().toString();

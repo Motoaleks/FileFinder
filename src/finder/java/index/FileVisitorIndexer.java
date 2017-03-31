@@ -19,7 +19,10 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
@@ -34,14 +37,17 @@ import javafx.collections.ObservableList;
  */
 public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
-  private final int MAX_THREADS = 10;
-  private final String exclude = "[!@#$%^&*()_+1234567890-=|/.,<>]";
-  private ObservableList extensions;
-  private Logger log;
-  private IndexingRequest request;
-  private IndexParameters parameters;
-  private IndexStorage storage;
-  private final Semaphore semaphore;
+  protected final int    MAX_THREADS = 10;
+  protected final String exclude     = "[!@#$%^&*()_+1234567890-=|/.,<>]";
+  protected final Semaphore       semaphore;
+  protected       ObservableList  extensions;
+  protected       Logger          log;
+  protected       IndexingRequest request;
+  protected       IndexParameters parameters;
+  protected       IndexStorage    storage;
+  // todo: delete, only in debug
+  private AtomicLong counter = new AtomicLong();
+  private Timer timer;
 
   public FileVisitorIndexer(IndexingRequest request) {
     this.request = request;
@@ -50,6 +56,15 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     this.extensions = (ObservableList) parameters.getStorage().get(Parameter.FORMATS);
     this.semaphore = new Semaphore(MAX_THREADS);
     this.log = Logger.getLogger(FileVisitorIndexer.class.getName());
+
+    timer = new Timer();
+    counter = new AtomicLong();
+    timer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        System.out.println("Indexed: " + counter.getAndSet(0));
+      }
+    }, 0, 30000);
   }
 
   private static String getExtension(String filename) {
@@ -120,7 +135,7 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     }
   }
 
-  private void indexFile(Path file) {
+  protected void indexFile(Path file) {
     new Thread(() -> {
       try {
         String filepath = file.toAbsolutePath().toString();
@@ -156,6 +171,7 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
             }
           }
         }
+
       } catch (InterruptedException e) {
         log.log(Level.SEVERE, "File indexing interrupted: {}", file.toAbsolutePath().toString());
       } catch (FileNotFoundException e) {
@@ -169,6 +185,11 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     }).start();
   }
 
+  protected String handle(String word) {
+    counter.incrementAndGet();
+    return word.toLowerCase().replaceAll(exclude, "");
+  }
+
   private void indexWord(String word, String filepath, int description) {
     /*
      * description:
@@ -176,11 +197,10 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
      * -1: Filename
      * 0>=: Line number
      */
-    word = word.toLowerCase().replaceAll(exclude, "");
+    word = handle(word);
     if (!"".equals(word)) {
       storage.put(word, filepath, description);
     }
-
   }
 
   @Override
@@ -201,5 +221,11 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     } finally {
       semaphore.release(MAX_THREADS);
     }
+  }
+
+  public void stopCounter() {
+    System.out.println("Indexed: " + counter.getAndSet(0));
+    timer.cancel();
+    timer.purge();
   }
 }

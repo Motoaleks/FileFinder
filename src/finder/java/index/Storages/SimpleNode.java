@@ -11,6 +11,7 @@ package index.Storages;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,20 +35,21 @@ public class SimpleNode implements Node {
   }
 
   @Override
-  public void add(String filepath, int desription) {
+  public void add(String filepath, int description) {
     // only if found in filename
-    if (desription == -1) {
+    if (description == -1) {
       filepaths.add(filepath);
     }
   }
 
   @Override
-  public Set<String> getFilenames() {
+  public Set<String> files() {
     return new HashSet<>(filepaths);
   }
 
   @Override
-  public Set<Integer> getLinenums(String filepath) {
+  public Map<String, Set<Integer>> filesToPos() {
     return null;
   }
+
 }

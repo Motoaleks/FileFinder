@@ -24,10 +24,10 @@ import java.util.UUID;
  */
 public class IndexingRequest extends Observable {
 
-  private UUID id;
+  private UUID       id;
   private List<Path> pathsToIndex;
-  private State state;
-  private Index targetIndex;
+  private State      state;
+  private Index      targetIndex;
 
   private IndexingRequest() {
     pathsToIndex = new LinkedList<>();
@@ -40,11 +40,13 @@ public class IndexingRequest extends Observable {
   }
 
   public void execute() {
-    new Thread(() -> {
-      setState(State.RUNNING);
-      targetIndex.index(this);
-      setState(State.COMPLETED);
-    }).start();
+    new Thread(this::run).start();
+  }
+
+  public void run() {
+    setState(State.RUNNING);
+    targetIndex.index(this);
+    setState(State.COMPLETED);
   }
 
   public State getState() {

@@ -9,9 +9,10 @@
 
 package index;
 
-import index.Storages.Node;
+import index.entities.Inclusion;
 import java.util.HashSet;
 import java.util.Observable;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
@@ -24,14 +25,14 @@ import javafx.collections.ObservableSet;
  */
 public class SearchRequest extends Observable {
 
-  private String searchFor;
-  private Index index;
-  private ObservableSet<Node> result;
-  private State state;
-  private boolean substringSearch;
+  private String                   searchFor;
+  private Index                    index;
+  private ObservableSet<Inclusion> result;
+  private State                    state;
+  private boolean                  substringSearch;
 
   private SearchRequest() {
-    result = FXCollections.observableSet(new HashSet<Node>());
+    result = FXCollections.observableSet(new HashSet<Inclusion>());
     substringSearch = false;
   }
 
@@ -40,16 +41,30 @@ public class SearchRequest extends Observable {
   }
 
   public void execute() {
-    new Thread(() -> {
-      setState(State.RUNNING);
-      index.search(this);
-      setState(State.DONE);
-    }).start();
+    new Thread(this::run).start();
   }
 
-  public ObservableSet<Node> getResult() {
+  public void run() {
+    setState(State.RUNNING);
+    index.search(this);
+    setState(State.DONE);
+  }
+
+  public ObservableSet<Inclusion> getResult() {
     return result;
   }
+
+  public void addResult(Inclusion inclusion) {
+    if (!result.contains(inclusion)) {
+      result.add(inclusion);
+    }
+  }
+
+  public void addResult(Set<Inclusion> inclusionSet) {
+    result.addAll(inclusionSet);
+  }
+
+  //================== GETTERS + SETTERS
 
   public Index getIndex() {
     return index;
@@ -72,11 +87,6 @@ public class SearchRequest extends Observable {
     return substringSearch;
   }
 
-  public void addResult(Node node) {
-    if (!result.contains(node)) {
-      result.add(node);
-    }
-  }
 
   /**
    * SearchRequest stage state.

@@ -10,6 +10,7 @@
 package index.Storages;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -19,11 +20,12 @@ import java.util.Set;
  *
  * "The more we do, the more we can do" ©
  */
-public interface Node extends Serializable{
+public interface Node extends Serializable {
 
-  void add(String filepath, int desription);
+  void add(String filepath, int description);
 
-  Set<String> getFilenames();
+  Set<String> files();
 
-  Set<Integer> getLinenums(String filepath);
+  Map<String, Set<Integer>> filesToPos();
+
 }

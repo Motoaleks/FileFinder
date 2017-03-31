@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping>
+          <factory-entry name="MainEntities" />
+          <factory-entry name="test" />
+        </datasource-mapping>
+        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/finder/java/META-INF/persistence.xml" />
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -22,7 +35,8 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="org.mockito:mockito-core:2.4.0" level="project" />
-    <orderEntry type="library" name="de.ruedigermoeller:fst:2.48" level="project" />
+    <orderEntry type="library" name="Java EE 6-Java EE 6" level="project" />
+    <orderEntry type="library" name="com.h2database:h2:1.4.189" level="project" />
+    <orderEntry type="library" name="org.hibernate:hibernate-entitymanager:5.2.7.Final" level="project" />
   </component>
 </module>

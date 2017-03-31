@@ -20,15 +20,15 @@ public class Main extends Application {
   }
 
   private void configLogger() {
-    Logger log = Logger.getLogger(getClass().getName());
-    log.setLevel(Level.ALL);
+//    Logger log = Logger.getLogger(getClass().getName());
+//    log.setLevel(Level.ALL);
 //    ConsoleHandler handler = new ConsoleHandler();
 //    handler.setFormatter(new SimpleFormatter());
 //    handler.setLevel(Level.ALL);
 //    log.addHandler(handler);
     try {
       LogManager.getLogManager()
-                .readConfiguration(getClass().getResourceAsStream("/logging.properties"));
+                .readConfiguration(getClass().getResourceAsStream("/META-INF/logging.properties"));
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -9,7 +9,7 @@
 
 package index;
 
-import index.Storages.InvertedIndex;
+import index.Storages.H2Storage;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.logging.Logger;
-import org.nustaq.serialization.FSTConfiguration;
+//import org.nustaq.serialization.FSTConfiguration;
 
 /**
  * Created by: Aleksandr
@@ -29,7 +29,7 @@ import org.nustaq.serialization.FSTConfiguration;
  */
 public class Index implements Serializable {
 
-  private static final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+  //  private static final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
   private transient static Logger log;
 
   static {
@@ -37,26 +37,31 @@ public class Index implements Serializable {
   }
 
   private transient IndexingHandler handler;
-  private IndexStorage storage;
-  private IndexParameters parameters;
-  private String name;
+  private           IndexStorage    storage;
+  private           IndexParameters parameters;
+  private           String          name;
 
   // ===============  Constructors
   private Index() {
 
   }
 
-  public Index(String name, IndexParameters parameters) {
-    this(parameters);
+  public Index(String name, IndexParameters parameters, IndexStorage storage) {
+    this.parameters = parameters;
+    this.storage = storage;
+    this.handler = new IndexingHandler(this);
     this.name = name;
   }
 
+  public Index(String name, IndexParameters parameters) {
+    // h2 - default storage
+    this(name, parameters, new H2Storage(parameters));
+  }
+
   private Index(IndexParameters parameters) {
-    this.parameters = parameters;
-    handler = new IndexingHandler(this);
-    storage = new InvertedIndex(parameters);
-    // todo: redo name generating
-    name = "test";
+    // h2 - default storage
+    // todo: remake name generator
+    this("test", parameters, new H2Storage(parameters));
   }
 
   // ===============  Saving

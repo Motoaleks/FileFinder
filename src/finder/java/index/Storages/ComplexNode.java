@@ -10,8 +10,10 @@
 package index.Storages;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,31 +39,34 @@ public class ComplexNode implements Node {
   }
 
   @Override
-  public void add(String filepath, int desription) {
+  public void add(String filepath, int description) {
     Optional<NodeRow> found;
     synchronized (rows) {
       found = rows.stream().filter(nodeRow -> nodeRow.filepath.equals(filepath)).findFirst();
 
       if (found.isPresent()) {
-        found.get().add(desription);
+        found.get().add(description);
       } else {
-        rows.add(new NodeRow(filepath, desription));
+        rows.add(new NodeRow(filepath, description));
       }
     }
   }
 
   @Override
-  public Set<String> getFilenames() {
+  public Set<String> files() {
     synchronized (rows) {
       return rows.stream().map(nodeRow -> nodeRow.filepath).collect(Collectors.toSet());
     }
   }
 
   @Override
-  public Set<Integer> getLinenums(String filepath) {
+  public Map<String, Set<Integer>> filesToPos() {
     synchronized (rows) {
-      return rows.stream().filter(nodeRow -> nodeRow.filepath.equals(filepath))
-                 .map(nodeRow -> nodeRow.rows).findAny().get();
+      Map<String, Set<Integer>> result = new HashMap<>();
+      rows.stream().forEach(nodeRow -> {
+        result.put(nodeRow.filepath, nodeRow.rows);
+      });
+      return result;
     }
   }
 
@@ -69,7 +74,7 @@ public class ComplexNode implements Node {
 
 class NodeRow implements Serializable {
 
-  String filepath;
+  String           filepath;
   HashSet<Integer> rows;
 
   private NodeRow() {

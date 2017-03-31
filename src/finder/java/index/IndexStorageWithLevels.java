@@ -10,10 +10,7 @@
 package index;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +27,7 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
 
   public IndexStorageWithLevels(IndexParameters parameters) {
     super(parameters);
-    if (log == null){
+    if (log == null) {
       log = Logger.getLogger(FileVisitorIndexer.class.getName());
     }
   }
@@ -62,7 +59,7 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
     for (String key : keys) {
       // if request is a part of some key - return node for this key
       if (key.contains(searchFor)) {
-        request.addResult(get(key));
+        request.addResult(get(searchFor));
       }
     }
   }
@@ -75,7 +72,7 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
   protected abstract void searchConcrete(SearchRequest request);
 
   private void readObject(java.io.ObjectInputStream in) throws IOException {
-    if (log == null){
+    if (log == null) {
       log = Logger.getLogger(FileVisitorIndexer.class.getName());
     }
   }
