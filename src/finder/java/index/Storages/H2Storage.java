@@ -17,8 +17,10 @@ import index.Storages.entities.Occurrence;
 import index.Storages.entities.Path;
 import index.Storages.entities.Word;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -36,9 +38,19 @@ public class H2Storage extends IndexStorageWithLevels {
 
   private final EntityManagerFactory managerFactory;
 
-  public H2Storage(IndexParameters parameters) {
+  public H2Storage(IndexParameters parameters, String name) {
     super(parameters);
-    managerFactory = Persistence.createEntityManagerFactory("MainEntities");
+
+//    managerFactory = Persistence.createEntityManagerFactory("myDbFile.odb");
+    Map<String, String> properties = new HashMap<String, String>();
+    properties.put("javax.persistence.jdbc.driver", "org.h2.Driver");
+    properties.put("javax.persistence.jdbc.url", "jdbc:h2:file:./indices/" + name);
+    properties.put("javax.persistence.jdbc.user", "sa");
+    properties.put("javax.persistence.jdbc.password", "");
+    properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+    properties.put("hibernate.hbm2ddl.auto", "update");
+//    properties.put("hibernate.show_sql", "true");
+    managerFactory = Persistence.createEntityManagerFactory("MainEntities", properties);
   }
 
   @Override
@@ -50,6 +62,7 @@ public class H2Storage extends IndexStorageWithLevels {
     put(word, path, description, manager);
 
     manager.getTransaction().commit();
+    manager.close();
   }
 
   public void put(String word, Path path, int description, EntityManager manager) {
@@ -61,7 +74,29 @@ public class H2Storage extends IndexStorageWithLevels {
     manager.persist(occurrenceEntity);
   }
 
+  @Override
+  public long remove(Set<java.nio.file.Path> temp) {
+    EntityManager manager = managerFactory.createEntityManager();
+    manager.getTransaction().begin();
+    long deleted = 0;
+    for (java.nio.file.Path path : temp) {
+      // here we can see leak in word table
+      List<Path> paths = manager.createQuery("SELECT p FROM Path p WHERE path LIKE :path")
+                                .setParameter("path", path.toString().replace("\\", "\\\\") + "%")
+                                .getResultList();
+      for (Path realPath : paths) {
+        manager.remove(realPath);
+      }
+    }
+    manager.getTransaction().commit();
+    manager.close();
+    return deleted;
+  }
+
   public EntityManager createEntityManager() {
+    if (!managerFactory.isOpen()) {
+      return null;
+    }
     return managerFactory.createEntityManager();
   }
 
@@ -69,12 +104,16 @@ public class H2Storage extends IndexStorageWithLevels {
   protected Set<String> getKeys() {
     EntityManager manager = managerFactory.createEntityManager();
     List<Word> resultSet = (List<Word>) manager.createQuery("SELECT w FROM Word w").getResultList();
+    manager.close();
     return resultSet.stream().map(Word::getWord).collect(Collectors.toSet());
   }
 
   @Override
   protected Set<Inclusion> get(String key) {
     EntityManager manager = managerFactory.createEntityManager();
+    if (!manager.isOpen()) {
+      return null;
+    }
 
     List<Occurrence> resultList = manager.createQuery(
         "SELECT o FROM Occurrence o INNER JOIN o.word w INNER JOIN o.path p WHERE w.word = :word")
@@ -83,8 +122,10 @@ public class H2Storage extends IndexStorageWithLevels {
 
     Set<Inclusion> inclusions = new HashSet<>();
     for (Occurrence entry : resultList) {
-      inclusions.add(new Inclusion(Paths.get(entry.getPath().getPath()), entry.getPlace(), entry.getPath().getUpdated()));
+      inclusions
+          .add(new Inclusion(Paths.get(entry.getPath().getPath()), entry.getPlace(), entry.getPath().getUpdated()));
     }
+    manager.close();
 
     return inclusions;
   }
@@ -92,5 +133,10 @@ public class H2Storage extends IndexStorageWithLevels {
   @Override
   protected void searchConcrete(SearchRequest request) {
     request.addResult(get(request.getSearchFor()));
+  }
+
+  @Override
+  public void exit() {
+    managerFactory.close();
   }
 }

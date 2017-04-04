@@ -59,6 +59,9 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
         tokenizer.lowerCaseMode(true);
 
         EntityManager manager = storage.createEntityManager();
+        if (manager == null) {
+          return;
+        }
         EntityTransaction transaction = manager.getTransaction();
         index.Storages.entities.Path path = new index.Storages.entities.Path(filepath);
         transaction.begin();
@@ -92,6 +95,9 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
           }
           if (counter % BATCHING_SIZE == 0) {
             counter = 0;
+            if (!manager.isOpen()){
+              return;
+            }
             manager.flush();
             manager.clear();
           }

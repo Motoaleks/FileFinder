@@ -18,9 +18,12 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 //import org.nustaq.serialization.FSTConfiguration;
 
 /**
@@ -56,13 +59,7 @@ public class Index implements Serializable {
 
   public Index(String name, IndexParameters parameters) {
     // h2 - default storage
-    this(name, parameters, new H2Storage(parameters));
-  }
-
-  private Index(IndexParameters parameters) {
-    // h2 - default storage
-    // todo: remake name generator
-    this("test", parameters, new H2Storage(parameters));
+    this(name, parameters, new H2Storage(parameters, name));
   }
 
   // ===============  Saving
@@ -77,31 +74,40 @@ public class Index implements Serializable {
       // red name + parameters (it's fast operation)
       String indexName = (String) in.readObject();
       IndexParameters indexParameters = (IndexParameters) in.readObject();
+      Set<String> indexedAsStrings = (Set<String>) in.readObject();
+      Set<Path> indexedPaths = indexedAsStrings.stream().map(s -> Paths.get(s)).collect(Collectors.toSet());
+      Class storageClass = (Class) in.readObject();
       // creating index with specified name + parameters
       index = new Index(indexName, indexParameters);
+      index.indexedPaths = indexedPaths;
 
-      // make final index
-      Index finalIndex = index;
-      // run thread with long operation - loading index storage
-      new Thread(() -> {
-        try {
-          // load storage
-          finalIndex.storage = (IndexStorage) in.readObject();
-          // say info
-          log.info("Index " + name + " loaded.");
-        } catch (IOException | ClassNotFoundException e) {
-          log.severe("File-Index " + name + " was not loaded, problem acquired:" + e.getMessage());
-        } finally {
+      if (storageClass == H2Storage.class) {
+        log.info("Index " + name + " loaded.");
+      } else {
+        // make final index
+        Index finalIndex = index;
+        // run thread with long operation - loading index storage
+        new Thread(() -> {
           try {
-            // closing streams
-            fileIn.close();
-            in.close();
-          } catch (IOException e) {
-            log.fine(
-                "File-Index " + name + " was loaded, but streams were not closed. Problem acquired:" + e.getMessage());
+            // load storage
+            finalIndex.storage = (IndexStorage) in.readObject();
+            // say info
+            log.info("Index " + name + " loaded.");
+          } catch (IOException | ClassNotFoundException e) {
+            log.severe("File-Index " + name + " was not loaded, problem acquired:" + e.getMessage());
+          } finally {
+            try {
+              // closing streams
+              fileIn.close();
+              in.close();
+            } catch (IOException e) {
+              log.fine(
+                  "File-Index " + name + " was loaded, but streams were not closed. Problem acquired:" + e
+                      .getMessage());
+            }
           }
-        }
-      }).start();
+        }).start();
+      }
     } catch (Exception e) {
       log.severe("File-Index " + name + " was not loaded, problem acquired:" + e.getMessage());
     }
@@ -116,10 +122,16 @@ public class Index implements Serializable {
       FileOutputStream fileOut = new FileOutputStream(new RandomAccessFile(filename, "rw").getFD());
       ObjectOutputStream out = new ObjectOutputStream(fileOut);
 
+      storage.exit();
       // write objects in order - name, parameters, storage
       out.writeObject(name);
       out.writeObject(parameters);
-      out.writeObject(storage);
+      Set<String> indexedAsStrings = indexedPaths.stream().map(Path::toString).collect(Collectors.toSet());
+      out.writeObject(indexedAsStrings);
+      out.writeObject(storage.getClass());
+      if (!(storage instanceof H2Storage)) {
+        out.writeObject(storage);
+      }
 
       // close streams
       out.flush();
@@ -145,6 +157,13 @@ public class Index implements Serializable {
   public void search(SearchRequest request) {
     log.info("Searching with request \"" + request.getSearchFor() + "\" started");
     storage.search(request);
+  }
+
+  public void remove(Set<Path> temp) {
+    UUID uuid = UUID.randomUUID();
+    log.info("Removing paths from collection #" + uuid + " started.");
+    long deleted = storage.remove(temp);
+    log.info("Removing paths from collection #" + uuid + " ended. [deleted=" + deleted + "]");
   }
 
   // ===============  Getters/Setters

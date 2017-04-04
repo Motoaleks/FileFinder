@@ -14,6 +14,7 @@ import index.IndexStorageWithLevels;
 import index.Parameter;
 import index.SearchRequest;
 import index.Storages.entities.Inclusion;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,6 +86,11 @@ public class InvertedIndex extends IndexStorageWithLevels {
     synchronized (storage) {
       return extractFromNode(storage.get(key));
     }
+  }
+
+  @Override
+  public long remove(Set<Path> temp) {
+    return 0;
   }
 
   @Override

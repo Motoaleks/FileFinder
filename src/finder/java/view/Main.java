@@ -1,9 +1,7 @@
 package view;
 
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,10 +40,10 @@ public class Main extends Application {
 
     MainController controller = loader.getController();
     primaryStage.setOnShown(event -> {
-      controller.loadIndexes();
+      controller.loadIndices();
     });
     primaryStage.setOnCloseRequest(event -> {
-      controller.saveIndexes();
+      controller.saveIndices();
     });
 
     configLogger();

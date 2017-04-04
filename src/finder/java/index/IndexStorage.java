@@ -12,6 +12,7 @@ package index;
 import index.Storages.entities.Inclusion;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
@@ -43,4 +44,9 @@ public abstract class IndexStorage implements Serializable {
   private void readObject(java.io.ObjectInputStream in) throws IOException {
     this.semaphore = new Semaphore(20);
   }
+
+  public void exit() {
+  }
+
+  public abstract long remove(Set<Path> temp);
 }

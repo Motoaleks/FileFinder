@@ -11,11 +11,15 @@ package index.Storages.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
@@ -32,9 +36,12 @@ public class Path implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private int  pid;
+  private int              pid;
   @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-  private Date updated;
+  private Date             updated;
+  @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
+  private List<Occurrence> word;
+
 
   private String path;
 //  @OneToMany(cascade = CascadeType.ALL, mappedBy = "path", orphanRemoval = true, fetch = FetchType.LAZY)

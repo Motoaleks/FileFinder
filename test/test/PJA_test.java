@@ -22,6 +22,7 @@ import index.Storages.entities.Path;
 import index.Storages.entities.Word;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javafx.collections.ObservableSet;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -115,7 +117,7 @@ public class PJA_test {
   @Test
   public void test_index_h2() {
     IndexParameters parameters = new IndexParameters();
-    Index index = new Index("test", parameters, new H2Storage(parameters));
+    Index index = new Index("test", parameters, new H2Storage(parameters, "test"));
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
     IndexingRequest request = builder.setIndex(index)
                                      .addPath(Paths.get("C:/Alex/Downloads"))
@@ -134,7 +136,7 @@ public class PJA_test {
   @Test
   public void test_speed() {
     IndexParameters parameters = new IndexParameters();
-    Index h2 = new Index("test", parameters, new H2Storage(parameters));
+    Index h2 = new Index("test", parameters, new H2Storage(parameters, "test"));
     Index inverted = new Index("test1", parameters, new InvertedIndex(parameters));
 
     final String TESTING_ROUTE = "C:/Alex/Downloads";
@@ -162,6 +164,40 @@ public class PJA_test {
   }
 
   @Test
+  public void test_h2_speed() {
+    final String TESTING_ROUTE = "C:/Alex/Downloads";
+    double sum = 0;
+
+    for (int i = 0; i < 4; i++) {
+      IndexParameters parameters = new IndexParameters();
+      Index h2 = new Index("test", parameters, new H2Storage(parameters, "test"));
+
+      // TESTING SPEED
+      IndexingRequest.Builder builder = IndexingRequest.getBuilder();
+      IndexingRequest request_h2 = builder.setIndex(h2)
+                                          .addPath(Paths.get(TESTING_ROUTE))
+                                          .build();
+
+      double startTime = System.currentTimeMillis();
+      request_h2.run();
+      double endTime = System.currentTimeMillis();
+      sum += endTime - startTime;
+
+      h2.getStorage().exit();
+      System.out.println("Demi-time: " + (endTime - startTime) / 1000);
+      try (Stream<java.nio.file.Path> paths = Files.walk(Paths.get("./indices/"))) {
+        paths.forEach(filePath -> {
+          filePath.toFile().delete();
+        });
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
+    System.out.println("H2 indexing route <" + TESTING_ROUTE + "> speed: " + ((sum / 4) / 1000));
+  }
+
+  @Test
   public void batch_size() {
     Logger.getGlobal().setLevel(Level.OFF);
 
@@ -177,7 +213,7 @@ public class PJA_test {
 
       for (int j = 0; j < MED_COUNT; j++) {
         IndexParameters parameters = new IndexParameters();
-        Index h2 = new Index("test", parameters, new H2Storage(parameters));
+        Index h2 = new Index("test", parameters, new H2Storage(parameters, "test"));
         // TESTING SPEED
         IndexingRequest.Builder builder = IndexingRequest.getBuilder();
         IndexingRequest request_h2 = builder.setIndex(h2)

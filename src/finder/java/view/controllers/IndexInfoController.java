@@ -95,20 +95,25 @@ public class IndexInfoController {
     if (tempIndex.getParameters().equals(oldIndex.getParameters())) {
       // retain new paths
       Set<Path> newPaths = new HashSet<>(paths);
-      newPaths.removeAll(oldIndex.getIndexedPaths());
-      // check size
-      if (newPaths.size() <= 0) {
-        // set status to *no changes*
+      Set<Path> oldPaths = oldIndex.getIndexedPaths();
+      if (oldPaths.containsAll(newPaths) && newPaths.containsAll(oldPaths)) {
+        // nothing changed
         status = 3;
       } else {
-        // build request with new paths
-        IndexingRequest request = IndexingRequest.getBuilder().setIndex(oldIndex).addPaths(newPaths).build();
-        if (request == null) {
-          log.severe("Index request is null - error in building request.");
-          return;
+        Set<Path> temp = oldPaths;
+        temp.removeAll(newPaths);
+        if (temp.size() > 0) {
+          // smth got deleted
+          oldIndex.remove(temp);
         }
-        request.execute();
-        // set status to *old index changes*
+        temp = newPaths;
+        temp.removeAll(oldPaths);
+        if (temp.size() > 0) {
+          // smth got added
+          IndexingRequest request = IndexingRequest.getBuilder().addPaths(temp).setIndex(oldIndex).build();
+          request.execute();
+        }
+        // some changes in old index
         status = 1;
       }
       tempIndex = null;

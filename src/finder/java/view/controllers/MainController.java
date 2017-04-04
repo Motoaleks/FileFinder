@@ -3,6 +3,7 @@ package view.controllers;
 import index.Index;
 import index.IndexParameters;
 import index.SearchRequest;
+import index.Storages.H2Storage;
 import index.Storages.entities.Inclusion;
 import java.io.File;
 import java.io.IOException;
@@ -218,7 +219,7 @@ public class MainController {
     }
   }
 
-  public void saveIndexes() {
+  public void saveIndices() {
     // check for index existing
     if (indices.size() == 0) {
       return;
@@ -238,7 +239,7 @@ public class MainController {
     }).start();
   }
 
-  public void loadIndexes() {
+  public void loadIndices() {
     File indicesDirectory = new File(INDICES_DIRECTORY);
     // check for directory existence, if not - leave method (cause it's no indices dude)
     if (!indicesDirectory.exists()) {

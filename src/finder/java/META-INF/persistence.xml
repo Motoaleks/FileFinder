@@ -12,18 +12,16 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
   version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="MainEntities" transaction-type="RESOURCE_LOCAL">
-    <class>oldIndex.Storages.entities.Word</class>
-    <class>oldIndex.Storages.entities.Occurrence</class>
-    <class>oldIndex.Storages.entities.Path</class>
-    <properties>
-      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:file:./test_database"/>
-      <property name="javax.persistence.jdbc.user" value="sa"/>
-      <property name="javax.persistence.jdbc.password" value=""/>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
-      <property name="hibernate.hbm2ddl.auto" value="create"/>
-      <!--<property name="hibernate.show_sql" value="true"/>-->
-      <!--<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>-->
-    </properties>
+
+    <!--<properties>-->
+      <!--<property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>-->
+      <!--&lt;!&ndash;<property name="javax.persistence.jdbc.url" value="jdbc:h2:file:./test_database"/>&ndash;&gt;-->
+      <!--<property name="javax.persistence.jdbc.user" value="sa"/>-->
+      <!--<property name="javax.persistence.jdbc.password" value=""/>-->
+      <!--<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>-->
+      <!--<property name="hibernate.hbm2ddl.auto" value="create"/>-->
+      <!--&lt;!&ndash;<property name="hibernate.show_sql" value="true"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>&ndash;&gt;-->
+    <!--</properties>-->
   </persistence-unit>
 </persistence>
