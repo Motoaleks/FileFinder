@@ -117,7 +117,7 @@ public class IndexFoldersController {
   public IndexingRequest toRequest() {
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
     for (Path path : pathList) {
-      builder.addPathToIndex(path);
+      builder.addPath(path);
     }
     builder.setIndex(index);
     return builder.build();

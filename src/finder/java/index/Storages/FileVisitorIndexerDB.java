@@ -60,7 +60,7 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
 
         EntityManager manager = storage.createEntityManager();
         EntityTransaction transaction = manager.getTransaction();
-        index.entities.Path path = new index.entities.Path(filepath);
+        index.Storages.entities.Path path = new index.Storages.entities.Path(filepath);
         transaction.begin();
         manager.persist(path);
 

@@ -10,6 +10,7 @@
 package index;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -102,8 +103,13 @@ public class IndexingRequest extends Observable {
       return this;
     }
 
-    public Builder addPathToIndex(Path indexingPath) {
-      IndexingRequest.this.pathsToIndex.add(indexingPath);
+    public Builder addPath(Path path) {
+      IndexingRequest.this.pathsToIndex.add(path);
+      return this;
+    }
+
+    public Builder addPaths(Collection<Path> paths) {
+      IndexingRequest.this.pathsToIndex.addAll(paths);
       return this;
     }
 

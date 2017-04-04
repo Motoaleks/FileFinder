@@ -12,9 +12,9 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
   version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="MainEntities" transaction-type="RESOURCE_LOCAL">
-    <class>index.entities.Word</class>
-    <class>index.entities.Occurrence</class>
-    <class>index.entities.Path</class>
+    <class>oldIndex.Storages.entities.Word</class>
+    <class>oldIndex.Storages.entities.Occurrence</class>
+    <class>oldIndex.Storages.entities.Path</class>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
       <property name="javax.persistence.jdbc.url" value="jdbc:h2:file:./test_database"/>

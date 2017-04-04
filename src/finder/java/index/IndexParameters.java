@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
@@ -29,7 +30,7 @@ import javafx.collections.ObservableMap;
  *
  * "The more we do, the more we can do" ©
  */
-public class IndexParameters implements Serializable {
+public class IndexParameters implements Serializable, Cloneable {
 
   private transient ObservableMap<Parameter, ObservableValue> storage;
 
@@ -54,6 +55,44 @@ public class IndexParameters implements Serializable {
 
   public ObservableMap<Parameter, ObservableValue> getStorage() {
     return storage;
+  }
+
+  public IndexParameters clone() {
+    IndexParameters cloned = new IndexParameters();
+    for (Entry<Parameter, ObservableValue> entry : storage.entrySet()) {
+      Object value = entry.getValue();
+      if (value instanceof SimpleBooleanProperty) {
+        cloned.storage.put(entry.getKey(), new SimpleBooleanProperty(((SimpleBooleanProperty) value).get()));
+      } else if (value instanceof SimpleListProperty) {
+        cloned.storage.put(entry.getKey(), new SimpleListProperty(((SimpleListProperty) value).get()));
+      }
+    }
+    return cloned;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+    if (other == this) {
+      return true;
+    }
+    if (!(other instanceof IndexParameters)) {
+      return false;
+    }
+    IndexParameters otherParameters = (IndexParameters) other;
+    for (Entry<Parameter, ObservableValue> entry : storage.entrySet()) {
+      if (!otherParameters.storage.containsKey(entry.getKey())) {
+        return false;
+      }
+      boolean result = otherParameters.storage.get(entry.getKey()).getValue().equals(entry.getValue().getValue());
+      if (!result) {
+        return false;
+      }
+    }
+    return true;
+//    return this.storage.equals(((IndexParameters) other).storage);
   }
 
   // ---------- Serialization --------------

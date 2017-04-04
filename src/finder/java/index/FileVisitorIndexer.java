@@ -187,7 +187,11 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
   protected String handle(String word) {
     counter.incrementAndGet();
-    return word.toLowerCase().replaceAll(exclude, "");
+    String temp = word.toLowerCase().replaceAll(exclude, "");
+    if (temp.length() > 250) {
+      temp = temp.substring(0, 250);
+    }
+    return temp;
   }
 
   private void indexWord(String word, String filepath, int description) {

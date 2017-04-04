@@ -9,7 +9,7 @@
 
 package index;
 
-import index.entities.Inclusion;
+import index.Storages.entities.Inclusion;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;

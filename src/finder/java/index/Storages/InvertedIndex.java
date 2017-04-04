@@ -13,7 +13,7 @@ import index.IndexParameters;
 import index.IndexStorageWithLevels;
 import index.Parameter;
 import index.SearchRequest;
-import index.entities.Inclusion;
+import index.Storages.entities.Inclusion;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;

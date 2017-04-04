@@ -16,10 +16,10 @@ import index.SearchRequest;
 import index.Storages.FileVisitorIndexerDB;
 import index.Storages.H2Storage;
 import index.Storages.InvertedIndex;
-import index.entities.Inclusion;
-import index.entities.Occurrence;
-import index.entities.Path;
-import index.entities.Word;
+import index.Storages.entities.Inclusion;
+import index.Storages.entities.Occurrence;
+import index.Storages.entities.Path;
+import index.Storages.entities.Word;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -118,7 +118,7 @@ public class PJA_test {
     Index index = new Index("test", parameters, new H2Storage(parameters));
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
     IndexingRequest request = builder.setIndex(index)
-                                     .addPathToIndex(Paths.get("C:/Alex/Downloads"))
+                                     .addPath(Paths.get("C:/Alex/Downloads"))
                                      .build();
     request.run();
 
@@ -142,7 +142,7 @@ public class PJA_test {
     // TESTING SPEED
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
     IndexingRequest request_h2 = builder.setIndex(h2)
-                                        .addPathToIndex(Paths.get(TESTING_ROUTE))
+                                        .addPath(Paths.get(TESTING_ROUTE))
                                         .build();
 
     long startTime = System.currentTimeMillis();
@@ -152,7 +152,7 @@ public class PJA_test {
 
     builder = IndexingRequest.getBuilder();
     IndexingRequest request_inverted = builder.setIndex(inverted)
-                                              .addPathToIndex(Paths.get(TESTING_ROUTE))
+                                              .addPath(Paths.get(TESTING_ROUTE))
                                               .build();
     startTime = System.currentTimeMillis();
     request_inverted.run();
@@ -181,7 +181,7 @@ public class PJA_test {
         // TESTING SPEED
         IndexingRequest.Builder builder = IndexingRequest.getBuilder();
         IndexingRequest request_h2 = builder.setIndex(h2)
-                                            .addPathToIndex(Paths.get(TESTING_ROUTE))
+                                            .addPath(Paths.get(TESTING_ROUTE))
                                             .build();
 
         startTime = System.currentTimeMillis();

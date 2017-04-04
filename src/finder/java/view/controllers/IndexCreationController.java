@@ -2,31 +2,21 @@ package view.controllers;
 
 import index.Index;
 import index.IndexParameters;
-import index.Parameter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Map.Entry;
 import java.util.ResourceBundle;
-import javafx.beans.property.Property;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.converter.DefaultStringConverter;
 
 
 public class IndexCreationController {
@@ -34,11 +24,11 @@ public class IndexCreationController {
   // for errors in name
   private final String INDEX_CREATION_FXML = "../fxml/indexCreation.fxml";
   private final ObservableList<Index> indices;
-  private IndexParameters parameters;
-  private Node view;
-  private boolean confirmed;
+  private       IndexParameters       parameters;
+  private       Node                  view;
+  private       boolean               confirmed;
   @FXML
-  private ResourceBundle resources;
+  private       ResourceBundle        resources;
 
   @FXML
   private URL location;
@@ -137,17 +127,17 @@ public class IndexCreationController {
   @FXML
   void initialize() {
     assert btn_acceptIndexCreation
-        != null : "fx:id=\"btn_acceptIndexCreation\" was not injected: check your FXML file 'indexCreation.fxml'.";
+           != null : "fx:id=\"btn_acceptIndexCreation\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert btn_createIndex
-        != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'indexCreation.fxml'.";
+           != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert btn_returnToConfiguring
-        != null : "fx:id=\"btn_returnToConfiguring\" was not injected: check your FXML file 'indexCreation.fxml'.";
+           != null : "fx:id=\"btn_returnToConfiguring\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert hb_bottomBox
-        != null : "fx:id=\"hb_bottomBox\" was not injected: check your FXML file 'indexCreation.fxml'.";
+           != null : "fx:id=\"hb_bottomBox\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert sp_parameters
-        != null : "fx:id=\"sp_parameters\" was not injected: check your FXML file 'indexCreation.fxml'.";
+           != null : "fx:id=\"sp_parameters\" was not injected: check your FXML file 'indexCreation.fxml'.";
     assert tf_indexName
-        != null : "fx:id=\"tf_indexName\" was not injected: check your FXML file 'indexCreation.fxml'.";
+           != null : "fx:id=\"tf_indexName\" was not injected: check your FXML file 'indexCreation.fxml'.";
 
     parameters = new IndexParameters();
     // initialize paramlist
@@ -165,48 +155,11 @@ public class IndexCreationController {
   }
 
   private void initializeParamList() {
-    // create vbox for scroll view
-    VBox content = new VBox();
-    content.setPadding(new Insets(4, 10, 4, 10));
-    content.setSpacing(10);
+    VBox paramList = (VBox) Controllers.getParamList(parameters);
     sp_parameters.widthProperty().addListener((observable, oldValue, newValue) -> {
-      content.prefWidthProperty().setValue(newValue.intValue() - 20);
+      paramList.prefWidthProperty().setValue(newValue.intValue() - 20);
     });
-    sp_parameters.setContent(content);
-
-    // fill vbox with values
-    for (Entry<Parameter, ObservableValue> parameterEntry : parameters.getStorage().entrySet()) {
-      Node value = null;
-      switch (parameterEntry.getKey().getType()) {
-        case 0: { // case boolean
-          CheckBox temp = new CheckBox(parameterEntry.getKey().name());
-          temp.selectedProperty().bindBidirectional((Property<Boolean>) parameterEntry.getValue());
-          value = temp;
-          break;
-        }
-        case 2: { // case list
-          Label label = new Label(parameterEntry.getKey().name());
-          ListView<String> temp = new ListView<>();
-          temp.setEditable(true);
-          temp.setMaxHeight(100);
-          temp.setCellFactory(param -> {
-            TextFieldListCell tf = new TextFieldListCell(new DefaultStringConverter());
-            tf.setEditable(true);
-            return tf;
-          });
-          temp.setOnEditCommit(event -> {
-            temp.getItems().set(event.getIndex(), event.getNewValue());
-          });
-          temp.itemsProperty().bind(parameterEntry.getValue());
-          value = new VBox(label, temp);
-          break;
-        }
-      }
-
-      if (value != null) {
-        content.getChildren().add(value);
-      }
-    }
+    sp_parameters.setContent(paramList);
   }
 
   public Node getView() {

@@ -55,7 +55,7 @@ public class IndexTest {
   public void simpleCRUD() {
     Index index = createDefault();
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
-    builder.setIndex(index).addPathToIndex(Paths.get(""));
+    builder.setIndex(index).addPath(Paths.get(""));
     IndexingRequest request = builder.build();
 
     Object ring = new Object();

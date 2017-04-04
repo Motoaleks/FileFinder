@@ -24,7 +24,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane prefHeight="400.0" prefWidth="450.0" style="-fx-focus-color: transparent; " xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="view.controllers.MainController">
+<BorderPane prefHeight="400.0" prefWidth="450.0" style="-fx-focus-color: transparent; " xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.MainController">
   <bottom>
     <HBox id="toolBar" alignment="CENTER_RIGHT" fillHeight="true" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT">
       <children>
@@ -93,7 +93,7 @@
                 <HBox alignment="CENTER_LEFT" fillHeight="true" pickOnBounds="true" prefHeight="38.0" prefWidth="450.0" spacing="5.0" BorderPane.alignment="TOP_LEFT">
                   <children>
                     <Button id="btn_addIndex" fx:id="btn_createIndex" mnemonicParsing="false" onAction="#onCreateIndex" prefHeight="31.0" prefWidth="89.0" text="Create indexRequest" underline="false" wrapText="true" HBox.hgrow="ALWAYS" />
-                    <Button id="btn_showInfo" fx:id="btn_showIndex" mnemonicParsing="false" prefHeight="31.0" prefWidth="89.0" text="Show info" underline="false" wrapText="true" />
+                    <Button id="btn_showInfo" fx:id="btn_showIndex" mnemonicParsing="false" onAction="#onShowIndexInfo" prefHeight="31.0" prefWidth="89.0" text="Show info" underline="false" wrapText="true" />
                   </children>
                   <padding>
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

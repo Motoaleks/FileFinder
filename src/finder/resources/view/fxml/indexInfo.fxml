@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Created by Aleksandr Smilyanskiy
+  ~ Date: 01.04.17 22:14
+  ~ Project: FileFinder
+  ~
+  ~ "The more we do, the more we can do"
+  ~ Copyright (c) 2017.
+  -->
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox minHeight="290.0" minWidth="-Infinity" prefHeight="450.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.IndexInfoController">
+  <padding>
+    <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+  </padding>
+   <children>
+     <Label text="Name" />
+     <TextField fx:id="tf_name" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="156.0" />
+     <Separator prefWidth="200.0">
+       <padding>
+         <Insets bottom="5.0" top="5.0" />
+       </padding>
+     </Separator>
+     <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="331.0" VBox.vgrow="NEVER">
+       <VBox.margin>
+         <Insets bottom="4.0" top="2.0" />
+       </VBox.margin>
+         <children>
+           <Label text="Parameters" />
+         <Label ellipsisString="" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="241.0" text="All folders reindex needed" textFill="#656464" textOverrun="CLIP" wrapText="true" HBox.hgrow="ALWAYS">
+           <graphic>
+             <ImageView fitHeight="17.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@../../img/exclamation_severe.png" />
+                </image>
+             </ImageView>
+           </graphic>
+           <font>
+             <Font size="11.0" />
+           </font>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+         </Label>
+         </children>
+     </HBox>
+     <ScrollPane fx:id="sp_parameters" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="342.0" VBox.vgrow="ALWAYS" />
+     <Separator prefWidth="200.0">
+       <padding>
+         <Insets bottom="5.0" top="5.0" />
+       </padding>
+     </Separator>
+      <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="331.0">
+         <children>
+           <Label text="Indexing paths" />
+            <Label ellipsisString="" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="241.0" text="Additional paths oldIndex needed" textFill="#656464" textOverrun="CLIP" wrapText="true" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font size="11.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="17.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/exclamation_info.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets bottom="4.0" top="2.0" />
+         </VBox.margin>
+      </HBox>
+     <ScrollPane fx:id="sp_paths" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="342.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS" />
+     <HBox prefHeight="48.0" prefWidth="262.0" VBox.vgrow="NEVER">
+        <children>
+          <Button fx:id="btn_addPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onAddPath" prefHeight="67.0" prefWidth="128.0" text="Add" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+              <Insets bottom="2.0" right="2.0" top="2.0" />
+            </HBox.margin>
+          </Button>
+          <Button fx:id="btn_removePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRemovePath" prefHeight="67.0" prefWidth="125.0" text="Remove" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+              <Insets bottom="2.0" left="2.0" top="2.0" />
+            </HBox.margin>
+          </Button>
+        </children>
+         <VBox.margin>
+            <Insets top="4.0" />
+         </VBox.margin>
+     </HBox>
+     <Separator prefWidth="200.0">
+       <padding>
+         <Insets bottom="5.0" top="5.0" />
+       </padding>
+     </Separator>
+     <Button fx:id="btn_reindex" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onReindex" text="Reindex" VBox.vgrow="SOMETIMES">
+       <VBox.margin>
+         <Insets bottom="4.0" />
+       </VBox.margin>
+     </Button>
+   </children>
+</VBox>

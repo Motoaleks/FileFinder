@@ -7,7 +7,7 @@
  * Copyright (c) 2017.
  */
 
-package index.entities;
+package index.Storages.entities;
 
 import java.io.Serializable;
 import javax.persistence.Entity;

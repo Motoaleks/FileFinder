@@ -7,7 +7,7 @@
  * Copyright (c) 2017.
  */
 
-package index.entities;
+package index.Storages.entities;
 
 import java.nio.file.Path;
 import java.util.Date;

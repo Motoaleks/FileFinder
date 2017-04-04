@@ -3,7 +3,7 @@ package view.controllers;
 import index.Index;
 import index.IndexParameters;
 import index.SearchRequest;
-import index.entities.Inclusion;
+import index.Storages.entities.Inclusion;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -43,6 +43,7 @@ public class MainController {
 
   public final static String INDICES_DIRECTORY  = "indices\\";
   public final static String INDEX_FOLDERS_FXML = "../fxml/indexFolders.fxml";
+  public final static String INDEX_INFO_FXML    = "../fxml/indexInfo.fxml";
   private ObservableList<Path>  paths;
   private ObservableList<Index> indices;
 
@@ -160,6 +161,42 @@ public class MainController {
 
   }
 
+  @FXML
+  void onShowIndexInfo(ActionEvent event) {
+    if (lv_indices.getSelectionModel().getSelectedItem() == null) {
+      Alert alert = new Alert(AlertType.INFORMATION);
+      alert.setTitle("");
+      alert.setHeaderText("Index not selected");
+      alert.setContentText("Please, select index in list to show info.");
+      alert.showAndWait();
+      return;
+    }
+
+    try {
+      // load parent node
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(INDEX_INFO_FXML));
+      Parent indexInfoNode = loader.load();
+      // prepare stage
+      Stage indexInfoStage = new Stage();
+      indexInfoStage.setTitle("Index info");
+      indexInfoStage.setScene(new Scene(indexInfoNode));
+      // set up controller
+      IndexInfoController controller = loader.getController();
+      Index selectedIndex = lv_indices.getSelectionModel().getSelectedItem();
+      controller.setIndex(selectedIndex);
+      indexInfoStage.showAndWait();
+
+      if (controller.getStatus() == 2) {
+        // if index is redone - remove old add new one
+        indices.remove(selectedIndex);
+        indices.add(controller.getResult());
+      }
+      lv_indices.refresh();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   private void openIndexFolders(Index index) {
     // show indexing window
     try {
@@ -249,8 +286,12 @@ public class MainController {
     assert cb_seachSubstring
            != null : "fx:id=\"cb_seachSubstring\" was not injected: check your FXML file 'main.fxml'.";
 
+    // initialize lists
     initializePathList();
     initializeIndexList();
+
+    // connect properties
+    btn_showIndex.disableProperty().bind(lv_indices.getSelectionModel().selectedIndexProperty().isEqualTo(-1));
   }
 
   private void initializePathList() {

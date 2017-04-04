@@ -17,6 +17,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 //import org.nustaq.serialization.FSTConfiguration;
 
@@ -30,23 +33,21 @@ import java.util.logging.Logger;
 public class Index implements Serializable {
 
   //  private static final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-  private transient static Logger log;
-
-  static {
-    log = Logger.getLogger(Index.class.getName());
-  }
+  private transient static Logger log = Logger.getLogger(Index.class.getName());
 
   private transient IndexingHandler handler;
   private           IndexStorage    storage;
   private           IndexParameters parameters;
   private           String          name;
+  private           Set<Path>       indexedPaths;
 
   // ===============  Constructors
   private Index() {
-
+    this.indexedPaths = new HashSet<>();
   }
 
   public Index(String name, IndexParameters parameters, IndexStorage storage) {
+    this();
     this.parameters = parameters;
     this.storage = storage;
     this.handler = new IndexingHandler(this);
@@ -135,6 +136,9 @@ public class Index implements Serializable {
 
   public void index(IndexingRequest request) {
     log.info("Indexing with request \"" + request.getId().toString() + "\" started");
+    // add paths to history
+    indexedPaths.addAll(request.getPaths());
+    // index paths
     handler.index(request);
   }
 
@@ -154,5 +158,23 @@ public class Index implements Serializable {
 
   public String getName() {
     return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public Set<Path> getIndexedPaths() {
+    return indexedPaths;
+  }
+
+  public Index clone() {
+    Index cloned = new Index();
+    cloned.handler = new IndexingHandler(cloned);
+    cloned.storage = this.storage; // just a reference, not a real copy
+    cloned.parameters = this.parameters.clone();
+    cloned.name = this.name;
+    cloned.indexedPaths = new HashSet<>(this.indexedPaths);
+    return cloned;
   }
 }
