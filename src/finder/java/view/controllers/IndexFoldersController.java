@@ -71,11 +71,11 @@ public class IndexFoldersController {
   @FXML
   void initialize() {
     assert btn_index
-        != null : "fx:id=\"btn_index\" was not injected: check your FXML file 'indexFolders.fxml'.";
+           != null : "fx:id=\"btn_index\" was not injected: check your FXML file 'indexFolders.fxml'.";
     assert btn_foldersSelection
-        != null : "fx:id=\"btn_foldersSelection\" was not injected: check your FXML file 'indexFolders.fxml'.";
+           != null : "fx:id=\"btn_foldersSelection\" was not injected: check your FXML file 'indexFolders.fxml'.";
     assert lv_filesToIndex
-        != null : "fx:id=\"lv_filesToIndex\" was not injected: check your FXML file 'indexFolders.fxml'.";
+           != null : "fx:id=\"lv_filesToIndex\" was not injected: check your FXML file 'indexFolders.fxml'.";
 
     // initialize list
     pathList = FXCollections.observableArrayList();

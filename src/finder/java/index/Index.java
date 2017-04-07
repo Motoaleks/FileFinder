@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-//import org.nustaq.serialization.FSTConfiguration;
 
 /**
  * Created by: Aleksandr
@@ -39,10 +38,10 @@ public class Index implements Serializable {
   private transient static Logger log = Logger.getLogger(Index.class.getName());
 
   private transient IndexingHandler handler;
-  private           IndexStorage    storage;
-  private           IndexParameters parameters;
-  private           String          name;
-  private           Set<Path>       indexedPaths;
+  private IndexStorage storage;
+  private IndexParameters parameters;
+  private String name;
+  private Set<Path> indexedPaths;
 
   // ===============  Constructors
   private Index() {

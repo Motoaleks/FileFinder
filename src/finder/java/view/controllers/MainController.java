@@ -3,7 +3,6 @@ package view.controllers;
 import index.Index;
 import index.IndexParameters;
 import index.SearchRequest;
-import index.Storages.H2Storage;
 import index.Storages.entities.Inclusion;
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +41,10 @@ import view.views.PathCell;
 
 public class MainController {
 
-  public final static String INDICES_DIRECTORY  = "indices\\";
+  public final static String INDICES_DIRECTORY = "indices\\";
   public final static String INDEX_FOLDERS_FXML = "../fxml/indexFolders.fxml";
-  public final static String INDEX_INFO_FXML    = "../fxml/indexInfo.fxml";
-  private ObservableList<Path>  paths;
+  public final static String INDEX_INFO_FXML = "../fxml/indexInfo.fxml";
+  private ObservableList<Path> paths;
   private ObservableList<Index> indices;
 
   @FXML

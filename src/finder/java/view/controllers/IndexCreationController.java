@@ -24,11 +24,11 @@ public class IndexCreationController {
   // for errors in name
   private final String INDEX_CREATION_FXML = "../fxml/indexCreation.fxml";
   private final ObservableList<Index> indices;
-  private       IndexParameters       parameters;
-  private       Node                  view;
-  private       boolean               confirmed;
+  private IndexParameters parameters;
+  private Node view;
+  private boolean confirmed;
   @FXML
-  private       ResourceBundle        resources;
+  private ResourceBundle resources;
 
   @FXML
   private URL location;

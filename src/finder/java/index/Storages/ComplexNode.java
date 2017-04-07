@@ -74,7 +74,7 @@ public class ComplexNode implements Node {
 
 class NodeRow implements Serializable {
 
-  String           filepath;
+  String filepath;
   HashSet<Integer> rows;
 
   private NodeRow() {

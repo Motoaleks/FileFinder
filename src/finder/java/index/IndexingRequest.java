@@ -25,10 +25,10 @@ import java.util.UUID;
  */
 public class IndexingRequest extends Observable {
 
-  private UUID       id;
+  private UUID id;
   private List<Path> pathsToIndex;
-  private State      state;
-  private Index      targetIndex;
+  private State state;
+  private Index targetIndex;
 
   private IndexingRequest() {
     pathsToIndex = new LinkedList<>();

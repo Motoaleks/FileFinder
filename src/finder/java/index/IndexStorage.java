@@ -25,7 +25,7 @@ import java.util.concurrent.Semaphore;
  */
 public abstract class IndexStorage implements Serializable {
 
-  public static final int SEARCH_REQUESTS_PERMITS = 3;
+  public static final int SEARCH_REQUESTS_PERMITS = 5;
   protected transient IndexParameters parameters;
   protected transient Semaphore semaphore;
 

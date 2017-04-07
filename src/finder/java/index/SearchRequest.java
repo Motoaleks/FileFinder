@@ -25,11 +25,11 @@ import javafx.collections.ObservableSet;
  */
 public class SearchRequest extends Observable {
 
-  private String                   searchFor;
-  private Index                    index;
+  private String searchFor;
+  private Index index;
   private ObservableSet<Inclusion> result;
-  private State                    state;
-  private boolean                  substringSearch;
+  private State state;
+  private boolean substringSearch;
 
   private SearchRequest() {
     result = FXCollections.observableSet(new HashSet<Inclusion>());

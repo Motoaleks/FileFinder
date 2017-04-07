@@ -10,8 +10,6 @@
 package index;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +23,7 @@ import java.util.logging.Logger;
  */
 public abstract class IndexStorageWithLevels extends IndexStorage {
 
-  private static transient Logger    log;
+  private static transient Logger log;
 
   public IndexStorageWithLevels(IndexParameters parameters) {
     super(parameters);

@@ -101,9 +101,9 @@ public class PathCellController {
   @FXML
   void initialize() {
     assert iv_thumbnail
-        != null : "fx:id=\"iv_thumbnail\" was not injected: check your FXML file 'pathCell.fxml'.";
+           != null : "fx:id=\"iv_thumbnail\" was not injected: check your FXML file 'pathCell.fxml'.";
     assert lb_created
-        != null : "fx:id=\"lb_created\" was not injected: check your FXML file 'pathCell.fxml'.";
+           != null : "fx:id=\"lb_created\" was not injected: check your FXML file 'pathCell.fxml'.";
     assert
         lb_name != null : "fx:id=\"lb_name\" was not injected: check your FXML file 'pathCell.fxml'.";
     assert

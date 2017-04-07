@@ -62,11 +62,11 @@ public class IndexCellController {
   @FXML
   void initialize() {
     assert lb_indexName
-        != null : "fx:id=\"lb_indexName\" was not injected: check your FXML file 'indexCell.fxml'.";
+           != null : "fx:id=\"lb_indexName\" was not injected: check your FXML file 'indexCell.fxml'.";
     assert lb_selectionStatus
-        != null : "fx:id=\"lb_selectionStatus\" was not injected: check your FXML file 'indexCell.fxml'.";
+           != null : "fx:id=\"lb_selectionStatus\" was not injected: check your FXML file 'indexCell.fxml'.";
     assert bp_body
-        != null : "fx:id=\"bp_body\" was not injected: check your FXML file 'indexCell.fxml'.";
+           != null : "fx:id=\"bp_body\" was not injected: check your FXML file 'indexCell.fxml'.";
   }
 
   public void setIndex(Index item) {

@@ -36,7 +36,7 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
 
   private boolean numbers =
       parameters.get(Parameter.NUMBERS) != null && (boolean) parameters.get(Parameter.NUMBERS).getValue();
-  private boolean words   =
+  private boolean words =
       parameters.get(Parameter.WORDS).getValue() != null && (boolean) parameters.get(Parameter.WORDS).getValue();
 
   public FileVisitorIndexerDB(IndexingRequest request) {
@@ -95,7 +95,7 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
           }
           if (counter % BATCHING_SIZE == 0) {
             counter = 0;
-            if (!manager.isOpen()){
+            if (!manager.isOpen()) {
               return;
             }
             manager.flush();

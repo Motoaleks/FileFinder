@@ -31,10 +31,10 @@ import java.util.logging.Logger;
 public class IndexingHandler {
 
   public static final int INDEX_REQUESTS_PERMITS = 3;
-  protected final IndexStorage    storage;
+  protected final IndexStorage storage;
   protected final IndexParameters parameters;
   protected final List<Parameter> available;
-  private final   Semaphore       semaphore;
+  private final Semaphore semaphore;
   Logger log = Logger.getLogger(IndexingHandler.class.getName());
 
   public IndexingHandler(Index index) {
@@ -43,7 +43,7 @@ public class IndexingHandler {
 
     // The number of indexing tasks are not limited and can grow a lot.
     // That is why cached pool will be a good idea.
-  semaphore = new Semaphore(INDEX_REQUESTS_PERMITS, false);
+    semaphore = new Semaphore(INDEX_REQUESTS_PERMITS, false);
 
     // Unpack storage and parameters
     this.storage = index.getStorage();

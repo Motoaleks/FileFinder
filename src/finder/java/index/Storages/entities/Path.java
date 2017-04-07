@@ -12,7 +12,6 @@ package index.Storages.entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,9 +35,9 @@ public class Path implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private int              pid;
+  private int pid;
   @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-  private Date             updated;
+  private Date updated;
   @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
   private List<Occurrence> word;
 

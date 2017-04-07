@@ -16,7 +16,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  * Represents all available indexing algorithms parameters. Each algorithm can support not all of
