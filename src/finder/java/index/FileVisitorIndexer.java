@@ -37,14 +37,15 @@ import javafx.collections.ObservableList;
  */
 public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
-  protected final int    MAX_THREADS = 10;
-  protected final String exclude     = "[!@#$%^&*()_+1234567890-=|/.,<>]";
-  protected final Semaphore       semaphore;
-  protected       ObservableList  extensions;
-  protected       Logger          log;
-  protected       IndexingRequest request;
-  protected       IndexParameters parameters;
-  protected       IndexStorage    storage;
+  protected final int FILE_INDEX_PERMITS = 3;
+  protected final String exclude = "[!@#$%^&*()_+1234567890-=|/.,<>]";
+  protected final Semaphore semaphore;
+  protected ObservableList extensions;
+  protected Logger log;
+  protected IndexingRequest request;
+  protected IndexParameters parameters;
+  protected IndexStorage storage;
+
   // todo: delete, only in debug
   private AtomicLong counter = new AtomicLong();
   private Timer timer;
@@ -54,7 +55,7 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     this.parameters = request.getTargetIndex().getParameters();
     this.storage = request.getTargetIndex().getStorage();
     this.extensions = (ObservableList) parameters.getStorage().get(Parameter.FORMATS);
-    this.semaphore = new Semaphore(MAX_THREADS);
+    this.semaphore = new Semaphore(FILE_INDEX_PERMITS);
     this.log = Logger.getLogger(FileVisitorIndexer.class.getName());
 
     timer = new Timer();
@@ -219,11 +220,11 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
   public void waitUntilQueueEnds() {
     try {
-      semaphore.acquire(MAX_THREADS);
+      semaphore.acquire(FILE_INDEX_PERMITS);
     } catch (InterruptedException e) {
       e.printStackTrace();
     } finally {
-      semaphore.release(MAX_THREADS);
+      semaphore.release(FILE_INDEX_PERMITS);
     }
   }
 

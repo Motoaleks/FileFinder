@@ -25,12 +25,13 @@ import java.util.concurrent.Semaphore;
  */
 public abstract class IndexStorage implements Serializable {
 
+  public static final int SEARCH_REQUESTS_PERMITS = 3;
   protected transient IndexParameters parameters;
-  protected transient Semaphore       semaphore;
+  protected transient Semaphore semaphore;
 
   public IndexStorage(IndexParameters parameters) {
     this.parameters = parameters;
-    this.semaphore = new Semaphore(20);
+    this.semaphore = new Semaphore(SEARCH_REQUESTS_PERMITS);
   }
 
   public abstract void search(SearchRequest request);
@@ -42,7 +43,7 @@ public abstract class IndexStorage implements Serializable {
   protected abstract Set<Inclusion> get(String key);
 
   private void readObject(java.io.ObjectInputStream in) throws IOException {
-    this.semaphore = new Semaphore(20);
+    this.semaphore = new Semaphore(SEARCH_REQUESTS_PERMITS);
   }
 
   public void exit() {
