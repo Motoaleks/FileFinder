@@ -28,7 +28,7 @@ import javafx.scene.layout.BorderPane;
  */
 public class IndexCellController {
 
-  private final String INDEX_CELL_FXML = "../fxml/indexCell.fxml";
+  private final String INDEX_CELL_FXML = "/view/fxml/indexCell.fxml";
 
   @FXML
   private ResourceBundle resources;

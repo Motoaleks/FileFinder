@@ -42,8 +42,8 @@ import view.views.PathCell;
 public class MainController {
 
   public final static String INDICES_DIRECTORY = "indices\\";
-  public final static String INDEX_FOLDERS_FXML = "../fxml/indexFolders.fxml";
-  public final static String INDEX_INFO_FXML = "../fxml/indexInfo.fxml";
+  public final static String INDEX_FOLDERS_FXML = "/view/fxml/indexFolders.fxml";
+  public final static String INDEX_INFO_FXML = "/view/fxml/indexInfo.fxml";
   private ObservableList<Path> paths;
   private ObservableList<Index> indices;
 

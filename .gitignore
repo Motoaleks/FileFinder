@@ -17,6 +17,7 @@ hs_err_pid*
 
 #generated data
 *.ser
-indices/
+/indices/
 *.db
-lib/
+/lib/
+/target/

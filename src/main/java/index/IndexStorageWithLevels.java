@@ -59,7 +59,7 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
     for (String key : keys) {
       // if request is a part of some key - return node for this key
       if (key.contains(searchFor)) {
-        request.addResult(get(searchFor));
+        request.addResult(get(key));
       }
     }
   }

@@ -81,7 +81,7 @@ public class H2Storage extends IndexStorageWithLevels {
     long deleted = 0;
     for (java.nio.file.Path path : temp) {
       // here we can see leak in word table
-      List<Path> paths = manager.createQuery("SELECT p FROM Path p WHERE path LIKE :path")
+      List<Path> paths = manager.createQuery("SELECT p FROM Path p WHERE p.path LIKE :path")
                                 .setParameter("path", path.toString().replace("\\", "\\\\") + "%")
                                 .getResultList();
       for (Path realPath : paths) {
@@ -115,10 +115,10 @@ public class H2Storage extends IndexStorageWithLevels {
       return null;
     }
 
-    List<Occurrence> resultList = manager.createQuery(
-        "SELECT o FROM Occurrence o INNER JOIN o.word w INNER JOIN o.path p WHERE w.word = :word")
-                                         .setParameter("word", key)
-                                         .getResultList();
+    List<Occurrence> occurances = manager.createQuery("SELECT o FROM Occurrence o").getResultList();
+    List<Occurrence> resultList = (List<Occurrence>) manager.createQuery("SELECT o FROM Occurrence o WHERE o.word.word = :word")
+                                                            .setParameter("word", key)
+                                                            .getResultList();
 
     Set<Inclusion> inclusions = new HashSet<>();
     for (Occurrence entry : resultList) {

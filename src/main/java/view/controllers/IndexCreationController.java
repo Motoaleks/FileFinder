@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 public class IndexCreationController {
 
   // for errors in name
-  private final String INDEX_CREATION_FXML = "../fxml/indexCreation.fxml";
+  private final String INDEX_CREATION_FXML = "/view/fxml/indexCreation.fxml";
   private final ObservableList<Index> indices;
   private IndexParameters parameters;
   private Node view;

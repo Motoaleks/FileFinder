@@ -1,6 +1,7 @@
 package view;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.LogManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +12,7 @@ import view.controllers.MainController;
 
 public class Main extends Application {
 
-  private static String MAIN_FXML = "fxml/main.fxml";
+  private static String MAIN_FXML = "/view/fxml/main.fxml";
 
   public static void main(String[] args) {
     launch(args);
@@ -25,8 +26,7 @@ public class Main extends Application {
 //    handler.setLevel(Level.ALL);
 //    log.addHandler(handler);
     try {
-      LogManager.getLogManager()
-                .readConfiguration(getClass().getResourceAsStream("/META-INF/logging.properties"));
+      LogManager.getLogManager().readConfiguration(getClass().getResourceAsStream("/META-INF/logging.properties"));
     } catch (IOException e) {
       e.printStackTrace();
     }
