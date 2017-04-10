@@ -2,6 +2,8 @@ package view.controllers;
 
 import index.Index;
 import index.IndexParameters;
+import index.IndexingRequest;
+import index.Request;
 import index.SearchRequest;
 import index.Storages.entities.Inclusion;
 import java.io.File;
@@ -12,6 +14,8 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -46,6 +50,7 @@ public class MainController {
   public final static String INDEX_INFO_FXML = "/view/fxml/indexInfo.fxml";
   private ObservableList<Path> paths;
   private ObservableList<Index> indices;
+  private ObservableList<Request> requestQueue;
 
   @FXML
   private ResourceBundle resources;
@@ -184,6 +189,7 @@ public class MainController {
       IndexInfoController controller = loader.getController();
       Index selectedIndex = lv_indices.getSelectionModel().getSelectedItem();
       controller.setIndex(selectedIndex);
+      controller.setMainStage(this);
       indexInfoStage.showAndWait();
 
       if (controller.getStatus() == 2) {
@@ -205,6 +211,7 @@ public class MainController {
 
       IndexFoldersController controller = fxmlLoader.getController();
       controller.setIndex(index);
+      controller.setMainController(this);
 
       Stage stage = new Stage();
       stage.initModality(Modality.APPLICATION_MODAL);
@@ -212,7 +219,6 @@ public class MainController {
       stage.setTitle("Index folders");
       stage.setScene(new Scene(indexFolders));
       stage.show();
-
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -289,6 +295,7 @@ public class MainController {
     // initialize lists
     initializePathList();
     initializeIndexList();
+    initializeStatusQueue();
 
     // connect properties
     btn_showIndex.disableProperty().bind(lv_indices.getSelectionModel().selectedIndexProperty().isEqualTo(-1));
@@ -309,4 +316,56 @@ public class MainController {
     lv_indices.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
   }
 
+  private void initializeStatusQueue() {
+    requestQueue = FXCollections.observableArrayList();
+    lb_status.visibleProperty().bind(Bindings.size(requestQueue).greaterThan(0));
+    pb_progress.visibleProperty().bind(Bindings.size(requestQueue).greaterThan(0));
+
+//    // listeners for actions
+//    ChangeListener<String> statusListener = (observable1, oldValue, newValue) -> Platform.runLater(() -> {
+//      lb_status.setText(newValue);
+//    });
+//    ChangeListener<Number> progressListener = (observable1, oldValue, newValue) -> {
+//      Platform.runLater(() -> {
+//        pb_progress.setProgress((Double) newValue);
+//      });
+//      if ((double) newValue >= 1) {
+//        requestQueue.remove(request);
+//      }
+//    };
+
+    requestQueue.addListener((InvalidationListener) observable -> {
+      if (requestQueue.size() <= 0) {
+        return;
+      }
+//      if (requestQueue.size() >= 2) {
+//        Request oldRequest = requestQueue.get(requestQueue.size() - 1);
+//        oldRequest.statusProperty().removeListener();
+//      }
+
+      Request request = requestQueue.get(requestQueue.size() - 1);
+
+//
+//      request.statusProperty().addListener(statusListener);
+//      request.progressProperty().addListener(progressListener);
+
+      Platform.runLater(() -> {
+        lb_status.textProperty().bind(request.statusProperty());
+        pb_progress.progressProperty().bind(request.progressProperty());
+        request.progressProperty().addListener((observable1, oldValue, newValue) -> {
+          if (newValue.doubleValue() >= 1.) {
+            requestQueue.remove(request);
+          }
+        });
+      });
+//      Platform.runLater(() -> {
+//        lb_status.setText(request.statusProperty().getValue());
+//        pb_progress.setProgress(request.progressProperty().getValue());
+//      });
+    });
+  }
+
+  public void registerRequest(IndexingRequest request) {
+    requestQueue.add(request);
+  }
 }

@@ -1,17 +1,18 @@
 /*
  * Created by Aleksandr Smilyanskiy
- * Date: 29.03.17 13:13
+ * Date: 10.04.17 0:44
  * Project: FileFinder
  *
  * "The more we do, the more we can do"
  * Copyright (c) 2017.
  */
 
-package index.Storages;
+package index;
 
 import index.FileVisitorIndexer;
 import index.IndexingRequest;
 import index.Parameter;
+import index.Storages.H2Storage;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -114,6 +115,7 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
       } finally {
         // release semaphore for indexing file operation
         semaphore.release();
+        request.incrementFileCounter(1);
       }
     }).start();
   }

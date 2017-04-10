@@ -66,6 +66,7 @@ public class IndexInfoController {
 
   @FXML
   private Button btn_removePath;
+  private MainController mainStage;
 
   @FXML
   void onAddPath() {
@@ -100,17 +101,18 @@ public class IndexInfoController {
         // nothing changed
         status = 3;
       } else {
-        Set<Path> temp = oldPaths;
+        Set<Path> temp = new HashSet<>(oldPaths);
         temp.removeAll(newPaths);
         if (temp.size() > 0) {
           // smth got deleted
           oldIndex.remove(temp);
         }
-        temp = newPaths;
+        temp = new HashSet<>(newPaths);
         temp.removeAll(oldPaths);
         if (temp.size() > 0) {
           // smth got added
           IndexingRequest request = IndexingRequest.getBuilder().addPaths(temp).setIndex(oldIndex).build();
+          mainStage.registerRequest(request);
           request.execute();
         }
         // some changes in old index
@@ -125,6 +127,7 @@ public class IndexInfoController {
     // new parameters - recreate index
     Index temp = new Index(oldIndex.getName(), tempIndex.getParameters());
     IndexingRequest request = IndexingRequest.getBuilder().setIndex(temp).addPaths(paths).build();
+    mainStage.registerRequest(request);
     request.execute();
 
     //set status to *new index created*
@@ -183,5 +186,9 @@ public class IndexInfoController {
 
     // set status to operating
     status = 0;
+  }
+
+  public void setMainStage(MainController mainStage) {
+    this.mainStage = mainStage;
   }
 }

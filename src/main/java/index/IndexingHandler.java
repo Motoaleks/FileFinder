@@ -9,7 +9,6 @@
 
 package index;
 
-import index.Storages.FileVisitorIndexerDB;
 import index.Storages.H2Storage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +16,6 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -54,33 +52,26 @@ public class IndexingHandler {
     return available;
   }
 
-  public void index(IndexingRequest request) {
+  public void index(IndexingRequest request) throws IOException, InterruptedException {
     try {
       semaphore.acquire();
-      // start file walking
-      try {
-        FileVisitorIndexer visitor;
-        if (storage instanceof H2Storage) {
-          visitor = new FileVisitorIndexerDB(request);
-        } else {
-          visitor = new FileVisitorIndexer(request);
-        }
 
-        for (Path pathToIndex : request.getPaths()) {
-          Files.walkFileTree(pathToIndex, visitor);
-        }
-        visitor.waitUntilQueueEnds();
-        visitor.stopCounter();
-      } catch (IOException e) {
-        e.printStackTrace();
-        log.log(Level.SEVERE, "Indexing file tree interrupted: {}", request.getId().toString());
+      FileVisitorIndexer visitor;
+      if (storage instanceof H2Storage) {
+        visitor = new FileVisitorIndexerDB(request);
+      } else {
+        visitor = new FileVisitorIndexer(request);
       }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-      log.log(Level.SEVERE, "Indexing path interrupted: {}", request.getId().toString());
+
+      // start file walking
+      for (Path pathToIndex : request.getPaths()) {
+        Files.walkFileTree(pathToIndex, visitor);
+      }
+      request.setTitlesIndexed(true);
+      visitor.waitUntilQueueEnds();
+      visitor.stopCounter();
     } finally {
       semaphore.release();
-      log.info("Indexing with request \"" + request.getId().toString() + "\" completed");
     }
   }
 }

@@ -9,11 +9,11 @@
 
 package test;
 
+import index.FileVisitorIndexerDB;
 import index.Index;
 import index.IndexParameters;
 import index.IndexingRequest;
 import index.SearchRequest;
-import index.Storages.FileVisitorIndexerDB;
 import index.Storages.H2Storage;
 import index.Storages.InvertedIndex;
 import index.Storages.entities.Inclusion;
@@ -33,6 +33,9 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableSet;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -242,6 +245,19 @@ public class PJA_test {
     for (int i = 0; i < 3; i++) {
       System.out.println(i);
     }
+  }
+
+  @Test
+  public void bindings_javafx() {
+    IntegerProperty num1 = new SimpleIntegerProperty(1);
+    IntegerProperty num2 = new SimpleIntegerProperty(2);
+    num1.addListener((observable, oldValue, newValue) -> System.out.println("Value num1 changed: " + newValue));
+    num2.addListener((observable, oldValue, newValue) -> System.out.println("Value num2 changed: " + newValue));
+    NumberBinding sum = num1.add(num2);
+    sum.addListener((observable, oldValue, newValue) -> System.out.println("Value sum changed: " + newValue));
+    System.out.println(sum.getValue());
+    num1.set(2);
+    System.out.println(sum.getValue());
   }
 
 }

@@ -45,7 +45,6 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
   protected IndexingRequest request;
   protected IndexParameters parameters;
   protected IndexStorage storage;
-
   // todo: delete, only in debug
   private AtomicLong counter = new AtomicLong();
   private Timer timer;
@@ -124,6 +123,7 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
     // check extension --FORMATS--
     if ("".equals(extension)) {
+      request.incrementFileCounter(1);
       return;
     }
 
@@ -133,6 +133,8 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     if ((fileIndexing != null && (Boolean) fileIndexing.getValue())
         && (extensions.contains(extension) || extensions.contains("*"))) {
       indexFile(file);
+    } else {
+      request.incrementFileCounter(1);
     }
   }
 
@@ -182,6 +184,7 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
       } finally {
         // release semaphore for indexing file operation
         semaphore.release();
+        request.incrementFileCounter(1);
       }
     }).start();
   }

@@ -29,6 +29,7 @@ public class IndexFoldersController {
   private ObservableList<Path> pathList;
   private Index index;
   private volatile SimpleBooleanProperty hasFiles = new SimpleBooleanProperty(false);
+  private MainController mainController;
 
   @FXML
   private ResourceBundle resources;
@@ -62,7 +63,10 @@ public class IndexFoldersController {
     IndexingRequest request = toRequest();
     // check if request can be built
     if (request != null) {
-      toRequest().execute();
+      if (mainController != null) {
+        mainController.registerRequest(request);
+      }
+      request.execute();
     }
     // close window
     ((Stage) (btn_index.getScene().getWindow())).close();
@@ -125,5 +129,9 @@ public class IndexFoldersController {
 
   public void setIndex(Index index) {
     this.index = index;
+  }
+
+  public void setMainController(MainController mainController) {
+    this.mainController = mainController;
   }
 }

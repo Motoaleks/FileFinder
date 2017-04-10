@@ -29,7 +29,7 @@
     <HBox id="toolBar" alignment="CENTER_RIGHT" fillHeight="true" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT">
       <children>
         <Label id="lb_progressName" fx:id="lb_status" text="Status" />
-        <ProgressBar id="pb_progressStatus" fx:id="pb_progress" prefWidth="200.0" progress="0.0">
+        <ProgressBar id="pb_progressStatus" fx:id="pb_progress" prefWidth="200.0">
           <HBox.margin>
             <Insets left="5.0" />
           </HBox.margin>

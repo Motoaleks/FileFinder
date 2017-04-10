@@ -150,7 +150,13 @@ public class Index implements Serializable {
     // add paths to history
     indexedPaths.addAll(request.getPaths());
     // index paths
-    handler.index(request);
+    try {
+      handler.index(request);
+      log.info("Indexing with request \"" + request.getId().toString() + "\" completed.");
+    } catch (IOException | InterruptedException e) {
+      log.severe("Indexing path \"" + request.getId().toString() + "\" interrupted.\n" + e.getMessage());
+      e.printStackTrace();
+    }
   }
 
   public void search(SearchRequest request) {

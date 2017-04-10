@@ -23,7 +23,7 @@ import javafx.collections.ObservableSet;
  *
  * "The more we do, the more we can do" ©
  */
-public class SearchRequest extends Observable {
+public class SearchRequest extends Observable  {
 
   private String searchFor;
   private Index index;
