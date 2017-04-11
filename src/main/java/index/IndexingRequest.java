@@ -17,13 +17,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 
 /**
@@ -35,12 +35,15 @@ import javafx.beans.property.SimpleLongProperty;
  */
 public class IndexingRequest extends Observable implements Request {
 
-  private final SimpleLongProperty processedNumberOfFiles = new SimpleLongProperty(0);
+  //  private final SimpleLongProperty processedNumberOfFiles = new SimpleLongProperty(0);
   private final SimpleBooleanProperty filesCounted = new SimpleBooleanProperty(false);
-  private final DoubleBinding progress;
   private final SimpleBooleanProperty titlesIndexed = new SimpleBooleanProperty(false);
+  private final SimpleDoubleProperty progress = new SimpleDoubleProperty(-1);
+  private final AtomicLong filesIndexed = new AtomicLong(0);
   private final StringBinding indexStatus;
-  private long totalNumberOfFiles = 0;
+  private long fileCount = 0;
+  private int UPDATE_INTERVAL;
+  private int update_counter;
 
   private UUID id;
   private List<Path> pathsToIndex;
@@ -50,13 +53,13 @@ public class IndexingRequest extends Observable implements Request {
   private IndexingRequest() {
     pathsToIndex = new LinkedList<>();
     id = UUID.randomUUID();
-    progress = Bindings.createDoubleBinding(() -> {
-      if (totalNumberOfFiles == 0 || !filesCounted.getValue()) {
-        return -1.;
-      } else {
-        return ((double) (processedNumberOfFiles.getValue())) / totalNumberOfFiles;
-      }
-    }, processedNumberOfFiles);
+//    progress = Bindings.createDoubleBinding(() -> {
+//      if (totalNumberOfFiles == 0 || !filesCounted.getValue()) {
+//        return -1.;
+//      } else {
+//        return ((double) (processedNumberOfFiles.getValue())) / totalNumberOfFiles;
+//      }
+//    }, processedNumberOfFiles);
     indexStatus = Bindings.createStringBinding(() -> {
       if (!filesCounted.getValue()) {
         return "Counting files";
@@ -80,12 +83,12 @@ public class IndexingRequest extends Observable implements Request {
   public void run() {
     setState(State.RUNNING);
     // count total number of files
-    new Thread(this::countTotalNumber).start();
+    new Thread(this::countFileCount).start();
     targetIndex.index(this);
     setState(State.COMPLETED);
   }
 
-  public void countTotalNumber() {
+  private void countFileCount() {
     for (Path path : pathsToIndex) {
       if (path.toFile().isDirectory()) {
         try {
@@ -94,9 +97,11 @@ public class IndexingRequest extends Observable implements Request {
           e.printStackTrace();
         }
       } else {
-        totalNumberOfFiles += 1;
+        fileCount += 1;
       }
     }
+    UPDATE_INTERVAL = (int) Math.ceil((double) fileCount / 1000);
+    update_counter = 0;
     Platform.runLater(() -> {
       filesCounted.set(true);
     });
@@ -107,22 +112,24 @@ public class IndexingRequest extends Observable implements Request {
       if (iterPath.toFile().isDirectory()) {
         count(iterPath);
       } else {
-        totalNumberOfFiles += 1;
+        fileCount += 1;
       }
     }
   }
 
-  public void incrementFileCounter(int count) {
-    Platform.runLater(() -> {
-//      synchronized (processedNumberOfFiles) {
-        processedNumberOfFiles.set(processedNumberOfFiles.getValue() + count);
-//      }
-    });
-//    synchronized (processedNumberOfFiles) {
-//      Platform.runLater(() -> {
-//        processedNumberOfFiles.set(processedNumberOfFiles.getValue() + count);
-//      });
-//    }
+  private int counter = 0;
+  void incrementFileCounter(int count) {
+    long temp = filesIndexed.addAndGet(count);
+    update_counter += 1;
+    if (filesCounted.getValue() && UPDATE_INTERVAL != 0) {
+      update_counter = update_counter & UPDATE_INTERVAL;
+      if (update_counter == 0) {
+        Platform.runLater(() -> {
+          progress.set(temp / fileCount);
+          System.out.println(counter++);
+        });
+      }
+    }
   }
 
   public void setTitlesIndexed(boolean titlesIndexed) {
@@ -130,7 +137,6 @@ public class IndexingRequest extends Observable implements Request {
       this.titlesIndexed.set(titlesIndexed);
       this.indexStatus.invalidate();
     });
-//    this.titlesIndexed.set(titlesIndexed);
   }
 
   public State getState() {
@@ -161,7 +167,7 @@ public class IndexingRequest extends Observable implements Request {
   }
 
   @Override
-  public DoubleBinding progressProperty() {
+  public SimpleDoubleProperty progressProperty() {
     return progress;
   }
 

@@ -9,8 +9,8 @@
 
 package index;
 
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.SimpleDoubleProperty;
 
 /**
  * Created by: Aleksandr
@@ -23,5 +23,5 @@ public interface Request {
 
   StringBinding statusProperty();
 
-  DoubleBinding progressProperty();
+  SimpleDoubleProperty progressProperty();
 }

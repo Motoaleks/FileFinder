@@ -321,33 +321,12 @@ public class MainController {
     lb_status.visibleProperty().bind(Bindings.size(requestQueue).greaterThan(0));
     pb_progress.visibleProperty().bind(Bindings.size(requestQueue).greaterThan(0));
 
-//    // listeners for actions
-//    ChangeListener<String> statusListener = (observable1, oldValue, newValue) -> Platform.runLater(() -> {
-//      lb_status.setText(newValue);
-//    });
-//    ChangeListener<Number> progressListener = (observable1, oldValue, newValue) -> {
-//      Platform.runLater(() -> {
-//        pb_progress.setProgress((Double) newValue);
-//      });
-//      if ((double) newValue >= 1) {
-//        requestQueue.remove(request);
-//      }
-//    };
-
     requestQueue.addListener((InvalidationListener) observable -> {
       if (requestQueue.size() <= 0) {
         return;
       }
-//      if (requestQueue.size() >= 2) {
-//        Request oldRequest = requestQueue.get(requestQueue.size() - 1);
-//        oldRequest.statusProperty().removeListener();
-//      }
 
       Request request = requestQueue.get(requestQueue.size() - 1);
-
-//
-//      request.statusProperty().addListener(statusListener);
-//      request.progressProperty().addListener(progressListener);
 
       Platform.runLater(() -> {
         lb_status.textProperty().bind(request.statusProperty());
@@ -358,10 +337,6 @@ public class MainController {
           }
         });
       });
-//      Platform.runLater(() -> {
-//        lb_status.setText(request.statusProperty().getValue());
-//        pb_progress.setProgress(request.progressProperty().getValue());
-//      });
     });
   }
 
