@@ -166,9 +166,11 @@ public class Index implements Serializable {
     return indexed;
   }
 
-  public void search(SearchRequest request) {
+  public long search(SearchRequest request) {
     log.info("Searching with request \"" + request.getSearchFor() + "\" started");
-    storage.search(request);
+    long found = storage.search(request);
+    log.info("Searching with request \"" + request.getSearchFor() + "\" completed");
+    return found;
   }
 
   public void remove(Set<Path> temp) {

@@ -57,7 +57,7 @@ public class MainController {
   private ObservableList<Path> paths;
   private ObservableList<Index> indices;
   //  private ObservableList<Request> requestQueue;
-  private final ExecutorService requests =Executors.newCachedThreadPool();
+  private final ExecutorService requests = Executors.newCachedThreadPool();
   private final ObservableList<Task<Long>> taskQueue = FXCollections.observableArrayList();
 
   @FXML
@@ -161,7 +161,17 @@ public class MainController {
     paths.clear();
 
     // execute request
-    request.execute();
+    if (request != null) {
+      addTask(request);
+    } else {
+      Alert alert = new Alert(AlertType.ERROR);
+      alert.setTitle("Search failed");
+      alert.setHeaderText(null);
+      alert.setContentText("Failed to create search request.");
+      alert.showAndWait();
+      return;
+    }
+
     ObservableSet<Inclusion> requestResults = request.getResult();
     requestResults.addListener((SetChangeListener<? super Inclusion>) change -> {
       if (change.wasAdded()) {

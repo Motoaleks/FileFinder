@@ -15,6 +15,7 @@ import java.util.Observable;
 import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
+import javafx.concurrent.Task;
 
 /**
  * Created by: Aleksandr
@@ -23,12 +24,11 @@ import javafx.collections.ObservableSet;
  *
  * "The more we do, the more we can do" ©
  */
-public class SearchRequest extends Observable  {
+public class SearchRequest extends Task<Long> {
 
   private String searchFor;
   private Index index;
   private ObservableSet<Inclusion> result;
-  private State state;
   private boolean substringSearch;
 
   private SearchRequest() {
@@ -36,18 +36,15 @@ public class SearchRequest extends Observable  {
     substringSearch = false;
   }
 
+  @Override
+  protected Long call() throws Exception {
+    updateMessage("Searching files");
+    long found = index.search(this);
+    return found;
+  }
+
   public static Builder getBuilder() {
     return new SearchRequest().new Builder();
-  }
-
-  public void execute() {
-    new Thread(this::run).start();
-  }
-
-  public void run() {
-    setState(State.RUNNING);
-    index.search(this);
-    setState(State.DONE);
   }
 
   public ObservableSet<Inclusion> getResult() {
@@ -74,66 +71,9 @@ public class SearchRequest extends Observable  {
     return searchFor;
   }
 
-  public State getState() {
-    return state;
-  }
-
-  private void setState(State state) {
-    this.state = state;
-    notifyObservers(state);
-  }
 
   public Boolean getSubstringSearch() {
     return substringSearch;
-  }
-
-
-  /**
-   * SearchRequest stage state.
-   */
-  public enum State {
-    /**
-     * Error occurred.
-     */
-    ERROR(-1),
-    /**
-     * Created, but not finally initialized.
-     */
-    PENDING(0),
-    /**
-     * Prepared, all fields correctly initialized, but not started.
-     */
-    PREPARED(1),
-    /**
-     * Search working.
-     */
-    RUNNING(2),
-    /**
-     * Search done.
-     */
-    DONE(3);
-
-    /**
-     * Stage code.
-     */
-    private int code;
-
-    State(int code) {
-      this.code = code;
-    }
-
-    public int code() {
-      return code;
-    }
-
-    /**
-     * Indicates if all fields are correctly initialized.
-     *
-     * @return True if stage is above or equals PREPARED.
-     */
-    public boolean prepared() {
-      return code >= State.PREPARED.code;
-    }
   }
 
   /**
@@ -145,7 +85,7 @@ public class SearchRequest extends Observable  {
      * Initializing with Pending state - nothing is ready.
      */
     private Builder() {
-      setState(State.PENDING);
+
     }
 
     /**
@@ -184,7 +124,6 @@ public class SearchRequest extends Observable  {
       if (searchFor != null
           && !"".equals(searchFor)
           && index != null) {
-        setState(State.PREPARED);
         return true;
       }
       return false;

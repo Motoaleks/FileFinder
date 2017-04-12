@@ -33,24 +33,19 @@ public abstract class IndexStorageWithLevels extends IndexStorage {
   }
 
   @Override
-  public void search(SearchRequest request) {
-    int acquired = 0;
-    try {
-      semaphore.acquire();
-      acquired++;
-      searchConcrete(request);
-      if (request.getSubstringSearch()) {
-        searchSimilar(request);
-      }
-      semaphore.acquire();
-      acquired++;
-      searchStraightInFiles(request);
-    } catch (InterruptedException e) {
-      log.log(Level.SEVERE, "Search interrupted: {}", request.getSearchFor());
-    } finally {
-      semaphore.release(acquired);
-      log.info("Searching with request \"" + request.getSearchFor() + "\" completed");
+  public long search(SearchRequest request) {
+    searchConcrete(request);
+    if (request.isCancelled()) {
+      return request.getResult().size();
     }
+    if (request.getSubstringSearch()) {
+      searchSimilar(request);
+    }
+    if (request.isCancelled()) {
+      return request.getResult().size();
+    }
+    searchStraightInFiles(request);
+    return request.getResult().size();
   }
 
   protected void searchSimilar(SearchRequest request) {

@@ -131,26 +131,6 @@ public class IndexingRequest extends Task<Long> {
     updateMessage(message);
   }
 
-  public enum State {
-    ERROR(-1),
-    PENDING(0),
-    PREPARED(1),
-    RUNNING(2),
-    PAUSED(3),
-    STOPPED(4),
-    COMPLETED(5);
-
-    private int code;
-
-    State(int stateCode) {
-      code = stateCode;
-    }
-
-    int code() {
-      return code;
-    }
-  }
-
   public class Builder {
 
     private Builder() {

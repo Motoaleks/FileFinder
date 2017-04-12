@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -27,24 +29,19 @@ public abstract class IndexStorage implements Serializable {
 
   public static final int SEARCH_REQUESTS_PERMITS = 5;
   protected transient IndexParameters parameters;
-  protected transient Semaphore semaphore;
+//  protected transient ExecutorService service = Executors.newFixedThreadPool(SEARCH_REQUESTS_PERMITS);
 
   public IndexStorage(IndexParameters parameters) {
     this.parameters = parameters;
-    this.semaphore = new Semaphore(SEARCH_REQUESTS_PERMITS);
   }
 
-  public abstract void search(SearchRequest request);
+  public abstract long search(SearchRequest request);
 
   public abstract void put(String word, String filepath, int description);
 
   protected abstract Set<String> getKeys();
 
   protected abstract Set<Inclusion> get(String key);
-
-  private void readObject(java.io.ObjectInputStream in) throws IOException {
-    this.semaphore = new Semaphore(SEARCH_REQUESTS_PERMITS);
-  }
 
   public void exit() {
   }

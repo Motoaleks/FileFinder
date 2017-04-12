@@ -11,9 +11,6 @@ package test;
 
 import index.Index;
 import index.IndexParameters;
-import index.IndexingRequest;
-import index.IndexingRequest.State;
-import java.nio.file.Paths;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;

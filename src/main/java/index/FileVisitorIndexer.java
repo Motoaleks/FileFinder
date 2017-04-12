@@ -41,9 +41,9 @@ import javafx.collections.ObservableList;
  */
 public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
-  //  protected final int FILE_INDEX_PERMITS = 3;
+    protected final int FILE_INDEX_PERMITS = 3;
   //  protected final Semaphore semaphore;
-  protected final ExecutorService service = Executors.newFixedThreadPool(3);
+  protected final ExecutorService service = Executors.newFixedThreadPool(FILE_INDEX_PERMITS);
 //  protected final Executor executor;
 
 
