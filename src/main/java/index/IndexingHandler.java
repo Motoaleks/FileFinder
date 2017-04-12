@@ -52,7 +52,7 @@ public class IndexingHandler {
     return available;
   }
 
-  public void index(IndexingRequest request) throws IOException, InterruptedException {
+  public long index(IndexingRequest request) throws IOException, InterruptedException {
     try {
       semaphore.acquire();
 
@@ -62,16 +62,16 @@ public class IndexingHandler {
       } else {
         visitor = new FileVisitorIndexer(request);
       }
-
       // start file walking
       for (Path pathToIndex : request.getPaths()) {
         Files.walkFileTree(pathToIndex, visitor);
       }
-      request.setTitlesIndexed(true);
+      request.setStatus("Indexing file content");
       visitor.waitUntilQueueEnds();
       visitor.stopCounter();
     } finally {
       semaphore.release();
     }
+    return -1;
   }
 }

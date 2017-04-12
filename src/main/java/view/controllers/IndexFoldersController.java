@@ -46,6 +46,7 @@ public class IndexFoldersController {
 
   @FXML
   private ListView<Path> lv_filesToIndex;
+  private boolean validated;
 
 
   @FXML
@@ -60,15 +61,7 @@ public class IndexFoldersController {
 
   @FXML
   void onIndexFolders(ActionEvent event) {
-    IndexingRequest request = toRequest();
-    // check if request can be built
-    if (request != null) {
-      if (mainController != null) {
-        mainController.registerRequest(request);
-      }
-      request.execute();
-    }
-    // close window
+    validated = true;
     ((Stage) (btn_index.getScene().getWindow())).close();
   }
 
@@ -119,6 +112,9 @@ public class IndexFoldersController {
 
 
   public IndexingRequest toRequest() {
+    if (!validated) {
+      return null;
+    }
     IndexingRequest.Builder builder = IndexingRequest.getBuilder();
     for (Path path : pathList) {
       builder.addPath(path);

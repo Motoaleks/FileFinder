@@ -117,8 +117,8 @@
 //    SearchRequest searchRequest = requestBuilder.build();
 //    // todo: add result saving
 //    // get result reference
-//    Result result = searchRequest.getResult();
-//    resultList = FXCollections.observableArrayList(result.getResult());
+//    Result result = searchRequest.toIndex();
+//    resultList = FXCollections.observableArrayList(result.toIndex());
 //    // setting items to listview
 //    lv_files.setItems(resultList);
 //    // setting cell factory, initializing with special cell caching class.

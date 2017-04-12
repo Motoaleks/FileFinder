@@ -3,7 +3,6 @@ package view.controllers;
 import index.Index;
 import index.IndexParameters;
 import index.IndexingRequest;
-import index.Request;
 import index.SearchRequest;
 import index.Storages.entities.Inclusion;
 import java.io.File;
@@ -12,14 +11,21 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -50,7 +56,9 @@ public class MainController {
   public final static String INDEX_INFO_FXML = "/view/fxml/indexInfo.fxml";
   private ObservableList<Path> paths;
   private ObservableList<Index> indices;
-  private ObservableList<Request> requestQueue;
+  //  private ObservableList<Request> requestQueue;
+  private final ExecutorService requests =Executors.newCachedThreadPool();
+  private final ObservableList<Task<Long>> taskQueue = FXCollections.observableArrayList();
 
   @FXML
   private ResourceBundle resources;
@@ -104,6 +112,7 @@ public class MainController {
     // initialize stage
     Stage indexCreationStage = new Stage();
     indexCreationStage.setTitle("Create index");
+
     // initialize controller
     IndexCreationController icc = new IndexCreationController(indices);
     javafx.scene.Node view = icc.getView();
@@ -120,10 +129,10 @@ public class MainController {
     if (parameters == null || name == null) {
       return;
     }
-    Index temp_index = new Index(name, parameters);
-    indices.add(temp_index);
+    Index index = new Index(name, parameters);
+    indices.add(index);
 
-    openIndexFolders(temp_index);
+    openIndexFilesForm(index);
   }
 
   @FXML
@@ -192,10 +201,17 @@ public class MainController {
       controller.setMainStage(this);
       indexInfoStage.showAndWait();
 
-      if (controller.getStatus() == 2) {
-        // if index is redone - remove old add new one
-        indices.remove(selectedIndex);
-        indices.add(controller.getResult());
+      IndexingRequest request = controller.toRequest();
+      Index index = controller.toIndex();
+      // check for core changes
+      if (index != null) {
+        // if core changes made - remake an index
+        indices.remove(index);
+        indices.add(index);
+      }
+      // check for checnges in pahts
+      if (request != null) {
+        addTask(request);
       }
       lv_indices.refresh();
     } catch (IOException e) {
@@ -203,11 +219,11 @@ public class MainController {
     }
   }
 
-  private void openIndexFolders(Index index) {
+  private void openIndexFilesForm(Index index) {
     // show indexing window
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(INDEX_FOLDERS_FXML));
-      Parent indexFolders = (Parent) fxmlLoader.load();
+      Parent indexFolders = fxmlLoader.load();
 
       IndexFoldersController controller = fxmlLoader.getController();
       controller.setIndex(index);
@@ -218,10 +234,21 @@ public class MainController {
       stage.initStyle(StageStyle.UTILITY);
       stage.setTitle("Index folders");
       stage.setScene(new Scene(indexFolders));
-      stage.show();
+      stage.showAndWait();
+
+      // add request to queue
+      IndexingRequest request = controller.toRequest();
+      if (request != null) {
+        addTask(request);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  private void addTask(Task<Long> task) {
+    requests.submit(task);
+    taskQueue.add(task);
   }
 
   public void saveIndices() {
@@ -295,7 +322,7 @@ public class MainController {
     // initialize lists
     initializePathList();
     initializeIndexList();
-    initializeStatusQueue();
+    initializeTaskQueue();
 
     // connect properties
     btn_showIndex.disableProperty().bind(lv_indices.getSelectionModel().selectedIndexProperty().isEqualTo(-1));
@@ -316,31 +343,20 @@ public class MainController {
     lv_indices.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
   }
 
-  private void initializeStatusQueue() {
-    requestQueue = FXCollections.observableArrayList();
-    lb_status.visibleProperty().bind(Bindings.size(requestQueue).greaterThan(0));
-    pb_progress.visibleProperty().bind(Bindings.size(requestQueue).greaterThan(0));
+  private void initializeTaskQueue() {
+    pb_progress.visibleProperty().bind(Bindings.size(taskQueue).greaterThan(0));
+    lb_status.visibleProperty().bind(Bindings.size(taskQueue).greaterThan(0));
+    taskQueue.addListener((ListChangeListener<? super Task<Long>>) c -> {
+      c.next();
+      if (c.wasAdded()) {
+        Task added = c.getAddedSubList().get(0);
+        pb_progress.progressProperty().bind(added.progressProperty());
+        lb_status.textProperty().bind(added.messageProperty());
 
-    requestQueue.addListener((InvalidationListener) observable -> {
-      if (requestQueue.size() <= 0) {
-        return;
-      }
-
-      Request request = requestQueue.get(requestQueue.size() - 1);
-
-      Platform.runLater(() -> {
-        lb_status.textProperty().bind(request.statusProperty());
-        pb_progress.progressProperty().bind(request.progressProperty());
-        request.progressProperty().addListener((observable1, oldValue, newValue) -> {
-          if (newValue.doubleValue() >= 1.) {
-            requestQueue.remove(request);
-          }
+        added.setOnSucceeded(event -> {
+          taskQueue.remove(added);
         });
-      });
+      }
     });
-  }
-
-  public void registerRequest(IndexingRequest request) {
-    requestQueue.add(request);
   }
 }

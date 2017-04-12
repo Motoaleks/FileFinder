@@ -53,27 +53,27 @@ public class IndexTest {
 
   @Test
   public void simpleCRUD() {
-    Index index = createDefault();
-    IndexingRequest.Builder builder = IndexingRequest.getBuilder();
-    builder.setIndex(index).addPath(Paths.get(""));
-    IndexingRequest request = builder.build();
-
-    Object ring = new Object();
-    request.addObserver((o, arg) -> {
-      if (arg == State.COMPLETED) {
-        synchronized (ring) {
-          ring.notifyAll();
-        }
-      }
-    });
-    request.execute();
-
-    try {
-      synchronized (ring) {
-        ring.wait();
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+//    Index index = createDefault();
+//    IndexingRequest.Builder builder = IndexingRequest.getBuilder();
+//    builder.setIndex(index).addPath(Paths.get(""));
+//    IndexingRequest request = builder.build();
+//
+//    Object ring = new Object();
+//    request.addObserver((o, arg) -> {
+//      if (arg == State.COMPLETED) {
+//        synchronized (ring) {
+//          ring.notifyAll();
+//        }
+//      }
+//    });
+//    request.execute();
+//
+//    try {
+//      synchronized (ring) {
+//        ring.wait();
+//      }
+//    } catch (InterruptedException e) {
+//      e.printStackTrace();
+//    }
   }
 }

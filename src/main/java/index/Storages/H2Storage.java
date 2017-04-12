@@ -115,9 +115,10 @@ public class H2Storage extends IndexStorageWithLevels {
       return null;
     }
 
-    List<Occurrence> resultList = (List<Occurrence>) manager.createQuery("SELECT o FROM Occurrence o WHERE o.word.word = :word")
-                                                            .setParameter("word", key)
-                                                            .getResultList();
+    List<Occurrence> resultList = (List<Occurrence>) manager
+        .createQuery("SELECT o FROM Occurrence o WHERE o.word.word = :word")
+        .setParameter("word", key)
+        .getResultList();
 
     Set<Inclusion> inclusions = new HashSet<>();
     for (Occurrence entry : resultList) {
@@ -137,5 +138,11 @@ public class H2Storage extends IndexStorageWithLevels {
   @Override
   public void exit() {
     managerFactory.close();
+  }
+
+  @Override
+  public void changeName(String name) {
+    super.changeName(name);
+
   }
 }

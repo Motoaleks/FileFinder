@@ -10,6 +10,7 @@
 package index;
 
 import index.Storages.H2Storage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,6 +34,9 @@ import java.util.stream.Collectors;
  * "The more we do, the more we can do" ©
  */
 public class Index implements Serializable {
+
+  public static final String INDICES_DIRECTORY = "indices\\";
+  public static final String INDEX_FILE_EXTENSION = ".ser";
 
   //  private static final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
   private transient static Logger log = Logger.getLogger(Index.class.getName());
@@ -145,18 +149,21 @@ public class Index implements Serializable {
 
   // ===============  Operations
 
-  public void index(IndexingRequest request) {
+  public long index(IndexingRequest request) {
     log.info("Indexing with request \"" + request.getId().toString() + "\" started");
     // add paths to history
     indexedPaths.addAll(request.getPaths());
     // index paths
+    long indexed = -1;
     try {
-      handler.index(request);
+      indexed = handler.index(request);
       log.info("Indexing with request \"" + request.getId().toString() + "\" completed.");
+      return indexed;
     } catch (IOException | InterruptedException e) {
       log.severe("Indexing path \"" + request.getId().toString() + "\" interrupted.\n" + e.getMessage());
       e.printStackTrace();
     }
+    return indexed;
   }
 
   public void search(SearchRequest request) {
@@ -184,10 +191,6 @@ public class Index implements Serializable {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public Set<Path> getIndexedPaths() {
     return indexedPaths;
   }
@@ -200,5 +203,17 @@ public class Index implements Serializable {
     cloned.name = this.name;
     cloned.indexedPaths = new HashSet<>(this.indexedPaths);
     return cloned;
+  }
+
+  public void changeName(String name) {
+    if ("".equals(name)) {
+      throw new IllegalArgumentException("Name is empty");
+    }
+    // should delete all savings
+    new File(INDICES_DIRECTORY + getName() + INDEX_FILE_EXTENSION).delete();
+    // set new name
+    this.name = name;
+    storage.changeName(name);
+//    throw new UnsupportedOperationException("Not implemented");
   }
 }

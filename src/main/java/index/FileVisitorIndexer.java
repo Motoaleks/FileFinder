@@ -9,7 +9,6 @@
 
 package index;
 
-import index.IndexingRequest.State;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,7 +20,12 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,9 +41,13 @@ import javafx.collections.ObservableList;
  */
 public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
-  protected final int FILE_INDEX_PERMITS = 3;
+  //  protected final int FILE_INDEX_PERMITS = 3;
+  //  protected final Semaphore semaphore;
+  protected final ExecutorService service = Executors.newFixedThreadPool(3);
+//  protected final Executor executor;
+
+
   protected final String exclude = "[!@#$%^&*()_+1234567890-=|/.,<>]";
-  protected final Semaphore semaphore;
   protected ObservableList extensions;
   protected Logger log;
   protected IndexingRequest request;
@@ -51,11 +59,11 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
   public FileVisitorIndexer(IndexingRequest request) {
     this.request = request;
-    this.parameters = request.getTargetIndex().getParameters();
-    this.storage = request.getTargetIndex().getStorage();
+    this.parameters = request.getIndex().getParameters();
+    this.storage = request.getIndex().getStorage();
     this.extensions = (ObservableList) parameters.getStorage().get(Parameter.FORMATS);
-    this.semaphore = new Semaphore(FILE_INDEX_PERMITS);
     this.log = Logger.getLogger(FileVisitorIndexer.class.getName());
+//    this.executor =
 
     timer = new Timer();
     counter = new AtomicLong();
@@ -87,33 +95,31 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
   @Override
   public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs)
       throws IOException {
-    if (request.getState().code() >= State.STOPPED.code() ||
-        request.getState().code() == State.ERROR.code()) {
+    if (request.isCancelled()) {
       return FileVisitResult.TERMINATE;
     }
-
     return FileVisitResult.CONTINUE;
   }
 
   @Override
   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
     // terminate mechanism
-    if (request.getState().code() >= State.STOPPED.code() ||
-        request.getState().code() == State.ERROR.code()) {
+    if (request.isCancelled()) {
       return FileVisitResult.TERMINATE;
     }
 
-    if (request.getState().code() == State.PAUSED.code()) {
-      // todo: pause mechanism
-    }
-
     // index filepath and optionally content (if property is set to true)
-    indexNameAndContent(file);
+    try {
+      indexNameAndContent(file);
+    } catch (ExecutionException | InterruptedException e) {
+      log.fine("Indexing file <" + file.toString() + "> failed: " + e.getMessage());
+      e.printStackTrace();
+    }
 
     return FileVisitResult.CONTINUE;
   }
 
-  private void indexNameAndContent(Path file) {
+  private void indexNameAndContent(Path file) throws ExecutionException, InterruptedException {
     // index filename and separately - extension
     String filename = file.getFileName().toString(); // pre-ready filename with extension
     String extension = getExtension(filename); // file extension
@@ -139,11 +145,10 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
   }
 
   protected void indexFile(Path file) {
-    new Thread(() -> {
+    service.submit(() -> {
       try {
         String filepath = file.toAbsolutePath().toString();
         // acquire semaphore for file index operation
-        semaphore.acquire();
 
         FileReader reader = new FileReader(file.toFile());
         StreamTokenizer tokenizer = new StreamTokenizer(reader);
@@ -175,18 +180,15 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
           }
         }
 
+        request.incrementFileCounter(1);
       } catch (InterruptedException e) {
         log.log(Level.SEVERE, "File indexing interrupted: {}", file.toAbsolutePath().toString());
       } catch (FileNotFoundException e) {
         log.log(Level.SEVERE, "File not found: {}", file.toAbsolutePath().toString());
-      } catch (IOException e) {
+      } catch (IOException | ExecutionException e) {
         log.log(Level.SEVERE, "File cannot be opened: {}", file.toAbsolutePath().toString());
-      } finally {
-        // release semaphore for indexing file operation
-        semaphore.release();
-        request.incrementFileCounter(1);
       }
-    }).start();
+    });
   }
 
   protected String handle(String word) {
@@ -223,11 +225,11 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
   public void waitUntilQueueEnds() {
     try {
-      semaphore.acquire(FILE_INDEX_PERMITS);
+      service.shutdown();
+      service.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
+      log.severe("Error in waiting for task indexed: " + e.getMessage());
       e.printStackTrace();
-    } finally {
-      semaphore.release(FILE_INDEX_PERMITS);
     }
   }
 

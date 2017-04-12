@@ -50,4 +50,7 @@ public abstract class IndexStorage implements Serializable {
   }
 
   public abstract long remove(Set<Path> temp);
+
+  public void changeName(String name) {
+  }
 }

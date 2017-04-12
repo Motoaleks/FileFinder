@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -46,13 +47,11 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
 
   @Override
   protected void indexFile(Path file) {
-    new Thread(() -> {
+    service.submit(() -> {
       H2Storage storage = (H2Storage) this.storage;
-
       try {
         String filepath = file.toAbsolutePath().toString();
         // acquire semaphore for file index operation
-        semaphore.acquire();
 
         FileReader reader = new FileReader(file.toFile());
         StreamTokenizer tokenizer = new StreamTokenizer(reader);
@@ -105,18 +104,15 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
         }
 
         transaction.commit();
+        request.incrementFileCounter(1);
 
       } catch (InterruptedException e) {
         log.log(Level.SEVERE, "File indexing interrupted: {}", file.toAbsolutePath().toString());
       } catch (FileNotFoundException e) {
         log.log(Level.SEVERE, "File not found: {}", file.toAbsolutePath().toString());
-      } catch (IOException e) {
+      } catch (IOException | ExecutionException e) {
         log.log(Level.SEVERE, "File cannot be opened: {}", file.toAbsolutePath().toString());
-      } finally {
-        // release semaphore for indexing file operation
-        semaphore.release();
-        request.incrementFileCounter(1);
       }
-    }).start();
+    });
   }
 }
