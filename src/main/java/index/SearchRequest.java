@@ -40,6 +40,7 @@ public class SearchRequest extends Task<Long> {
   protected Long call() throws Exception {
     updateMessage("Searching files");
     long found = index.search(this);
+    updateProgress(1, 1);
     return found;
   }
 
