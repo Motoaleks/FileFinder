@@ -43,7 +43,7 @@ public class IndexingHandler {
     // That is why cached pool will be a good idea.
     semaphore = new Semaphore(INDEX_REQUESTS_PERMITS, false);
 
-    // Unpack storage and parameters
+    // Unpack h2 and parameters
     this.storage = index.getStorage();
     this.parameters = index.getParameters();
   }

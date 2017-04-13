@@ -11,7 +11,9 @@ package index.Storages.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,6 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.transaction.Transactional;
 
 /**
  * Created by: Aleksandr
@@ -38,13 +41,10 @@ public class Path implements Serializable {
   private int pid;
   @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private Date updated;
-  @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
-  private List<Occurrence> word;
-
-
+  @OneToMany(orphanRemoval = true, mappedBy = "path", fetch = FetchType.LAZY)
+  private Set<Occurrence> occurrences = new HashSet<>();
+  ;
   private String path;
-//  @OneToMany(cascade = CascadeType.ALL, mappedBy = "path", orphanRemoval = true, fetch = FetchType.LAZY)
-//  private List<Occurrence> connected = new ArrayList<>();
 
   public Path(String path) {
     this.path = path;
@@ -53,9 +53,16 @@ public class Path implements Serializable {
   public Path() {
   }
 
-//  public void addOccurance(Occurrence occurrence) {
-//    connected.add(occurrence);
-//  }
+  public void addOccurrence(Occurrence occurrence) {
+    occurrences.add(occurrence);
+    if (occurrence.getPath() != this) {
+      occurrence.setPath(this);
+    }
+  }
+
+  public Set<Occurrence> getOccurrences() {
+    return occurrences;
+  }
 
   public String getPath() {
     return path;

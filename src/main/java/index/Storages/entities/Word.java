@@ -11,14 +11,20 @@ package index.Storages.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.transaction.Transactional;
 
 /**
  * Created by: Aleksandr
@@ -37,25 +43,30 @@ public class Word implements Serializable {
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastModified;
 
+  //  @Id
+//  @Column(unique = true)
   private String word;
-//  @OneToMany(cascade = CascadeType.ALL, mappedBy = "word",orphanRemoval = true, fetch= FetchType.LAZY)
-//  private List<Occurrence> entries = new ArrayList<>();
+
+  @OneToMany(orphanRemoval = true, mappedBy = "word", fetch = FetchType.LAZY)
+  private Set<Occurrence> occurrences = new HashSet<>();
+  ;
 
   public Word() {
-
   }
 
   public Word(String word) {
     this.word = word;
   }
 
-//  public void addOccurrence(Occurrence occurrence) {
-//    entries.add(occurrence);
-//    occurrence.setWord(this);
-//  }
-
   public String getWord() {
     return word;
+  }
+
+  public void addOccurrence(Occurrence occurrence) {
+    occurrences.add(occurrence);
+    if (occurrence.getWord() != this) {
+      occurrence.setWord(this);
+    }
   }
 
   @PreUpdate
@@ -67,5 +78,9 @@ public class Word implements Serializable {
   @Override
   public String toString() {
     return "Word [word=" + word + ", lastModified=" + (lastModified == null ? null : lastModified) + "]";
+  }
+
+  public Set<Occurrence> getOccurrences() {
+    return occurrences;
   }
 }

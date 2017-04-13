@@ -13,7 +13,6 @@ import index.IndexParameters;
 import index.IndexStorageWithLevels;
 import index.Parameter;
 import index.SearchRequest;
-import index.Storages.entities.Inclusion;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class InvertedIndex extends IndexStorageWithLevels {
     for (Entry<String, Set<Integer>> entry : node.filesToPos().entrySet()) {
       for (Integer position : entry.getValue()) {
         // todo: add date
-        result.add(new Inclusion(Paths.get(entry.getKey()), position, null));
+        result.add(new Inclusion(entry.getKey(), Paths.get(entry.getKey()), position, null));
       }
     }
     return result;

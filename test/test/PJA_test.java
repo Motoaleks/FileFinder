@@ -16,7 +16,7 @@ import index.IndexingRequest;
 import index.SearchRequest;
 import index.Storages.H2Storage;
 import index.Storages.InvertedIndex;
-import index.Storages.entities.Inclusion;
+import index.Storages.Inclusion;
 import index.Storages.entities.Occurrence;
 import index.Storages.entities.Path;
 import index.Storages.entities.Word;

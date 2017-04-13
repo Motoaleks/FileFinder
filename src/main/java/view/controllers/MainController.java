@@ -4,21 +4,17 @@ import index.Index;
 import index.IndexParameters;
 import index.IndexingRequest;
 import index.SearchRequest;
-import index.Storages.entities.Inclusion;
+import index.Storages.Inclusion;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -175,7 +171,7 @@ public class MainController {
     ObservableSet<Inclusion> requestResults = request.getResult();
     requestResults.addListener((SetChangeListener<? super Inclusion>) change -> {
       if (change.wasAdded()) {
-        Platform.runLater(() -> paths.addAll(change.getElementAdded().getFile()));
+        Platform.runLater(() -> paths.addAll(change.getElementAdded().getPath()));
       }
     });
   }

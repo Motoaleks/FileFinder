@@ -114,6 +114,8 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     } catch (ExecutionException | InterruptedException e) {
       log.fine("Indexing file <" + file.toString() + "> failed: " + e.getMessage());
       e.printStackTrace();
+    } catch (Exception e){
+      e.printStackTrace();
     }
 
     return FileVisitResult.CONTINUE;

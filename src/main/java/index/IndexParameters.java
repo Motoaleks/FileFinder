@@ -92,7 +92,7 @@ public class IndexParameters implements Serializable, Cloneable {
       }
     }
     return true;
-//    return this.storage.equals(((IndexParameters) other).storage);
+//    return this.h2.equals(((IndexParameters) other).h2);
   }
 
   // ---------- Serialization --------------

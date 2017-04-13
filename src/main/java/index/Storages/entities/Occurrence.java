@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
@@ -35,9 +36,11 @@ public class Occurrence implements Serializable {
   private long place;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "PATH_ID")
   private Path path;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "WORD")
   private Word word;
 
   public Occurrence(Word word, Path file, int place) {
@@ -56,7 +59,9 @@ public class Occurrence implements Serializable {
 
   public void setPath(Path path) {
     this.path = path;
-//    path.addOccurance(this);
+    if (!path.getOccurrences().contains(this)) {
+      path.addOccurrence(this);
+    }
   }
 
   public long getPlace() {
@@ -73,7 +78,9 @@ public class Occurrence implements Serializable {
 
   public void setWord(Word word) {
     this.word = word;
-//    word.addOccurrence(this);
+    if (!word.getOccurrences().contains(this)) {
+      word.addOccurrence(this);
+    }
   }
 
   @Override

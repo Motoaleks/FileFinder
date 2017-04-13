@@ -9,19 +9,21 @@
 
 package index;
 
-import index.FileVisitorIndexer;
-import index.IndexingRequest;
-import index.Parameter;
 import index.Storages.H2Storage;
+import index.Storages.Inclusion;
+import index.Storages.entities.Occurrence;
+import index.Storages.entities.Word;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 
 /**
  * Created by: Aleksandr
@@ -35,7 +37,7 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
   // 130 is a good size for batch based on testing value [10,400] with interval 10.
   // it's performance is around the best
   public static int BATCHING_SIZE = 130;
-
+  private H2Storage h2 = (H2Storage) storage;
   private boolean numbers =
       parameters.get(Parameter.NUMBERS) != null && (boolean) parameters.get(Parameter.NUMBERS).getValue();
   private boolean words =
@@ -47,28 +49,18 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
 
   @Override
   protected void indexFile(Path file) {
-    service.submit(() -> {
-      H2Storage storage = (H2Storage) this.storage;
-      try {
-        String filepath = file.toAbsolutePath().toString();
-        // acquire semaphore for file index operation
 
+    // submit a task
+    service.submit(() -> {
+      try {
+        // config streams
         FileReader reader = new FileReader(file.toFile());
         StreamTokenizer tokenizer = new StreamTokenizer(reader);
-        // set to lowercase, cause it is no reason in separating lowercase and simple words
-        tokenizer.lowerCaseMode(true);
+        tokenizer
+            .lowerCaseMode(true);// set to lowercase, cause it is no reason in separating lowercase and simple words
 
-        EntityManager manager = storage.createEntityManager();
-        if (manager == null) {
-          return;
-        }
-        EntityTransaction transaction = manager.getTransaction();
-        index.Storages.entities.Path path = new index.Storages.entities.Path(filepath);
-        transaction.begin();
-        manager.persist(path);
-
-        int token = -1;
-        int counter = 0;
+        Set<Inclusion> inclusions = new HashSet<>();
+        int token;
         while ((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF) {
           String string_token = null;
           switch (token) {
@@ -91,27 +83,23 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
             }
           }
           if (string_token != null) {
-            storage.put(handle(string_token), path, tokenizer.lineno(), manager);
-          }
-          if (counter % BATCHING_SIZE == 0) {
-            counter = 0;
-            if (!manager.isOpen()) {
-              return;
+            inclusions.add(new Inclusion(handle(string_token), file, tokenizer.lineno(), null));
+            if (inclusions.size() > H2Storage.BATCH_SIZE * 3) {
+              h2.put(inclusions, 0);
+              inclusions = new HashSet<>();
             }
-            manager.flush();
-            manager.clear();
           }
         }
-
-        transaction.commit();
+        h2.put(inclusions, 0);
         request.incrementFileCounter(1);
-
       } catch (InterruptedException e) {
         log.log(Level.SEVERE, "File indexing interrupted: {}", file.toAbsolutePath().toString());
       } catch (FileNotFoundException e) {
         log.log(Level.SEVERE, "File not found: {}", file.toAbsolutePath().toString());
       } catch (IOException | ExecutionException e) {
         log.log(Level.SEVERE, "File cannot be opened: {}", file.toAbsolutePath().toString());
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     });
   }

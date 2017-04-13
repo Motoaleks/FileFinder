@@ -61,7 +61,7 @@ public class Index implements Serializable {
   }
 
   public Index(String name, IndexParameters parameters) {
-    // h2 - default storage
+    // h2 - default h2
     this(name, parameters, new H2Storage(parameters, name));
   }
 
@@ -89,10 +89,10 @@ public class Index implements Serializable {
       } else {
         // make final index
         Index finalIndex = index;
-        // run thread with long operation - loading index storage
+        // run thread with long operation - loading index h2
         new Thread(() -> {
           try {
-            // load storage
+            // load h2
             finalIndex.storage = (IndexStorage) in.readObject();
             // say info
             log.info("Index " + name + " loaded.");
@@ -126,7 +126,7 @@ public class Index implements Serializable {
       ObjectOutputStream out = new ObjectOutputStream(fileOut);
 
       storage.exit();
-      // write objects in order - name, parameters, storage
+      // write objects in order - name, parameters, h2
       out.writeObject(name);
       out.writeObject(parameters);
       Set<String> indexedAsStrings = indexedPaths.stream().map(Path::toString).collect(Collectors.toSet());

@@ -9,14 +9,10 @@
 
 package index;
 
-import index.Storages.entities.Inclusion;
-import java.io.IOException;
+import index.Storages.Inclusion;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 
 /**
  * Created by: Aleksandr

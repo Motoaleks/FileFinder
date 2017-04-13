@@ -9,9 +9,8 @@
 
 package index;
 
-import index.Storages.entities.Inclusion;
+import index.Storages.Inclusion;
 import java.util.HashSet;
-import java.util.Observable;
 import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;

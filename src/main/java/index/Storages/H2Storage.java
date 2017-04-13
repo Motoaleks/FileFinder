@@ -12,7 +12,6 @@ package index.Storages;
 import index.IndexParameters;
 import index.IndexStorageWithLevels;
 import index.SearchRequest;
-import index.Storages.entities.Inclusion;
 import index.Storages.entities.Occurrence;
 import index.Storages.entities.Path;
 import index.Storages.entities.Word;
@@ -25,7 +24,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
+import javax.persistence.RollbackException;
 
 /**
  * Created by: Aleksandr
@@ -37,41 +40,86 @@ import javax.persistence.Persistence;
 public class H2Storage extends IndexStorageWithLevels {
 
   private final EntityManagerFactory managerFactory;
+  public static final int BATCH_SIZE = 130;
+  public static final int MAX_TRIES = 10;
 
   public H2Storage(IndexParameters parameters, String name) {
     super(parameters);
 
 //    managerFactory = Persistence.createEntityManagerFactory("myDbFile.odb");
-    Map<String, String> properties = new HashMap<String, String>();
+    Map<String, Object> properties = new HashMap<>();
     properties.put("javax.persistence.jdbc.driver", "org.h2.Driver");
-    properties.put("javax.persistence.jdbc.url", "jdbc:h2:file:./indices/" + name);
+    properties.put("javax.persistence.jdbc.url", "jdbc:h2:file:./indices/" + name + ";MVCC=true");
     properties.put("javax.persistence.jdbc.user", "sa");
     properties.put("javax.persistence.jdbc.password", "");
     properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
     properties.put("hibernate.hbm2ddl.auto", "update");
+    properties.put("javax.persistence.lock.timeout", 15000);
 //    properties.put("hibernate.show_sql", "true");
     managerFactory = Persistence.createEntityManagerFactory("MainEntities", properties);
   }
 
-  @Override
-  public void put(String word, String filepath, int description) {
-    EntityManager manager = managerFactory.createEntityManager();
-    manager.getTransaction().begin();
-
-    Path path = manager.merge(new Path(filepath));
-    put(word, path, description, manager);
-
-    manager.getTransaction().commit();
-    manager.close();
+  public void put(Set<Inclusion> inclusions, int tryNumber) {
+    if (inclusions.size() <= 0) {
+      return;
+    }
+    EntityManager manager = createEntityManager();
+    try {
+      manager.getTransaction().begin();
+      int counter = 0;
+      Path path = manager.merge(new Path(inclusions.toArray(new Inclusion[]{})[0].getPath().toString()));
+      for (Inclusion inclusion : inclusions) {
+//        manager.lock(path, LockModeType.PESSIMISTIC_WRITE);
+        Word word = manager.merge(new Word(inclusion.getWord()));
+//        manager.lock(word, LockModeType.PESSIMISTIC_WRITE);
+        Occurrence occurrence = new Occurrence();
+        occurrence.setWord(word);
+        occurrence.setPath(path);
+        occurrence.setPlace((int) inclusion.getPlace());
+        manager.persist(occurrence);
+        counter += 1;
+        if (counter % BATCH_SIZE == 0) {
+          counter = 0;
+          manager.flush();
+          manager.clear();
+        }
+      }
+      if (!manager.isOpen()){
+        return;
+      }
+      manager.getTransaction().commit();
+      manager.close();
+    } catch (RollbackException e) {
+      manager.getTransaction().rollback();
+      if (tryNumber >= MAX_TRIES) {
+        e.printStackTrace();
+      } else {
+        put(inclusions, ++tryNumber);
+      }
+    } catch (Exception e){
+      e.printStackTrace();
+    }
   }
 
-  public void put(String word, Path path, int description, EntityManager manager) {
-    Word wordEntity = manager.merge(new Word(word));
-    Occurrence occurrenceEntity = new Occurrence();
-    occurrenceEntity.setPath(path);
-    occurrenceEntity.setWord(wordEntity);
-    occurrenceEntity.setPlace(description);
-    manager.persist(occurrenceEntity);
+  @Override
+  public void put(String key, String filepath, int description) {
+    try {
+      EntityManager manager = managerFactory.createEntityManager();
+      manager.getTransaction().begin();
+
+      Path path = manager.merge(new Path(filepath));
+      Word word = manager.merge(new Word(key));
+      Occurrence occurrence = new Occurrence();
+      occurrence.setPlace(description);
+      occurrence.setWord(word);
+      occurrence.setPath(path);
+      manager.persist(occurrence);
+
+      manager.getTransaction().commit();
+      manager.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -123,16 +171,30 @@ public class H2Storage extends IndexStorageWithLevels {
     Set<Inclusion> inclusions = new HashSet<>();
     for (Occurrence entry : resultList) {
       inclusions
-          .add(new Inclusion(Paths.get(entry.getPath().getPath()), entry.getPlace(), entry.getPath().getUpdated()));
+          .add(
+              new Inclusion(key, Paths.get(entry.getPath().getPath()), entry.getPlace(), entry.getPath().getUpdated()));
     }
     manager.close();
 
     return inclusions;
   }
 
+  protected void get(SearchRequest request) {
+    EntityManager manager = managerFactory.createEntityManager();
+    if (!manager.isOpen()) {
+      return;
+    }
+
+    Query query = manager.createQuery("SELECT w FROM Word w WHERE w.word = :word", Word.class);
+    query.setParameter("word", request.getSearchFor());
+    query.getFirstResult();
+
+  }
+
   @Override
   protected void searchConcrete(SearchRequest request) {
-    request.addResult(get(request.getSearchFor()));
+    get(request);
+//    request.addResult(get(request.getSearchFor()));
   }
 
   @Override
