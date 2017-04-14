@@ -272,7 +272,9 @@ public class MainController {
     // start thread for saving indices (cause it is long operation)
     new Thread(() -> {
       indices.forEach(index -> {
+        requests.shutdown();
         index.save(INDICES_DIRECTORY);
+        index.exit();
       });
     }).start();
   }
@@ -284,7 +286,7 @@ public class MainController {
       return;
     }
     // start thread for loading indices (cause it is long operation)
-    new Thread(() -> {
+    Platform.runLater(() -> {
       try (Stream<Path> paths = Files.walk(indicesDirectory.toPath().toAbsolutePath())) {
         paths.forEach(filePath -> {
           // check if name contain '.ser' - serialization extension
@@ -295,7 +297,7 @@ public class MainController {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }).start();
+    });
   }
 
   @FXML
@@ -354,15 +356,23 @@ public class MainController {
     lb_status.visibleProperty().bind(Bindings.size(taskQueue).greaterThan(0));
     taskQueue.addListener((ListChangeListener<? super Task<Long>>) c -> {
       c.next();
-      if (c.wasAdded()) {
-        Task added = c.getAddedSubList().get(0);
-        pb_progress.progressProperty().bind(added.progressProperty());
-        lb_status.textProperty().bind(added.messageProperty());
-
-        added.setOnSucceeded(event -> {
-          taskQueue.remove(added);
-        });
+      Task newOne = null;
+      if (c.wasAdded() && c.getAddedSize() > 0) {
+        newOne = c.getAddedSubList().get(0);
+      } else if (c.wasRemoved() && taskQueue.size() > 0) {
+        newOne = taskQueue.get(0);
+      } else {
+        return;
       }
+
+      pb_progress.progressProperty().bind(newOne.progressProperty());
+      lb_status.textProperty().bind(newOne.messageProperty());
+
+      final Task temp = newOne;
+      newOne.setOnSucceeded(event -> {
+        taskQueue.remove(temp);
+      });
+
     });
   }
 }

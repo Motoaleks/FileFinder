@@ -125,7 +125,7 @@ public class Index implements Serializable {
       FileOutputStream fileOut = new FileOutputStream(new RandomAccessFile(filename, "rw").getFD());
       ObjectOutputStream out = new ObjectOutputStream(fileOut);
 
-      storage.exit();
+      exit();
       // write objects in order - name, parameters, h2
       out.writeObject(name);
       out.writeObject(parameters);
@@ -145,6 +145,10 @@ public class Index implements Serializable {
     } catch (IOException i) {
       log.severe("Index " + name + " was not saved, problem acquired:" + i.getMessage());
     }
+  }
+
+  public void exit() {
+    storage.exit();
   }
 
   // ===============  Operations
@@ -167,9 +171,15 @@ public class Index implements Serializable {
   }
 
   public long search(SearchRequest request) {
-    log.info("Searching with request \"" + request.getSearchFor() + "\" started");
-    long found = storage.search(request);
-    log.info("Searching with request \"" + request.getSearchFor() + "\" completed");
+    long found = -1;
+    try {
+      log.info("Searching with request \"" + request.getSearchFor() + "\" started");
+      found = storage.search(request);
+      log.info("Searching with request \"" + request.getSearchFor() + "\" completed");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     return found;
   }
 

@@ -10,6 +10,7 @@
 package view.views;
 
 import index.Index;
+import javafx.application.Platform;
 import javafx.scene.control.ListCell;
 import view.controllers.IndexCellController;
 
@@ -37,7 +38,10 @@ public class IndexCell extends ListCell<Index> {
     } else {
       controller = new IndexCellController();
       controller.setIndex(item);
+
       setGraphic(controller.getGraphic());
+
+
     }
   }
 

@@ -16,6 +16,7 @@ import index.Storages.entities.Occurrence;
 import index.Storages.entities.Path;
 import index.Storages.entities.Word;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -84,7 +85,7 @@ public class H2Storage extends IndexStorageWithLevels {
           manager.clear();
         }
       }
-      if (!manager.isOpen()){
+      if (!manager.isOpen()) {
         return;
       }
       manager.getTransaction().commit();
@@ -96,7 +97,7 @@ public class H2Storage extends IndexStorageWithLevels {
       } else {
         put(inclusions, ++tryNumber);
       }
-    } catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -185,10 +186,16 @@ public class H2Storage extends IndexStorageWithLevels {
       return;
     }
 
-    Query query = manager.createQuery("SELECT w FROM Word w WHERE w.word = :word", Word.class);
+    Query query = manager.createQuery(
+        "SELECT o.word.word, o.path.path, o.place, o.path.updated  FROM Occurrence o WHERE o.word.word = :word");
     query.setParameter("word", request.getSearchFor());
-    query.getFirstResult();
+    List<Object[]> found = query.getResultList();
 
+    Set<Inclusion> compressed = found.stream().map(
+        objects -> new Inclusion((String) objects[0], Paths.get((String) objects[1]), (long) objects[2],
+                                 (Date) objects[3])).collect(Collectors.toSet());
+
+    request.addResult(compressed);
   }
 
   @Override
