@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
@@ -29,7 +30,7 @@
     <HBox id="toolBar" alignment="CENTER_RIGHT" fillHeight="true" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT">
       <children>
         <Label id="lb_progressName" fx:id="lb_status" text="Status" />
-        <ProgressBar id="pb_progressStatus" fx:id="pb_progress" prefWidth="200.0">
+        <ProgressBar id="pb_progressStatus" fx:id="pb_progress" prefWidth="200.0" style="-fx-border-radius: 0; -fx-background-radius: 0;">
           <HBox.margin>
             <Insets left="5.0" />
           </HBox.margin>
@@ -65,8 +66,15 @@
                   <children>
                     <AnchorPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="NEVER">
                       <children>
-                        <TextField fx:id="txt_search" layoutX="0.0" layoutY="0.0" onAction="#onSearchChanged" prefHeight="24.0" prefWidth="200.0" text="test" />
-                        <Button fx:id="btn_Search" cancelButton="false" defaultButton="false" layoutX="167.0" layoutY="0.0" mnemonicParsing="false" onAction="#onSearch" prefHeight="24.0" prefWidth="33.0" text="" textAlignment="RIGHT" wrapText="false" />
+                        <TextField fx:id="txt_search" layoutX="0.0" layoutY="0.0" onAction="#onSearchChanged" prefHeight="24.0" prefWidth="200.0" style="-fx-border-radius: 0; -fx-background-radius: 0;" text="test" />
+                        <Button fx:id="btn_Search" cancelButton="false" defaultButton="false" layoutX="167.0" layoutY="0.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#onSearch" prefHeight="24.0" prefWidth="33.0" style="-fx-border-radius: 0; -fx-background-radius: 0;" text="" textAlignment="RIGHT">
+                                       <graphic>
+                                          <ImageView fitHeight="15.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../img/search.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></Button>
                       </children>
                     </AnchorPane>
                     <CheckBox fx:id="cb_seachSubstring" mnemonicParsing="false" onAction="#onSubstringSearchChanged" text="Search as a substring" HBox.hgrow="ALWAYS" />
