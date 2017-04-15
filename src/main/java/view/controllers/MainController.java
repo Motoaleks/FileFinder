@@ -67,6 +67,7 @@ public class MainController {
   private final ExecutorService requests = Executors.newCachedThreadPool();
   private final ObservableList<Task<Long>> taskQueue = FXCollections.observableArrayList();
   private final ObservableList<SearchRequest> history = FXCollections.observableArrayList();
+  private Task currentTask = null;
 
   private Node stashedPane;
 
@@ -236,6 +237,14 @@ public class MainController {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  @FXML
+  void onCancelTask(ActionEvent event) {
+    if (taskQueue.size() == 0) {
+      return;
+    }
+    currentTask.cancel();
   }
 
   private void openIndexFilesForm(Index index) {
@@ -421,22 +430,28 @@ public class MainController {
   private void initializeTaskQueue() {
     pb_progress.visibleProperty().bind(Bindings.size(taskQueue).greaterThan(0));
     lb_status.visibleProperty().bind(Bindings.size(taskQueue).greaterThan(0));
+    btn_cancel.visibleProperty().bind(Bindings.size(taskQueue).greaterThan(0));
     taskQueue.addListener((ListChangeListener<? super Task<Long>>) c -> {
       c.next();
-      Task newOne = null;
       if (c.wasAdded() && c.getAddedSize() > 0) {
-        newOne = c.getAddedSubList().get(0);
+        currentTask = c.getAddedSubList().get(0);
       } else if (c.wasRemoved() && taskQueue.size() > 0) {
-        newOne = taskQueue.get(0);
+        currentTask = taskQueue.get(0);
       } else {
+        if (c.wasRemoved() && taskQueue.size() == 0) {
+          currentTask = null;
+        }
         return;
       }
 
-      pb_progress.progressProperty().bind(newOne.progressProperty());
-      lb_status.textProperty().bind(newOne.messageProperty());
+      pb_progress.progressProperty().bind(currentTask.progressProperty());
+      lb_status.textProperty().bind(currentTask.messageProperty());
 
-      final Task temp = newOne;
-      newOne.setOnSucceeded(event -> {
+      final Task temp = currentTask;
+      currentTask.setOnSucceeded(event -> {
+        taskQueue.remove(temp);
+      });
+      currentTask.setOnCancelled(event -> {
         taskQueue.remove(temp);
       });
 

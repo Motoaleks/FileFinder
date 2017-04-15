@@ -186,6 +186,9 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
         request.incrementFileCounter(1);
       } catch (InterruptedException e) {
+        if (request.isCancelled()) {
+          return;
+        }
         log.log(Level.FINE, "File indexing interrupted: {0}", file.toString());
       } catch (FileNotFoundException e) {
         log.log(Level.FINE, "File not found: {}", file.toString());
@@ -235,8 +238,11 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
       service.shutdown();
       service.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
+      if (request.isCancelled()){
+        return;
+      }
       log.severe("Error in waiting for task indexed: " + e.getMessage());
-      e.printStackTrace();
+//      e.printStackTrace();
     }
   }
 

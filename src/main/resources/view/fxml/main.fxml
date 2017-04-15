@@ -36,7 +36,7 @@
             <Insets left="5.0" />
           </HBox.margin>
         </ProgressBar>
-            <Button fx:id="btn_cancel" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="18.0" prefWidth="18.0" style="-fx-background-color: transparent;">
+            <Button fx:id="btn_cancel" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCancelTask" prefHeight="18.0" prefWidth="18.0" style="-fx-background-color: transparent;">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                      <image>

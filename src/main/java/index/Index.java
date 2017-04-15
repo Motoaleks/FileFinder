@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.concurrent.Worker.State;
 
 /**
  * Created by: Aleksandr
@@ -164,6 +165,10 @@ public class Index implements Serializable {
       log.info("Indexing with request \"" + request.getId().toString() + "\" completed.");
       return indexed;
     } catch (IOException | InterruptedException e) {
+      if (request.isCancelled()) {
+        log.info("Indexing with request \"" + request.getId().toString() + "\" cancelled.");
+        return -1;
+      }
       log.severe("Indexing path \"" + request.getId().toString() + "\" interrupted.\n" + e.getMessage());
       e.printStackTrace();
     }

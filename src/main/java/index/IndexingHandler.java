@@ -11,6 +11,7 @@ package index;
 
 import index.Storages.H2Storage;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -28,11 +29,11 @@ import java.util.logging.Logger;
  */
 public class IndexingHandler {
 
-  public static final int INDEX_REQUESTS_PERMITS = 3;
+  //  public static final int INDEX_REQUESTS_PERMITS = 3;
   protected final IndexStorage storage;
   protected final IndexParameters parameters;
   protected final List<Parameter> available;
-  private final Semaphore semaphore;
+  //  private final Semaphore semaphore;
   Logger log = Logger.getLogger(IndexingHandler.class.getName());
 
   public IndexingHandler(Index index) {
@@ -41,7 +42,7 @@ public class IndexingHandler {
 
     // The number of indexing tasks are not limited and can grow a lot.
     // That is why cached pool will be a good idea.
-    semaphore = new Semaphore(INDEX_REQUESTS_PERMITS, false);
+//    semaphore = new Semaphore(INDEX_REQUESTS_PERMITS, false);
 
     // Unpack h2 and parameters
     this.storage = index.getStorage();
@@ -53,25 +54,30 @@ public class IndexingHandler {
   }
 
   public long index(IndexingRequest request) throws IOException, InterruptedException {
-    try {
-      semaphore.acquire();
-
-      FileVisitorIndexer visitor;
-      if (storage instanceof H2Storage) {
-        visitor = new FileVisitorIndexerDB(request);
-      } else {
-        visitor = new FileVisitorIndexer(request);
+    //      semaphore.acquire();
+    FileVisitorIndexer visitor;
+    if (storage instanceof H2Storage) {
+      visitor = new FileVisitorIndexerDB(request);
+    } else {
+      visitor = new FileVisitorIndexer(request);
+    }
+    // start file walking
+    for (Path pathToIndex : request.getPaths()) {
+      Files.walkFileTree(pathToIndex, visitor);
+      if (request.isCancelled()) {
+        request.setStatus("Awaiting to stop.");
+        break;
       }
-      // start file walking
-      for (Path pathToIndex : request.getPaths()) {
-        Files.walkFileTree(pathToIndex, visitor);
-      }
-      request.setStatus("Indexing file content");
+    }
+    if (request.isCancelled()) {
       visitor.waitUntilQueueEnds();
       visitor.stopCounter();
-    } finally {
-      semaphore.release();
+      throw new InterruptedException("Task cancelled");
+    } else{
+      request.setStatus("Indexing file content");
+      visitor.waitUntilQueueEnds();
     }
+    visitor.stopCounter();
     return -1;
   }
 }

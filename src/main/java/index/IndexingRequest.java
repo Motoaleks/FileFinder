@@ -56,7 +56,9 @@ public class IndexingRequest extends Task<Long> {
       fileCount.run();
       updateMessage("Indexing files");
     }).start();
-    long indexed = index.index(this);
+    long indexed = 0;
+    indexed = index.index(this);
+    updateProgress(1,1);
     return indexed;
   }
 
@@ -89,6 +91,10 @@ public class IndexingRequest extends Task<Long> {
   }
 
   private long count(Path path) throws IOException {
+    if (isCancelled()) {
+      return 0;
+    }
+
     // if method call is invalid
     if (path == null) {
       return 0;

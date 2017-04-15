@@ -98,7 +98,7 @@ public class H2Storage extends IndexStorageWithLevels {
         put(inclusions, ++tryNumber);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+//      e.printStackTrace();
     }
   }
 

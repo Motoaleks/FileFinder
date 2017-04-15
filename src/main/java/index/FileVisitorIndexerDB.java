@@ -63,6 +63,9 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
         Set<Inclusion> inclusions = new HashSet<>();
         int token;
         while ((token = tokenizer.nextToken()) != StreamTokenizer.TT_EOF) {
+          if (request.isCancelled()) {
+            return;
+          }
           String string_token = null;
           switch (token) {
             // checking --NUMBERS--
@@ -94,6 +97,9 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
         h2.put(inclusions, 0);
         request.incrementFileCounter(1);
       } catch (InterruptedException e) {
+        if (request.isCancelled()) {
+          return;
+        }
         log.log(Level.FINE, "File indexing interrupted: {0}", file.toString());
       } catch (FileNotFoundException e) {
         log.log(Level.FINE, "File not found: {0}", file.toString());
