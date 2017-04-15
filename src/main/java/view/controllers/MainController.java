@@ -71,6 +71,9 @@ public class MainController {
   private Node stashedPane;
 
   @FXML
+  private Button btn_cancel;
+
+  @FXML
   private ComboBox<SearchRequest> cb_search;
 
   @FXML

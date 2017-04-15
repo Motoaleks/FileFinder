@@ -184,7 +184,7 @@ public class PathCellController {
     if (selected || hovered) {
       name = item.normalize().toString();
     } else {
-      name = item.normalize().getFileName().toString();
+      name = item.normalize().toString();
     }
     lb_name.setText(name);
   }

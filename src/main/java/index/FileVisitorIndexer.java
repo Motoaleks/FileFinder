@@ -41,7 +41,7 @@ import javafx.collections.ObservableList;
  */
 public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
-    protected final int FILE_INDEX_PERMITS = 3;
+  protected final int FILE_INDEX_PERMITS = 3;
   //  protected final Semaphore semaphore;
   protected final ExecutorService service = Executors.newFixedThreadPool(FILE_INDEX_PERMITS);
 //  protected final Executor executor;
@@ -112,10 +112,12 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
     try {
       indexNameAndContent(file);
     } catch (ExecutionException | InterruptedException e) {
-      log.fine("Indexing file <" + file.toString() + "> failed: " + e.getMessage());
-      e.printStackTrace();
-    } catch (Exception e){
-      e.printStackTrace();
+      if (e.getCause() instanceof AccessDeniedException) {
+        log.finest("File <" + file.toString() + "> protected.");
+      } else {
+        log.fine("Indexing file <" + file.toString() + "> failed: " + e.getMessage());
+        e.printStackTrace();
+      }
     }
 
     return FileVisitResult.CONTINUE;
@@ -184,11 +186,14 @@ public class FileVisitorIndexer extends SimpleFileVisitor<Path> {
 
         request.incrementFileCounter(1);
       } catch (InterruptedException e) {
-        log.log(Level.SEVERE, "File indexing interrupted: {}", file.toAbsolutePath().toString());
+        log.log(Level.FINE, "File indexing interrupted: {0}", file.toString());
       } catch (FileNotFoundException e) {
-        log.log(Level.SEVERE, "File not found: {}", file.toAbsolutePath().toString());
+        log.log(Level.FINE, "File not found: {}", file.toString());
       } catch (IOException | ExecutionException e) {
-        log.log(Level.SEVERE, "File cannot be opened: {}", file.toAbsolutePath().toString());
+        if (e.getCause() instanceof AccessDeniedException) {
+          return;
+        }
+        log.log(Level.FINE, "File cannot be opened: {0}", file.toString());
       }
     });
   }

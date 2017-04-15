@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StreamTokenizer;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -93,11 +94,14 @@ public class FileVisitorIndexerDB extends FileVisitorIndexer {
         h2.put(inclusions, 0);
         request.incrementFileCounter(1);
       } catch (InterruptedException e) {
-        log.log(Level.SEVERE, "File indexing interrupted: {}", file.toAbsolutePath().toString());
+        log.log(Level.FINE, "File indexing interrupted: {0}", file.toString());
       } catch (FileNotFoundException e) {
-        log.log(Level.SEVERE, "File not found: {}", file.toAbsolutePath().toString());
+        log.log(Level.FINE, "File not found: {0}", file.toString());
       } catch (IOException | ExecutionException e) {
-        log.log(Level.SEVERE, "File cannot be opened: {}", file.toAbsolutePath().toString());
+        if (e.getCause() instanceof AccessDeniedException) {
+          return;
+        }
+        log.log(Level.FINE, "File cannot be opened: {0}", file.toString());
       } catch (Exception e) {
         e.printStackTrace();
       }

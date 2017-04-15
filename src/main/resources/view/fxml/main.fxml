@@ -36,6 +36,18 @@
             <Insets left="5.0" />
           </HBox.margin>
         </ProgressBar>
+            <Button fx:id="btn_cancel" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="18.0" prefWidth="18.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/cancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <padding>
+                  <Insets left="3.0" />
+               </padding>
+            </Button>
       </children>
       <padding>
         <Insets bottom="2.0" left="10.0" right="10.0" top="2.0" />
@@ -60,7 +72,7 @@
                 </SplitPane>
               </center>
               <padding>
-                <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                <Insets bottom="5.0" left="8.0" right="8.0" top="5.0" />
               </padding>
               <top>
                 <HBox alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="392.0" BorderPane.alignment="CENTER_LEFT" BorderPane.margin="$x1">
