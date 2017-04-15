@@ -25,22 +25,32 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SelectionModel;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import view.views.IndexCell;
 import view.views.PathCell;
 
@@ -50,20 +60,24 @@ public class MainController {
   public final static String INDICES_DIRECTORY = "indices\\";
   public final static String INDEX_FOLDERS_FXML = "/view/fxml/indexFolders.fxml";
   public final static String INDEX_INFO_FXML = "/view/fxml/indexInfo.fxml";
+  public final static String ERROR_CLASS = "error";
   private ObservableList<Path> paths;
   private ObservableList<Index> indices;
   //  private ObservableList<Request> requestQueue;
   private final ExecutorService requests = Executors.newCachedThreadPool();
   private final ObservableList<Task<Long>> taskQueue = FXCollections.observableArrayList();
+  private final ObservableList<SearchRequest> history = FXCollections.observableArrayList();
+
+  private Node stashedPane;
 
   @FXML
-  private ResourceBundle resources;
+  private ComboBox<SearchRequest> cb_search;
 
   @FXML
-  private URL location;
+  private Button btn_search;
 
   @FXML
-  private Button btn_Search;
+  private SplitPane sp_main;
 
   @FXML
   private Button btn_createIndex;
@@ -94,9 +108,6 @@ public class MainController {
 
   @FXML
   private Tab tab_search;
-
-  @FXML
-  private TextField txt_search;
 
   @FXML
   void onSubstringSearchChanged(ActionEvent event) {
@@ -132,7 +143,7 @@ public class MainController {
   }
 
   @FXML
-  void onSearch(ActionEvent event) {
+  void onSearch() {
     // get selected index to search in
     Index selectedIndex = lv_indices.getSelectionModel().getSelectedItem();
     // if there is no index - show dialog and return
@@ -144,12 +155,16 @@ public class MainController {
       alert.showAndWait();
       return;
     }
+    String searchFor = cb_search.getEditor().textProperty().get();
+    if (searchFor == null || "".equals(searchFor)) {
+      return;
+    }
 
     // building request
     SearchRequest request;
     SearchRequest.Builder builder = SearchRequest.getBuilder();
     builder.setIndex(selectedIndex)
-           .setSearchFor(txt_search.getText())
+           .setSearchFor(searchFor)
            .setSubstringSearch(cb_seachSubstring.isSelected());
     request = builder.build();
 
@@ -174,11 +189,6 @@ public class MainController {
         Platform.runLater(() -> paths.addAll(change.getElementAdded().getPath()));
       }
     });
-  }
-
-  @FXML
-  void onSearchChanged(ActionEvent event) {
-
   }
 
   @FXML
@@ -255,6 +265,9 @@ public class MainController {
   private void addTask(Task<Long> task) {
     requests.submit(task);
     taskQueue.add(task);
+    if (task instanceof SearchRequest) {
+      history.add((SearchRequest) task);
+    }
   }
 
   public void saveIndices() {
@@ -300,51 +313,102 @@ public class MainController {
     });
   }
 
+  public void setPreview(boolean active) {
+    if (active) {
+      if (stashedPane == null) {
+        return;
+      }
+      sp_main.getItems().add(1, stashedPane);
+      sp_main.setDividerPosition(1, 0.8);
+    } else {
+      stashedPane = sp_main.getItems().get(1);
+      sp_main.getItems().remove(stashedPane);
+    }
+  }
+
   @FXML
   void initialize() {
-    assert btn_Search
-           != null : "fx:id=\"btn_Search\" was not injected: check your FXML file 'main.fxml'.";
-    assert btn_createIndex
-           != null : "fx:id=\"btn_createIndex\" was not injected: check your FXML file 'main.fxml'.";
-    assert btn_showIndex
-           != null : "fx:id=\"btn_showIndex\" was not injected: check your FXML file 'main.fxml'.";
-    assert lb_status
-           != null : "fx:id=\"lb_status\" was not injected: check your FXML file 'main.fxml'.";
-    assert
-        lv_files != null : "fx:id=\"lv_files\" was not injected: check your FXML file 'main.fxml'.";
-    assert lv_indices
-           != null : "fx:id=\"lv_indices\" was not injected: check your FXML file 'main.fxml'.";
-    assert pb_progress
-           != null : "fx:id=\"pb_progress\" was not injected: check your FXML file 'main.fxml'.";
-    assert ta_preview
-           != null : "fx:id=\"ta_preview\" was not injected: check your FXML file 'main.fxml'.";
-    assert tab_indexes
-           != null : "fx:id=\"tab_indexes\" was not injected: check your FXML file 'main.fxml'.";
-    assert tab_search
-           != null : "fx:id=\"tab_search\" was not injected: check your FXML file 'main.fxml'.";
-    assert txt_search
-           != null : "fx:id=\"txt_search\" was not injected: check your FXML file 'main.fxml'.";
-    assert cb_seachSubstring
-           != null : "fx:id=\"cb_seachSubstring\" was not injected: check your FXML file 'main.fxml'.";
-
-    // initialize lists
+    // initialize items
     initializePathList();
     initializeIndexList();
     initializeTaskQueue();
+    initializeHistory();
 
     // connect properties
+    initializeSmallBindings();
+
+    // set hidable pane
+    stashedPane = sp_main.getItems().get(1);
+    bindPreview();
+    setPreview(false);
+  }
+
+  private void initializeSmallBindings() {
     btn_showIndex.disableProperty().bind(lv_indices.getSelectionModel().selectedIndexProperty().isEqualTo(-1));
+    btn_search.disableProperty().bind(lv_indices.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
+                                                .or(cb_search.getEditor().textProperty().isEqualTo("")));
+    cb_search.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null || "".equals(newValue)) {
+        cb_search.getStyleClass().add(ERROR_CLASS);
+      } else {
+        cb_search.getStyleClass().remove(ERROR_CLASS);
+      }
+    });
+    cb_search.setOnKeyPressed(event -> {
+      if (event.getCode() != KeyCode.ENTER) {
+        return;
+      }
+      onSearch();
+    });
+  }
+
+  private void bindPreview() {
+    lv_files.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        setPreview(false);
+      } else {
+        setPreview(true);
+      }
+    });
   }
 
   private void initializePathList() {
-    lv_files.setCellFactory(param -> new PathCell());
+//    lv_files.setCellFactory(param -> new PathCell());
+    lv_files.setCellFactory(param -> {
+      ListCell cell = new PathCell();
+      SelectionModel selectionModel = lv_files.getSelectionModel();
+      cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        lv_files.requestFocus();
+        if (!cell.isEmpty() && selectionModel.getSelectedIndex() != cell.getIndex()) {
+          selectionModel.select(cell.getIndex());
+        } else {
+          lv_files.getSelectionModel().clearSelection();
+        }
+        event.consume();
+      });
+      return cell;
+    });
     paths = FXCollections.observableArrayList();
     lv_files.setItems(paths);
     lv_files.setPlaceholder(new Label("Select index to search in and word for search."));
+    lv_files.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
   }
 
   private void initializeIndexList() {
-    lv_indices.setCellFactory(param -> new IndexCell());
+    lv_indices.setCellFactory(param -> {
+      ListCell cell = new IndexCell();
+      SelectionModel selectionModel = lv_indices.getSelectionModel();
+      cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        lv_indices.requestFocus();
+        if (!cell.isEmpty() && selectionModel.getSelectedIndex() != cell.getIndex()) {
+          selectionModel.select(cell.getIndex());
+        } else {
+          lv_indices.getSelectionModel().clearSelection();
+        }
+        event.consume();
+      });
+      return cell;
+    });
     indices = FXCollections.observableArrayList();
     lv_indices.setItems(indices);
     lv_indices.setPlaceholder(new Label("No indices found."));
@@ -374,5 +438,35 @@ public class MainController {
       });
 
     });
+  }
+
+  private void initializeHistory() {
+    lv_indices.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        cb_search.setEditable(false);
+        cb_search.setPromptText("Select index on index tab");
+//        cb_search.editorProperty().get().textProperty().setValue("");
+      } else {
+        cb_search.setEditable(true);
+        cb_search.setPromptText("Input text");
+        cb_search.setItems(null);
+      }
+    });
+    cb_search.setEditable(false);
+    cb_search.setPromptText("Select index on index tab");
+
+    cb_search.setItems(history);
+    cb_search.setCellFactory(param -> new ListCell<SearchRequest>() {
+      @Override
+      protected void updateItem(SearchRequest item, boolean empty) {
+        super.updateItem(item, empty);
+        if (item == null || empty) {
+          setGraphic(null);
+        } else {
+          setText(item.getSearchFor());
+        }
+      }
+    });
+    cb_search.setPlaceholder(new Label("No history"));
   }
 }

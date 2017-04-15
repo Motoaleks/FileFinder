@@ -37,6 +37,10 @@ public class Main extends Application {
     FXMLLoader loader = new FXMLLoader(getClass().getResource(MAIN_FXML));
     Parent root = loader.load();
     Scene scene = new Scene(root);
+    primaryStage.setHeight(450);
+    primaryStage.setWidth(600);
+    primaryStage.setMinHeight(250);
+    primaryStage.setMinWidth(430);
 
     MainController controller = loader.getController();
     primaryStage.setOnShown(event -> {

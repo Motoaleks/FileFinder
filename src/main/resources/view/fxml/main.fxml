@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
@@ -25,7 +26,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane prefHeight="400.0" prefWidth="450.0" style="-fx-focus-color: transparent; " xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.MainController">
+<BorderPane prefHeight="450.0" prefWidth="600.0" style="-fx-focus-color: transparent; " stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.MainController">
   <bottom>
     <HBox id="toolBar" alignment="CENTER_RIGHT" fillHeight="true" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: lightgrey;&#10;" BorderPane.alignment="CENTER_RIGHT">
       <children>
@@ -48,7 +49,7 @@
           <content>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
               <center>
-                <SplitPane disable="false" dividerPositions="0.6728971962616822" focusTraversable="true" prefHeight="160.0" prefWidth="200.0" style="-fx-box-border: transparent;" BorderPane.alignment="CENTER">
+                <SplitPane fx:id="sp_main" disable="false" dividerPositions="0.8" focusTraversable="true" prefHeight="160.0" prefWidth="200.0" style="-fx-box-border: transparent;" BorderPane.alignment="CENTER">
                   <items>
                     <ListView fx:id="lv_files" cache="false" disable="false" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mouseTransparent="false" opacity="1.0" orientation="VERTICAL" pickOnBounds="false" prefHeight="299.0" prefWidth="228.0" style="-fx-box-border: transparent;&#10;-fx-padding: 0 3 0 0;" />
                     <TextArea fx:id="ta_preview" disable="true" prefHeight="299.0" prefWidth="136.0" style="-fx-box-border: transparent;&#10;" visible="false" wrapText="true" />
@@ -62,22 +63,28 @@
                 <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
               </padding>
               <top>
-                <HBox alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="392.0" spacing="10.0" BorderPane.alignment="CENTER_LEFT" BorderPane.margin="$x1">
+                <HBox alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="392.0" BorderPane.alignment="CENTER_LEFT" BorderPane.margin="$x1">
                   <children>
-                    <AnchorPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="NEVER">
-                      <children>
-                        <TextField fx:id="txt_search" layoutX="0.0" layoutY="0.0" onAction="#onSearchChanged" prefHeight="24.0" prefWidth="200.0" style="-fx-border-radius: 0; -fx-background-radius: 0;" text="test" />
-                        <Button fx:id="btn_Search" cancelButton="false" defaultButton="false" layoutX="167.0" layoutY="0.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#onSearch" prefHeight="24.0" prefWidth="33.0" style="-fx-border-radius: 0; -fx-background-radius: 0;" text="" textAlignment="RIGHT">
-                                       <graphic>
-                                          <ImageView fitHeight="15.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../img/search.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic></Button>
-                      </children>
-                    </AnchorPane>
-                    <CheckBox fx:id="cb_seachSubstring" mnemonicParsing="false" onAction="#onSubstringSearchChanged" text="Search as a substring" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="cb_search" editable="true" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="270.0" style="-fx-border-radius: 0; -fx-background-radius: 0;" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="btn_search" mnemonicParsing="false" onAction="#onSearch" style="-fx-border-radius: 0; -fx-background-radius: 0;">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../img/search.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <padding>
+                                    <Insets bottom="3.0" left="3.0" right="3.0" top="2.0" />
+                                 </padding>
+                              </Button>
+                    <CheckBox fx:id="cb_seachSubstring" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSubstringSearchChanged" text="Search as a substring" HBox.hgrow="ALWAYS">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <HBox.margin>
+                                    <Insets left="7.0" />
+                                 </HBox.margin></CheckBox>
                   </children>
                   <padding>
                     <Insets fx:id="x1" />
@@ -100,8 +107,8 @@
               <top>
                 <HBox alignment="CENTER_LEFT" fillHeight="true" pickOnBounds="true" prefHeight="38.0" prefWidth="450.0" spacing="5.0" BorderPane.alignment="TOP_LEFT">
                   <children>
-                    <Button id="btn_addIndex" fx:id="btn_createIndex" mnemonicParsing="false" onAction="#onCreateIndex" prefHeight="31.0" prefWidth="89.0" text="Create indexRequest" underline="false" wrapText="true" HBox.hgrow="ALWAYS" />
-                    <Button id="btn_showInfo" fx:id="btn_showIndex" mnemonicParsing="false" onAction="#onShowIndexInfo" prefHeight="31.0" prefWidth="89.0" text="Show info" underline="false" wrapText="true" />
+                    <Button id="btn_addIndex" fx:id="btn_createIndex" mnemonicParsing="false" onAction="#onCreateIndex" prefHeight="28.0" prefWidth="200.0" text="Create index" underline="false" wrapText="true" HBox.hgrow="ALWAYS" />
+                    <Button id="btn_showInfo" fx:id="btn_showIndex" mnemonicParsing="false" onAction="#onShowIndexInfo" prefHeight="28.0" prefWidth="110.0" text="Show info" underline="false" wrapText="true" />
                   </children>
                   <padding>
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
