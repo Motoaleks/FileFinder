@@ -182,6 +182,10 @@ public class Index implements Serializable {
       found = storage.search(request);
       log.info("Searching with request \"" + request.getSearchFor() + "\" completed");
     } catch (Exception e) {
+      if (request.isCancelled()){
+        log.info("Searching with request \"" + request.getSearchFor() + "\" cancelled.");
+        return -1;
+      }
       e.printStackTrace();
     }
 

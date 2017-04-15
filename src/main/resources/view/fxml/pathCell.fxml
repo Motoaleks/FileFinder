@@ -49,7 +49,4 @@
       </children>
     </VBox>
   </center>
-  <left>
-    <ImageView fx:id="iv_thumbnail" fitHeight="53.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-  </left>
 </BorderPane>

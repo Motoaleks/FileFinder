@@ -181,21 +181,26 @@ public class H2Storage extends IndexStorageWithLevels {
   }
 
   protected void get(SearchRequest request) {
-    EntityManager manager = managerFactory.createEntityManager();
-    if (!manager.isOpen()) {
-      return;
+    try{
+      EntityManager manager = managerFactory.createEntityManager();
+      if (!manager.isOpen()) {
+        return;
+      }
+
+      Query query = manager.createQuery(
+          "SELECT o.word.word, o.path.path, o.place, o.path.updated  FROM Occurrence o WHERE o.word.word = :word");
+      query.setParameter("word", request.getSearchFor());
+      List<Object[]> found = query.getResultList();
+
+      Set<Inclusion> compressed = found.stream().map(
+          objects -> new Inclusion((String) objects[0], Paths.get((String) objects[1]), (long) objects[2],
+                                   (Date) objects[3])).collect(Collectors.toSet());
+
+      request.addResult(compressed);
+    } catch (Exception e){
+      e.printStackTrace();
     }
 
-    Query query = manager.createQuery(
-        "SELECT o.word.word, o.path.path, o.place, o.path.updated  FROM Occurrence o WHERE o.word.word = :word");
-    query.setParameter("word", request.getSearchFor());
-    List<Object[]> found = query.getResultList();
-
-    Set<Inclusion> compressed = found.stream().map(
-        objects -> new Inclusion((String) objects[0], Paths.get((String) objects[1]), (long) objects[2],
-                                 (Date) objects[3])).collect(Collectors.toSet());
-
-    request.addResult(compressed);
   }
 
   @Override

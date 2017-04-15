@@ -1,5 +1,6 @@
 package view.controllers;
 
+import com.sun.prism.paint.Color;
 import index.Index;
 import index.IndexParameters;
 import index.IndexingRequest;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,13 +46,19 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
+import view.views.InclusionCell;
 import view.views.IndexCell;
 import view.views.PathCell;
 
@@ -61,12 +69,12 @@ public class MainController {
   public final static String INDEX_FOLDERS_FXML = "/view/fxml/indexFolders.fxml";
   public final static String INDEX_INFO_FXML = "/view/fxml/indexInfo.fxml";
   public final static String ERROR_CLASS = "error";
-  private ObservableList<Path> paths;
+  public final static int MAX_HISTORY = 8;
+  private ObservableList<Inclusion> paths;
   private ObservableList<Index> indices;
-  //  private ObservableList<Request> requestQueue;
+  private ObservableList<SearchRequest> history;
   private final ExecutorService requests = Executors.newCachedThreadPool();
   private final ObservableList<Task<Long>> taskQueue = FXCollections.observableArrayList();
-  private final ObservableList<SearchRequest> history = FXCollections.observableArrayList();
   private Task currentTask = null;
 
   private Node stashedPane;
@@ -96,7 +104,7 @@ public class MainController {
   private CheckBox cb_seachSubstring;
 
   @FXML
-  private ListView<Path> lv_files;
+  private ListView<Inclusion> lv_files;
 
   @FXML
   private ListView<Index> lv_indices;
@@ -164,13 +172,8 @@ public class MainController {
       return;
     }
 
-    // building request
-    SearchRequest request;
-    SearchRequest.Builder builder = SearchRequest.getBuilder();
-    builder.setIndex(selectedIndex)
-           .setSearchFor(searchFor)
-           .setSubstringSearch(cb_seachSubstring.isSelected());
-    request = builder.build();
+    SearchRequest request = cb_search.getConverter().fromString(cb_search.getEditor().getText());
+
 
     // todo: обновление списка найденных путей здесь
     paths.clear();
@@ -178,6 +181,12 @@ public class MainController {
     // execute request
     if (request != null) {
       addTask(request);
+
+      if (!history.contains(request)) {
+        history.add(request);
+      }
+      cb_search.getSelectionModel().select(request);
+
     } else {
       Alert alert = new Alert(AlertType.ERROR);
       alert.setTitle("Search failed");
@@ -190,7 +199,10 @@ public class MainController {
     ObservableSet<Inclusion> requestResults = request.getResult();
     requestResults.addListener((SetChangeListener<? super Inclusion>) change -> {
       if (change.wasAdded()) {
-        Platform.runLater(() -> paths.addAll(change.getElementAdded().getPath()));
+        Platform.runLater(() -> {
+          paths.add(change.getElementAdded());
+        });
+//        Platform.runLater(() -> paths.addAll(change.getElementAdded().getPath()));
       }
     });
   }
@@ -277,9 +289,6 @@ public class MainController {
   private void addTask(Task<Long> task) {
     requests.submit(task);
     taskQueue.add(task);
-    if (task instanceof SearchRequest) {
-      history.add((SearchRequest) task);
-    }
   }
 
   public void saveIndices() {
@@ -311,18 +320,21 @@ public class MainController {
       return;
     }
     // start thread for loading indices (cause it is long operation)
-    Platform.runLater(() -> {
+    new Thread(() -> {
       try (Stream<Path> paths = Files.walk(indicesDirectory.toPath().toAbsolutePath())) {
         paths.forEach(filePath -> {
           // check if name contain '.ser' - serialization extension
           if (filePath.getFileName().toString().contains(".ser")) {
-            indices.add(Index.load(INDICES_DIRECTORY + filePath.getFileName().toString()));
+            Index temp = Index.load(INDICES_DIRECTORY + filePath.getFileName().toString());
+            Platform.runLater(() -> {
+              indices.add(temp);
+            });
           }
         });
       } catch (IOException e) {
         e.printStackTrace();
       }
-    });
+    }).start();
   }
 
   public void setPreview(boolean active) {
@@ -332,6 +344,7 @@ public class MainController {
       }
       sp_main.getItems().add(1, stashedPane);
       sp_main.setDividerPosition(1, 0.8);
+      stashedPane = null;
     } else {
       stashedPane = sp_main.getItems().get(1);
       sp_main.getItems().remove(stashedPane);
@@ -387,7 +400,7 @@ public class MainController {
   private void initializePathList() {
 //    lv_files.setCellFactory(param -> new PathCell());
     lv_files.setCellFactory(param -> {
-      ListCell cell = new PathCell();
+      ListCell cell = new InclusionCell();
       SelectionModel selectionModel = lv_files.getSelectionModel();
       cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
         lv_files.requestFocus();
@@ -463,28 +476,95 @@ public class MainController {
       if (newValue == null) {
         cb_search.setEditable(false);
         cb_search.setPromptText("Select index on index tab");
-//        cb_search.editorProperty().get().textProperty().setValue("");
       } else {
         cb_search.setEditable(true);
         cb_search.setPromptText("Input text");
-        cb_search.setItems(null);
+        cb_search.getEditor().setText("");
       }
     });
     cb_search.setEditable(false);
     cb_search.setPromptText("Select index on index tab");
+    cb_search.setPlaceholder(new Label("No history"));
 
-    cb_search.setItems(history);
-    cb_search.setCellFactory(param -> new ListCell<SearchRequest>() {
+    cb_search.setCellFactory(param -> new TextFieldListCell<SearchRequest>() {
       @Override
-      protected void updateItem(SearchRequest item, boolean empty) {
+      public void updateItem(SearchRequest item, boolean empty) {
         super.updateItem(item, empty);
         if (item == null || empty) {
           setGraphic(null);
         } else {
-          setText(item.getSearchFor());
+          HBox container = new HBox();
+
+          Label temp_searchFor = new Label("word: ");
+          temp_searchFor.setTextFill(javafx.scene.paint.Color.GRAY);
+          temp_searchFor.setOpacity(0.8);
+
+          Label searchFor = new Label(item.getSearchFor());
+          HBox.setHgrow(searchFor, Priority.ALWAYS);
+          searchFor.setMaxWidth(Double.MAX_VALUE);
+
+          Label temp_from = new Label("index: ");
+          temp_from.setTextFill(javafx.scene.paint.Color.GRAY);
+          temp_from.setOpacity(0.8);
+
+          Label from = new Label(item.getIndex().getName());
+          HBox.setHgrow(from, Priority.ALWAYS);
+          from.setMaxWidth(Double.MAX_VALUE);
+          from.setTextFill(javafx.scene.paint.Color.BLUE);
+
+          container.getChildren().addAll(temp_searchFor, searchFor, temp_from, from);
+          setGraphic(container);
+          setText(null);
         }
       }
     });
-    cb_search.setPlaceholder(new Label("No history"));
+    cb_search.setConverter(new StringConverter<SearchRequest>() {
+      @Override
+      public String toString(SearchRequest object) {
+        if (object == null) {
+          return null;
+        }
+        return object.toString();
+      }
+
+      @Override
+      public SearchRequest fromString(String string) {
+        if (string == null || "".equals(string)) {
+          return null;
+        }
+
+        Index index = lv_indices.getSelectionModel().getSelectedItem();
+        if (index == null) {
+          return null;
+        }
+
+        SearchRequest request = SearchRequest.getBuilder().setIndex(index)
+                                             .setSearchFor(string.toLowerCase())
+                                             .setSubstringSearch(cb_seachSubstring.isSelected()).build();
+        if (request == null) {
+          return null;
+        }
+        return request;
+      }
+    });
+
+    history = FXCollections.observableArrayList();
+    history.addListener((ListChangeListener<? super SearchRequest>) c -> {
+      c.next();
+      if (c.wasAdded()) {
+        if (history.size() >= MAX_HISTORY) {
+          history.remove(0);
+        }
+      }
+    });
+    cb_search.setItems(history);
+    cb_search.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        return;
+      }
+      paths.clear();
+
+      paths.setAll(newValue.getResult());
+    });
   }
 }

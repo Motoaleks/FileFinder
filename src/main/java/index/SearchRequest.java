@@ -76,6 +76,33 @@ public class SearchRequest extends Task<Long> {
     return substringSearch;
   }
 
+  @Override
+  public String toString() {
+    return searchFor;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+
+    SearchRequest other = (SearchRequest) obj;
+    if (other.getIndex() != index) {
+      return false;
+    }
+    if (other.getSearchFor() == null || !other.getSearchFor().equals(getSearchFor())) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * 'Builder' pattern, to correctly initialize all fields.
    */
