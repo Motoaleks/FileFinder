@@ -59,7 +59,7 @@
     <VBox prefHeight="45.0" prefWidth="348.0">
        <children>
          <Label font="$x3" text="Index name" />
-         <TextField fx:id="tf_indexName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="348.0" promptText="Enter name for oldIndex" />
+         <TextField fx:id="tf_indexName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="348.0" promptText="Enter name for the future index" />
        </children>
       <BorderPane.margin>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

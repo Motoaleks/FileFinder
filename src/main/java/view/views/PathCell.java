@@ -16,61 +16,84 @@
  */
 package view.views;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import javafx.scene.Node;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import view.controllers.PathCellController;
+import javafx.scene.layout.BorderPane;
 
 /**
  * Cell for representing needed path fields.
  */
 public class PathCell extends ListCell<Path> {
 
-  /**
-   * Controller for cell.
-   */
-  private final PathCellController pathCellController;
-  /**
-   * Caching node, for not creating a new every time.
-   */
-  private final Node view;
+  public static final String FXML_PATH_CELL = "/view/fxml/pathCell.fxml";
+  FXMLLoader loader;
+  private boolean hovered = false;
+  private boolean selected = false;
 
-  /**
-   * Initializing cell, without actual creating (loading) controller & view.
-   */
+  //  @FXML
+//  private Label lbl_size;
+  @FXML
+  private Label lbl_filePath;
+  @FXML
+  private BorderPane bp_main;
+
   public PathCell() {
-    pathCellController = new PathCellController();
-    view = pathCellController.getView();
-
-    //Setting hover elements
-    this.setOnMouseEntered(event -> {
-      pathCellController.setHovered(true).update();
+    selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        return;
+      }
+      selected = newValue;
+      refresh();
     });
-    this.setOnMouseExited(event -> {
-      pathCellController.setHovered(false).update();
+    hoverProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        return;
+      }
+      hovered = newValue;
+      refresh();
     });
   }
 
-  /**
-   * Updating item (loading if not load, otherwise just update fields).
-   */
-  @Override
-  protected void updateItem(Path item, boolean empty) {
-    super.updateItem(item, empty);
-    if (empty || item == null) {
-      setGraphic(null);
+  private void refresh() {
+    if (getItem() == null) {
+      return;
+    }
+    if (hovered || selected) {
+      lbl_filePath.setText(getItem().toString());
     } else {
-      pathCellController.setItem(item);
-      pathCellController.update();
-      setGraphic(view);
+      Path filename = getItem().getFileName();
+      String name = null;
+      if (filename == null) {
+        name = getItem().getFileName().getParent().getFileName().toString();
+      } else {
+        name = filename.toString();
+      }
+      lbl_filePath.setText(name);
     }
   }
 
   @Override
-  public void updateSelected(boolean selected) {
-    super.updateSelected(selected);
-    if (pathCellController != null) {
-      pathCellController.setSelected(selected).update();
+  protected void updateItem(Path item, boolean empty) {
+    super.updateItem(item, empty);
+    if (item == null || empty) {
+      setGraphic(null);
+    } else {
+      if (loader == null) {
+        loader = new FXMLLoader(getClass().getResource(FXML_PATH_CELL));
+        loader.setController(this);
+        try {
+          loader.load();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      setItem(item);
+      refresh();
+      setGraphic(bp_main);
     }
   }
 }

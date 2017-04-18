@@ -106,7 +106,7 @@
             </BorderPane>
           </content>
         </Tab>
-        <Tab fx:id="tab_indexes" text="Indexes">
+        <Tab fx:id="tab_indexes" text="Indices">
           <content>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
               <center>

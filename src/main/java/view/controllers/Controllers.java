@@ -46,10 +46,13 @@ public class Controllers {
           CheckBox temp = new CheckBox(parameterEntry.getKey().name());
           temp.selectedProperty().bindBidirectional((Property<Boolean>) parameterEntry.getValue());
           value = temp;
+          Label description = new Label(parameterEntry.getKey().getDescription());
+          value = new VBox(temp, description);
           break;
         }
         case 2: { // case list
-          Label label = new Label(parameterEntry.getKey().name());
+          Label key = new Label(parameterEntry.getKey().name());
+          Label description = new Label(parameterEntry.getKey().getDescription());
           ListView<String> temp = new ListView<>();
           temp.setEditable(true);
           temp.setMaxHeight(100);
@@ -62,7 +65,7 @@ public class Controllers {
             temp.getItems().set(event.getIndex(), event.getNewValue());
           });
           temp.itemsProperty().bind(parameterEntry.getValue());
-          value = new VBox(label, temp);
+          value = new VBox(key, description, temp);
           break;
         }
       }

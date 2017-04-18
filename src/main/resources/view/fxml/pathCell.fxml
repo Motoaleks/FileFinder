@@ -15,38 +15,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="52.0" prefWidth="234.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-  <center>
-    <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-      <children>
-        <Pane prefHeight="40.0" prefWidth="521.0" VBox.vgrow="ALWAYS">
-          <children>
-            <Label fx:id="lb_name" text="lb_name" textFill="BLACK" />
-          </children>
-          <padding>
-            <Insets />
-          </padding>
-          <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
-          </VBox.margin>
-        </Pane>
-        <HBox alignment="BOTTOM_LEFT" prefHeight="30.0" prefWidth="521.0" VBox.margin="$x2" VBox.vgrow="ALWAYS">
-          <children>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-              <left>
-                <Label fx:id="lb_created" text="lb_created">
-                  <textFill>
-                    <Color blue="0.375" green="0.375" red="0.375" fx:id="x1" />
-                  </textFill>
-                </Label>
-              </left>
-              <right>
-                <Label fx:id="lb_size" text="lb_size" textFill="$x1" />
-              </right>
-            </BorderPane>
-          </children>
-        </HBox>
-      </children>
-    </VBox>
-  </center>
+<BorderPane fx:id="bp_main" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="31.0" prefWidth="234.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <padding>
+      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+   </padding>
+   <left>
+      <Label fx:id="lbl_filePath" text="C:\\Test" BorderPane.alignment="CENTER" />
+   </left>
 </BorderPane>

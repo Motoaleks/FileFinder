@@ -23,25 +23,26 @@ import javafx.collections.FXCollections;
  */
 public enum Parameter {
   // MOST VALUABLE --------------
-  FILE_INDEX(true),
-  NUMBERS(true),
-  WORDS(true),
-  FORMATS(new LinkedList<>(Arrays.asList("txt", "xml", "html"))),
-  LANGUAGES(new LinkedList<>(Arrays.asList("rus", "eng"))),
+  FILE_INDEX(true, "Index file content, not just name and extension."),
+  NUMBERS(true, "Index numbers."),
+  WORDS(true, "Index words."),
+  FORMATS(new LinkedList<>(Arrays.asList("txt", "xml", "html")), "Extensions that would be indexed."),
+  LANGUAGES(new LinkedList<>(Arrays.asList("rus", "eng")), "Supported file languages.");
 
   // OPTIMIZATION ---------------
-  LEMMATISATION(false),
-  TOKENIZATION(false),
-  STEMMING(false),
+//  LEMMATISATION(false, "test"),
+//  TOKENIZATION(false, "test"),
+//  STEMMING(false, "test"),
 
   //CONTINUES OPRIMIZATIONS -----
-  STOPWORDS(false),
-  WEIGHTING(false);
+//  STOPWORDS(false, "test"),
+//  WEIGHTING(false, "test");
 
   private final int type;
   private final ObservableValue defaultValue;
+  private final String description;
 
-  Parameter(Object defaultValue) {
+  Parameter(Object defaultValue, String description) {
     // needed to define type of element and also initialize with correct-wrapped default value
     if (defaultValue instanceof Boolean) {
       type = 0;
@@ -54,6 +55,7 @@ public enum Parameter {
       type = -1;
       this.defaultValue = null;
     }
+    this.description = description;
   }
 
   public int getType() {
@@ -68,5 +70,9 @@ public enum Parameter {
       return defaultValue;
     }
     return defaultValue;
+  }
+
+  public String getDescription() {
+    return description;
   }
 }
