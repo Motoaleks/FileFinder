@@ -12,11 +12,11 @@ Explanation in presentation in Russian.
 Run jar build, wait until it's done. Use builded .jar file, start with index creation (indices tab), choose folders to index, wait until indexing is done, choose index, go back to find tab and use search with the word.
 
 ## Screenshots
-[image for main window]
+![image for main window]
 (PICS/mainWindow.png)
 main window (search tab)
 
-[image for index creation]
+![image for index creation]
 (PICS/indexCreation.png)
 index creation window
 
